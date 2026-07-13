@@ -1,0 +1,177 @@
+@import "tailwindcss";
+
+/* ============================================================
+   The Greenhouse — design tokens for Mike's Nursery
+   Palette derived from the subject: greenhouse glass, foliage,
+   soil, and warm grow-light. The amber "grow" is the signature.
+   ============================================================ */
+@theme {
+  /* Brand palette */
+  --color-fir: #0c1a10; /* deepest greenhouse-shadow green */
+  --color-canopy: #163a22; /* rich foliage — primary brand */
+  --color-leaf: #3e7d45; /* mid green — interactive */
+  --color-leaf-600: #356b3b;
+  --color-sprout: #86c34a; /* young-leaf highlight, used sparingly */
+  --color-grow: #f0b24a; /* warm grow-light amber — THE signature */
+  --color-grow-soft: #f6cd86;
+  --color-paper: #f6f3e9; /* warm greenhouse-glass off-white */
+  --color-paper-dim: #ece7d6;
+  --color-mist: #e7e3d4; /* muted borders on paper */
+  --color-loam: #241c14; /* dark soil — text on paper */
+  --color-loam-soft: #5b5044; /* muted text on paper */
+
+  /* Semantic aliases (default light "glass" surface) */
+  --color-background: var(--color-paper);
+  --color-foreground: var(--color-loam);
+
+  /* Type */
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-hanken);
+
+  /* Motion */
+  --ease-grow: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Radii — slight, organic */
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.625rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-loam);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  /* Honest, visible focus for keyboard users */
+  :focus-visible {
+    outline: 2px solid var(--color-grow);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-grow);
+    color: var(--color-fir);
+  }
+}
+
+/* ---- The signature: grow-light glow ---- */
+@utility glow-grow {
+  background: radial-gradient(
+    60% 60% at 50% 0%,
+    color-mix(in oklab, var(--color-grow) 55%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+/* Warm underline used on eyebrow labels */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Reveal-on-scroll base state (JS adds .is-in) */
+@utility reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s var(--ease-grow),
+    transform 0.7s var(--ease-grow);
+  will-change: opacity, transform;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---- Hero: the one orchestrated load moment ---- */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes glow-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sway {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(0.4deg);
+  }
+}
+
+.hero-rise {
+  opacity: 0;
+  animation: rise-in 0.9s var(--ease-grow) forwards;
+}
+.hero-glow {
+  opacity: 0;
+  animation: glow-bloom 1.6s var(--ease-grow) 0.1s forwards;
+}
+.hero-sway {
+  animation: sway 9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise,
+  .hero-glow {
+    animation: none;
+    opacity: 1;
+  }
+  .hero-sway {
+    animation: none;
+  }
+}

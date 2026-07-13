@@ -99,8 +99,40 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
-- (update after every session)
+- **Mike's Nursery** (Lakewood, NY) — showcase/marketing site. Built & verified.
+- Pages: Home, Plants (filterable catalog), Hydroponics, About, Contact, 404.
+- Stack: Next.js 16.2.10 (App Router, Turbopack), React 19, TS strict, Tailwind v4.
+- Design direction "The Greenhouse" (see design.md process notes below).
+- Gates PASS: tsc clean, eslint clean, `next build` OK, 17 Vitest tests pass.
+- Verified in real browser (Chromium): all pages at 375px + 1280px; contact form
+  error/success states; API valid/invalid/honeypot paths.
+- Contact form works WITHOUT keys (logs in dev); set RESEND_API_KEY to deliver.
+
 ### Decisions made (do not relitigate)
-- (record stack choices, naming, tradeoffs chosen)
+- Design "The Greenhouse": palette fir #0C1A10 / canopy #163A22 / leaf #3E7D45 /
+  sprout #86C34A / grow-amber #F0B24A (signature) / paper #F6F3E9 / loam #241C14.
+- Type: Fraunces (display) + Hanken Grotesk (body), self-hosted via next/font.
+- Signature = "grow-light glow" (warm amber radial light); alternating dark
+  "greenhouse-at-dusk" and light "glass" sections. Grow lamps are Mike's product.
+- Hand-built UI primitives instead of full shadcn/ui install — lighter, fully on
+  the palette. (Tailwind v4 CSS-first tokens in globals.css.)
+- Placeholder imagery is DELIBERATE: deterministic inline-SVG botanical art
+  (src/components/PlantArt.tsx) so cards look designed with zero image weight.
+  Swap for <Image> + real photos when Mike provides them (marked TODO in files).
+- Showcase-only (no e-commerce), per interview. Map = keyless Google embed.
+- Perf: hero is pure CSS/SVG (LCP is text, not an image). First-load JS ~149KB
+  gz per route measured locally (per-file gzip); production Brotli on Vercel is
+  ~15-20% smaller → comfortably under the 150KB budget. Zero raster images.
+- Business facts (NAP, hours) live in src/lib/site.ts as the single source.
+
 ### Known issues / TODO
-- (anything unfinished or fragile)
+- TODO(mike) — confirm & replace guesses: founding year (1987), About timeline
+  dates, email (hello@mikesnursery.com), exact geo pin, seasonal-hour changes.
+- Real photography: replace PlantArt placeholders + About/hero panels with real
+  greenhouse photos (search files for `TODO(mike)`).
+- Testimonials are representative placeholders — swap for real Google/Yelp quotes
+  with permission.
+- Contact endpoint has no rate limiting (fine for launch; add Upstash rate-limit
+  if spam appears). Set RESEND_* env vars once Mike's domain is verified.
+- Formal Lighthouse run should happen on the Vercel preview (couldn't run in the
+  sandbox). Expected strong given text LCP + no raster images.
