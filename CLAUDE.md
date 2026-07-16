@@ -121,8 +121,16 @@ At the end of every working session:
   logo/branding as an official partnership claim.
 ### Known issues / TODO
 - Logo files needed as real uploads (currently CSS wordmark placeholder).
-- Stage 2: secure downloads, customer dashboard, order history, DB, Resend
-  email delivery, Stripe webhook fulfillment, free lead-magnet capture.
-- Deploy to Vercel needs owner's account + env keys. .env.example documents keys.
+- DONE (Stage 2a/2b): HMAC signed secure downloads (/api/download), Stripe
+  fulfillment webhook (/api/stripe/webhook) emailing signed link via Resend,
+  free lead magnet (/free-toolkit + /api/subscribe). All no-op until keys set.
+- ACTIVATION NEEDED: Resend key + verified sending domain; product files in a
+  private bucket (DOWNLOAD_STORAGE_URL) named <slug>.pdf; DOWNLOAD_SECRET;
+  Stripe webhook endpoint registered. See .env.example.
+- Still Stage 2+: customer dashboard, order history, DB (optional — current
+  delivery is DB-free via signed links).
+- Deploy to Vercel needs owner's account + env keys.
 - Product-content quality upgrade (the actual PDFs) still to do.
 - Sample previews only cover ~3 products; roll out to the rest.
+- Minor: Turbopack NFT over-trace warning from /api/download local-fs fallback
+  (harmless; prod path is DOWNLOAD_STORAGE_URL bucket).
