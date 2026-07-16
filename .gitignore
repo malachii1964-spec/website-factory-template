@@ -35,3 +35,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Paid product files (never commit)
+private/downloads/*.pdf
+private/downloads/*.zip

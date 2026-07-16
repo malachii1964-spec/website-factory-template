@@ -10,6 +10,7 @@ const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
       { href: "/products?category=ebooks", label: "E-books & guides" },
       { href: "/products?category=courses", label: "Courses" },
       { href: "/local-business", label: "Local business kits" },
+      { href: "/free-toolkit", label: "Free starter prompts" },
     ],
   },
   {
