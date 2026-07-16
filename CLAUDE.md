@@ -99,8 +99,38 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
-- (update after every session)
+- FutureDeskAI rebuilt on owned stack (off Manus). Next.js 16 App Router, TS
+  strict, Tailwind v4, IBM Plex Sans/Mono via next/font. Live pages: Home,
+  /products (30-item catalog + category filter), /products/[slug] (all 30,
+  SSG), /about, /local-business, /membership, /legal/{terms,privacy}, 404,
+  /checkout/{success,cancel}, /api/checkout. All gates green (tsc, eslint,
+  next build, vitest). Pushed to branch claude/passive-income-analysis-vsbigm.
+- Design: "Command Center" — premium light default + dark mode (user loves the
+  black ground), electric-violet accent from the FD logo, instrument-readout
+  signature. Owner = Malachi.
+- Mission (per owner): positioning as an "AI learning center for every level";
+  50% of every sale pledged to St. Jude — surface prominently & honestly.
 ### Decisions made (do not relitigate)
-- (record stack choices, naming, tradeoffs chosen)
+- Full Next.js rebuild (not de-Manus in place). Dark is the DEFAULT theme.
+- Single source of truth for pricing (src/lib/pricing.ts) derives Stripe
+  amounts from catalog price — fixes the old display≠charge bug.
+- No money-back guarantee (owner's choice). Dan Martell = strategy lens only
+  (value ladder, buy-back-time, free-first); NO name/face/quotes on site.
+- Real sample previews pulled from source files (flagship + top sellers first).
+- St. Jude: state the 50% pledge in brand's own words; do NOT use St. Jude
+  logo/branding as an official partnership claim.
 ### Known issues / TODO
-- (anything unfinished or fragile)
+- Logo files needed as real uploads (currently CSS wordmark placeholder).
+- DONE (Stage 2a/2b): HMAC signed secure downloads (/api/download), Stripe
+  fulfillment webhook (/api/stripe/webhook) emailing signed link via Resend,
+  free lead magnet (/free-toolkit + /api/subscribe). All no-op until keys set.
+- ACTIVATION NEEDED: Resend key + verified sending domain; product files in a
+  private bucket (DOWNLOAD_STORAGE_URL) named <slug>.pdf; DOWNLOAD_SECRET;
+  Stripe webhook endpoint registered. See .env.example.
+- Still Stage 2+: customer dashboard, order history, DB (optional — current
+  delivery is DB-free via signed links).
+- Deploy to Vercel needs owner's account + env keys.
+- Product-content quality upgrade (the actual PDFs) still to do.
+- Sample previews only cover ~3 products; roll out to the rest.
+- Minor: Turbopack NFT over-trace warning from /api/download local-fs fallback
+  (harmless; prod path is DOWNLOAD_STORAGE_URL bucket).
