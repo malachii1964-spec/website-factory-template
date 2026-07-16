@@ -192,7 +192,7 @@ export const products: Product[] = [
     slug: "easy-ai-prompt-mastery",
     title: "Malachi's EASY AI - Prompt Mastery for Beginners",
     description: "The complete 18-chapter guide to using AI for life, work, business, content, and money. No fluff, no jargon.",
-    longDescription: "Written by Malachi for real people who feel intimidated by AI. This 68-page book teaches you the EASY AI method — a simple framework for getting amazing results from ChatGPT, Claude, and any AI tool. Covers prompting fundamentals, the Perfect Prompt Blueprint, fixing bad AI answers, AI for business, content creation, digital products, automation, safety, and includes a 30-day challenge plus a copy-and-paste prompt vault. No tech background needed.",
+    longDescription: "Written by Malachi for real people who feel intimidated by AI. This complete 18-chapter book teaches the EASY AI method — a simple framework for getting amazing results from ChatGPT, Claude, and any AI tool. Covers prompting fundamentals, the Perfect Prompt Blueprint, fixing bad AI answers, AI for business, content creation, digital products, automation, and safety, plus a 30-day challenge and a 40-prompt copy-and-paste vault. Deliberately no-fluff — every chapter earns its place. No tech background needed.",
     category: "ebooks",
     price: 24,
     originalPrice: 49,

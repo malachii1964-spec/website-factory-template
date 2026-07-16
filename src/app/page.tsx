@@ -254,7 +254,7 @@ export default function HomePage() {
                   <div className="mt-4 flex items-center gap-2">
                     <span className="status-dot" aria-hidden />
                     <span className="readout text-[0.62rem] text-muted-foreground">
-                      18 chapters · 68 pages
+                      18 chapters · 40-prompt vault
                     </span>
                   </div>
                 </div>
