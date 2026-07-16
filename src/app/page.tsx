@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Star,
   BookOpen,
+  Heart,
 } from "lucide-react";
 import { products, categories, getProductBySlug } from "@/lib/products";
 import { ProductCard } from "@/components/product-card";
@@ -72,17 +73,17 @@ export default function HomePage() {
           <div className="fade-up">
             <p className="eyebrow flex items-center gap-2">
               <span className="status-dot status-dot--amber" aria-hidden />
-              The AI command center
+              The AI learning center · every level
             </p>
             <h1 className="mt-5 text-[2.6rem] font-semibold leading-[1.04] tracking-tight sm:text-5xl lg:text-[3.5rem]">
-              AI tools that actually{" "}
+              Learn AI. Then make it{" "}
               <span className="text-accent">do the work</span>.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Battle-tested prompt packs, templates, industry automation kits,
-              and courses — built for professionals and local businesses who
-              want results, not hype. Buy once, download instantly, get moving
-              today.
+              From your very first prompt to advanced automation — battle-tested
+              packs, templates, industry kits, and courses for absolute
+              beginners and seasoned pros alike. Buy once, download instantly,
+              get results today.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/products" className={buttonVariants({ size: "lg" })}>
@@ -192,6 +193,40 @@ export default function HomePage() {
                 </Link>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── LEVELS ───────────────────────────────────────────────── */}
+      <section className="border-b border-border py-16 lg:py-20">
+        <div className="container-page">
+          <div className="max-w-2xl">
+            <p className="eyebrow">Start where you are</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+              Built for every level — nobody left behind
+            </h2>
+            <p className="mt-3 leading-relaxed text-muted-foreground">
+              Never touched AI, or automating a whole business? There&rsquo;s a
+              clear next step for you either way.
+            </p>
+          </div>
+          <div className="mt-9 grid gap-4 md:grid-cols-3">
+            {[
+              { level: "Beginner", tag: "New to AI", desc: "Start with the plain-English EASY AI book and learn the exact way to get great results — zero jargon.", href: "/products/easy-ai-prompt-mastery", cta: "Start learning" },
+              { level: "Intermediate", tag: "Ready to speed up", desc: "Grab the prompt vault and templates that turn AI into a daily time-saver across your work.", href: "/products?category=prompts", cta: "Level up" },
+              { level: "Advanced", tag: "Go pro", desc: "Master prompt engineering and automate whole workflows with the masterclass and certification.", href: "/products?category=courses", cta: "Go deeper" },
+            ].map((l, i) => (
+              <Link key={l.level} href={l.href} className="panel lift group flex flex-col p-6 hover:border-accent">
+                <span className="readout text-xs font-semibold text-accent">
+                  0{i + 1} · {l.tag}
+                </span>
+                <h3 className="mt-3 text-lg font-semibold tracking-tight">{l.level}</h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{l.desc}</p>
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors group-hover:text-accent">
+                  {l.cta} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -415,6 +450,56 @@ export default function HomePage() {
                 </figcaption>
               </figure>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── GIVE BACK ────────────────────────────────────────────── */}
+      <section className="border-b border-border bg-surface py-20">
+        <div className="container-page">
+          <div className="panel ticks relative overflow-hidden p-8 lg:p-12">
+            <div
+              className="pointer-events-none absolute right-0 top-0 h-64 w-64 opacity-15 blur-[90px]"
+              style={{ background: "radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--accent) 60%, transparent), transparent 70%)" }}
+              aria-hidden
+            />
+            <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+              <div>
+                <p className="eyebrow flex items-center gap-2">
+                  <Heart className="h-3.5 w-3.5" fill="currentColor" /> The mission
+                </p>
+                <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
+                  Every purchase gives half of itself away.
+                </h2>
+                <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">
+                  FutureDeskAI isn&rsquo;t only about buying back your time —
+                  it&rsquo;s about paying it forward. <span className="font-medium text-foreground">50% of every
+                  sale</span> is donated, split between two causes that matter:
+                  St. Jude Children&rsquo;s Research Hospital, and organizations
+                  that help homeless veterans get back on their feet. When you
+                  learn AI here, a child&rsquo;s treatment and a veteran&rsquo;s
+                  second chance get funded too.
+                </p>
+              </div>
+              <div className="grid gap-3">
+                {[
+                  { name: "St. Jude Children's Research Hospital", note: "Life-saving care, never a family bill" },
+                  { name: "Homeless veterans support", note: "Housing and a hand back up for those who served" },
+                ].map((c) => (
+                  <div key={c.name} className="rounded-lg border border-border bg-background p-4">
+                    <div className="flex items-center gap-2.5">
+                      <Heart className="h-4 w-4 shrink-0 text-accent" fill="currentColor" />
+                      <span className="text-sm font-semibold text-foreground">{c.name}</span>
+                    </div>
+                    <p className="mt-1.5 pl-6 text-sm text-muted-foreground">{c.note}</p>
+                  </div>
+                ))}
+                <p className="readout px-1 text-[0.68rem] leading-relaxed text-muted-foreground">
+                  A giving commitment from FutureDeskAI — an independent pledge,
+                  not a claim of official partnership.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

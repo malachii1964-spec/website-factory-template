@@ -3,6 +3,7 @@ import "./globals.css";
 import { plexSans, plexMono } from "@/lib/fonts";
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
+import { AnnouncementBar } from "@/components/site/announcement-bar";
 
 const SITE_URL = "https://www.futuredeskai.com";
 
@@ -55,6 +56,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
+        <AnnouncementBar />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
