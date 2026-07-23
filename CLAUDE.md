@@ -97,6 +97,33 @@ At the end of every working session:
    by impact — but do NOT build them until approved
 3. Update the Project Log below
 
+## Roster & Orchestration (the team + who dispatches whom)
+The main session is the ORCHESTRATOR (your OS doc's adaptive router). It does not
+do specialist work it can route; it classifies the task, dispatches the right
+role(s) — in PARALLEL when they don't depend on each other — and enforces the
+evidence gates before anything is called done. Specialists live in .claude/agents/.
+
+Roster (each owns a distinct domain; no overlap):
+- brand-strategist   — positioning, naming, category, brand architecture, message hierarchy
+- conversion-copywriter — verbal identity, headlines, CTAs, microcopy, page copy
+- growth-marketer    — local SEO, Google Business Profile, schema, CRO, analytics, referral loops
+- market-researcher  — customer/JTBD, competitor teardown, demand + pricing evidence (cited or killed)
+- pricing-strategist — unit economics, the quote formula, rate tables, margin proof
+- compliance-advisor — NY delivery/courier legality, licensing/insurance, privacy (flags what a lawyer must confirm)
+- brand-critic       — adversarial review of brand/positioning/copy before ship
+- design-critic      — adversarial review of every user-facing page vs design.md
+- reviewer           — adversarial code review of every completed feature (Rule 5)
+
+Dispatch router (default flows — deviate only with reason):
+- New brand/name/positioning  → market-researcher → brand-strategist → brand-critic (fix ≤3 before ship)
+- Any customer-facing copy     → conversion-copywriter → brand-critic
+- Any pricing/quote work       → market-researcher (inputs) → pricing-strategist
+- Any legal/"can we…" question → compliance-advisor (never assert law without it)
+- Any user-facing page built   → design-critic (Rule 6) + growth-marketer (found+converts)
+- Any feature with logic built → reviewer (Rule 5) after Rule 3 gates pass
+Hard gate over all of it (from the OS doc): truth + evidence for material claims;
+never present a guess, an unverified availability, or an uncleared trademark as fact.
+
 ## Project Log (keep current — this is the project's memory)
 ### Current state
 - FutureDeskAI rebuilt on owned stack (off Manus). Next.js 16 App Router, TS
