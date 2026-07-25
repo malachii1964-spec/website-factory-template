@@ -1,533 +1,267 @@
-import Link from "next/link";
-import {
-  ArrowRight,
-  Download,
-  ShieldCheck,
-  Zap,
-  Clock,
-  CircleDollarSign,
-  CheckCircle2,
-  Star,
-  BookOpen,
-  Heart,
-} from "lucide-react";
-import { products, categories, getProductBySlug } from "@/lib/products";
-import { ProductCard } from "@/components/product-card";
-import { ProductIcon } from "@/lib/icons";
+import { Phone, MessageSquare, Check, MapPin, Clock } from "lucide-react";
+import { CountyMap } from "@/components/ccc/county-map";
 import { buttonVariants } from "@/components/ui/button";
-import { formatPrice } from "@/lib/utils";
+import { serviceGroups } from "@/lib/services";
+import { site, coverage, formatPhone, telHref, smsHref } from "@/lib/site";
 
-const FEATURED_SLUGS = [
-  "ultimate-chatgpt-prompt-vault",
-  "ai-workspace-notion-template",
-  "passive-income-with-ai-guide",
-  "contractor-automation-pack",
-  "prompt-engineering-masterclass-ebook",
-  "ai-first-professional-course",
-];
+const phone = formatPhone(site.phoneDigits);
 
-const TELEMETRY = [
-  { value: "30", label: "Ready-to-use tools" },
-  { value: "6", label: "Product categories" },
-  { value: "$9+", label: "Instant downloads" },
-  { value: "24/7", label: "Buy & download" },
-];
-
-const PAINS = [
-  { icon: Clock, cost: "Hours lost to admin & busywork", fix: "Automation kits that do the repetitive work for you" },
-  { icon: CircleDollarSign, cost: "Leaving money on the table", fix: "Proven prompts that write quotes, follow-ups & offers" },
-  { icon: Zap, cost: "Staring at a blank AI prompt box", fix: "500+ battle-tested prompts — copy, paste, done" },
-  { icon: BookOpen, cost: "Never learned to use AI properly", fix: "Plain-English guides & courses, zero jargon" },
-];
-
-const STEPS = [
-  { n: "01", title: "Pick your tool", desc: "Browse 30 prompt packs, templates, kits, and courses. Every one solves a specific, real problem." },
-  { n: "02", title: "Check out securely", desc: "One-time payment through Stripe. No subscription trap, no upsell maze." },
-  { n: "03", title: "Download & use today", desc: "Instant delivery. Open it, plug in your details, and get results the same day." },
-];
-
-const TESTIMONIALS = [
-  { name: "Mike R.", role: "R&R HVAC Services, Ohio", initials: "MR", text: "I was losing 3–4 leads a week because I couldn't answer calls on jobs. The automation kit paid for itself in the first week — recovered about $2,400 in work I'd have lost." },
-  { name: "Sarah T.", role: "Bright Smile Dental, Texas", initials: "ST", text: "The patient recall prompts alone are worth 10x the price. We went from a 40% recall rate to 68% in six weeks just using the reminder templates." },
-  { name: "Carlos M.", role: "ProClean Services, Florida", initials: "CM", text: "I'm not a tech person at all. Everything was set up before lunch. My Google reviews went from 12 to 47 in two months using the review prompts." },
-];
-
-export default function HomePage() {
-  const featured = FEATURED_SLUGS.map(getProductBySlug).filter(
-    (p): p is NonNullable<typeof p> => Boolean(p),
-  );
-  const flagship = getProductBySlug("easy-ai-prompt-mastery");
-  const catalogCount = products.length;
-
+export default function Home() {
   return (
     <>
-      {/* ── HERO ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="grid-blueprint absolute inset-0 opacity-40" aria-hidden />
-        <div
-          className="pointer-events-none absolute left-1/2 top-[-20%] h-[380px] w-[760px] -translate-x-1/2 rounded-full opacity-20 blur-[130px]"
-          style={{ background: "radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--accent) 45%, transparent), transparent 70%)" }}
-          aria-hidden
-        />
-        <div className="container-page relative grid items-center gap-14 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
+      {/* ---------- Hero ---------- */}
+      <section className="relative overflow-hidden contour">
+        <div className="container-page grid items-center gap-12 py-16 lg:grid-cols-[1.05fr_1fr] lg:py-24">
           <div className="fade-up">
             <p className="eyebrow flex items-center gap-2">
-              <span className="status-dot status-dot--amber" aria-hidden />
-              The AI learning center · every level
+              <span className="status-dot" aria-hidden />
+              Chautauqua County · On call
             </p>
-            <h1 className="mt-5 text-[2.6rem] font-semibold leading-[1.04] tracking-tight sm:text-5xl lg:text-[3.5rem]">
-              Learn AI. Then make it{" "}
-              <span className="text-accent">do the work</span>.
+            <h1 className="mt-5 text-[2.7rem] leading-[1.02] sm:text-6xl">
+              One call.
+              <br />
+              <span className="text-grape">Consider it done.</span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              From your very first prompt to advanced automation — battle-tested
-              packs, templates, industry kits, and courses for absolute
-              beginners and seasoned pros alike. Buy once, download instantly,
-              get results today.
+            <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+              Delivery, errands, and concierge runs across the whole county — one
+              local dispatcher who knows the back roads, and one price agreed
+              before we go. The help Pip&rsquo;s used to give, back and better.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/products" className={buttonVariants({ size: "lg" })}>
-                Browse all products
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-              {flagship && (
-                <Link
-                  href={`/products/${flagship.slug}`}
-                  className={buttonVariants({ variant: "outline", size: "lg" })}
-                >
-                  Get the EASY AI book — {formatPrice(flagship.price)}
-                </Link>
-              )}
+
+            {/* The dispatch ticket — the primary call to action */}
+            <div className="ticket ticket--perf mt-8 max-w-md p-5 pt-7">
+              <p className="readout text-xs text-muted-foreground">
+                Call or text the dispatcher
+              </p>
+              <a
+                href={telHref(site.phoneDigits)}
+                className="mt-1 flex items-center gap-2 font-display text-3xl font-bold tracking-tight hover:text-accent sm:text-4xl"
+              >
+                <Phone className="h-6 w-6 text-accent" />
+                {phone}
+              </a>
+              <div className="mt-4 flex flex-wrap gap-2.5">
+                <a href={telHref(site.phoneDigits)} className={buttonVariants({ size: "md" })}>
+                  <Phone className="h-4 w-4" /> Call now
+                </a>
+                <a href={smsHref(site.phoneDigits)} className={buttonVariants({ variant: "outline", size: "md" })}>
+                  <MessageSquare className="h-4 w-4" /> Text your errand
+                </a>
+              </div>
+              <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                <Check className="h-4 w-4 text-lake" /> You approve the price before we go.
+              </p>
             </div>
-            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              {["Instant digital download", "One-time payment", "No tech skills needed"].map((f) => (
-                <li key={f} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-active" />
-                  {f}
+          </div>
+
+          {/* The signature — the county route map */}
+          <div className="relative">
+            <div className="ticket p-4 sm:p-6">
+              <div className="mb-3 flex items-center justify-between">
+                <p className="eyebrow eyebrow-grape">Today&rsquo;s route</p>
+                <p className="readout text-xs text-muted-foreground">Westfield → Jamestown</p>
+              </div>
+              <CountyMap />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Trust strip ---------- */}
+      <section className="border-y border-border bg-surface">
+        <div className="container-page grid gap-6 py-8 sm:grid-cols-3">
+          {[
+            { t: "A local person, not an app", d: "The same dispatcher every time — who knows the county and owns your job." },
+            { t: "One price, before we go", d: "Dispatch minimum, mileage, and time — quoted and agreed up front. No meter." },
+            { t: "Almost anything legal", d: "Multi-stop runs, wait-and-return, weekly routes, lake-house stocking, business delivery." },
+          ].map((item) => (
+            <div key={item.t} className="flex gap-3">
+              <span className="mt-1 grid h-6 w-6 flex-none place-items-center rounded-full bg-accent-tint text-accent">
+                <Check className="h-3.5 w-3.5" />
+              </span>
+              <div>
+                <p className="font-semibold">{item.t}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{item.d}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------- Services ---------- */}
+      <section id="services" className="container-page scroll-mt-20 py-20">
+        <div className="max-w-2xl">
+          <p className="eyebrow eyebrow-grape">What we run for you</p>
+          <h2 className="mt-3 text-4xl sm:text-5xl">Eight kinds of runs. One number to call.</h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            If it takes a drive, we probably handle it. Tell us what you need — if
+            it&rsquo;s legal and safe, consider it done.
+          </p>
+        </div>
+
+        <div className="mt-12 space-y-12">
+          {serviceGroups.map((group) => (
+            <div key={group.key}>
+              <div className="flex items-baseline gap-3">
+                <h3 className="font-display text-2xl font-bold">{group.label}</h3>
+                <span className="readout text-xs text-muted-foreground">{group.note}</span>
+              </div>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {group.services.map((s) => (
+                  <div key={s.id} className="ticket lift p-5">
+                    <p className="font-display text-lg font-bold text-grape">{s.name}</p>
+                    <p className="mt-2 text-sm text-muted-foreground">{s.blurb}</p>
+                    <p className="readout mt-4 border-t border-border pt-3 text-xs text-muted-foreground">
+                      e.g. {s.eg}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------- How it works ---------- */}
+      <section id="how" className="border-y border-border bg-surface scroll-mt-20">
+        <div className="container-page py-20">
+          <p className="eyebrow eyebrow-grape">How it works</p>
+          <h2 className="mt-3 max-w-2xl text-4xl sm:text-5xl">Three steps. No app to download.</h2>
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {[
+              { n: "01", t: "Call or text", d: "Tell the dispatcher what you need — a pickup, a delivery, a list of stops, or a standing weekly run." },
+              { n: "02", t: "We quote one price", d: "You get one price for the whole job, agreed before we move. No meter, no surge, no surprise on the receipt." },
+              { n: "03", t: "Consider it done", d: "We run it, keep you posted, and hand you every receipt. Same name, same number, next time." },
+            ].map((step) => (
+              <div key={step.n} className="ticket p-6">
+                <p className="readout text-2xl font-semibold text-accent">{step.n}</p>
+                <p className="mt-3 font-display text-xl font-bold">{step.t}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{step.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Coverage ---------- */}
+      <section id="coverage" className="container-page scroll-mt-20 py-20">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+          <div>
+            <p className="eyebrow eyebrow-grape">Coverage</p>
+            <h2 className="mt-3 text-4xl sm:text-5xl">The whole county, one call.</h2>
+            <p className="mt-4 max-w-lg text-lg text-muted-foreground">
+              Based in {site.base}, running all 1,060 square miles of Chautauqua
+              County — lakeshore to back roads, town to town.
+            </p>
+            <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3">
+              {coverage.map((town) => (
+                <li key={town} className="flex items-center gap-2 text-sm">
+                  <MapPin className="h-3.5 w-3.5 flex-none text-grape" />
+                  {town}
+                </li>
+              ))}
+            </ul>
+            <p className="readout mt-8 flex items-center gap-2 text-sm text-muted-foreground">
+              <Clock className="h-4 w-4" />
+              {site.hours.map((h) => `${h.days} ${h.time}`).join("  ·  ")}
+            </p>
+          </div>
+          <div className="ticket p-4 sm:p-6">
+            <CountyMap />
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Pricing ---------- */}
+      <section id="pricing" className="border-y border-border bg-surface scroll-mt-20">
+        <div className="container-page py-20">
+          <div className="max-w-2xl">
+            <p className="eyebrow eyebrow-grape">Pricing</p>
+            <h2 className="mt-3 text-4xl sm:text-5xl">One honest price, agreed before we go.</h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              No hidden fees, no meter running, no surge. We build one price from
+              four plain parts and tell you the number before we lift a finger.
+            </p>
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            {["Dispatch minimum", "Route mileage", "Service time", "Extra stops"].map((part, i) => (
+              <div key={part} className="flex items-center gap-3">
+                <span className="ticket readout px-4 py-2.5 text-sm">{part}</span>
+                {i < 3 && <span className="text-xl text-muted-foreground">+</span>}
+              </div>
+            ))}
+            <span className="text-xl text-muted-foreground">=</span>
+            <span className="readout rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground">
+              one price, agreed up front
+            </span>
+          </div>
+
+          <div className="mt-10 flex flex-wrap gap-3">
+            <a href={telHref(site.phoneDigits)} className={buttonVariants({ size: "lg" })}>
+              <Phone className="h-4 w-4" /> Get your price — {phone}
+            </a>
+            <a href={smsHref(site.phoneDigits)} className={buttonVariants({ variant: "outline", size: "lg" })}>
+              <MessageSquare className="h-4 w-4" /> Text us the details
+            </a>
+          </div>
+          <p className="readout mt-4 text-xs text-muted-foreground">
+            Scheduled &amp; recurring runs cost less than dedicated, drop-everything runs.
+          </p>
+        </div>
+      </section>
+
+      {/* ---------- What we can & can't carry ---------- */}
+      <section id="carry" className="container-page scroll-mt-20 py-20">
+        <p className="eyebrow eyebrow-grape">Straight talk</p>
+        <h2 className="mt-3 max-w-2xl text-4xl sm:text-5xl">What we can &amp; can&rsquo;t carry.</h2>
+        <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+          Almost anything legal, safe, and vehicle-friendly. A few things the law
+          keeps us out of — we&rsquo;d rather tell you plainly than surprise you.
+        </p>
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <div className="ticket p-6">
+            <p className="eyebrow eyebrow-muted">We carry</p>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              {["Food, groceries & retail", "Packages, documents & returns", "Flowers, hardware & supplies", "Items for repair (wait-and-return)", "Lake-house & business deliveries"].map((x) => (
+                <li key={x} className="flex items-start gap-2.5">
+                  <Check className="mt-0.5 h-4 w-4 flex-none text-lake" /> {x}
                 </li>
               ))}
             </ul>
           </div>
-
-          {/* Command deck panel — the signature visual, built in CSS */}
-          <div className="fade-up relative" style={{ animationDelay: "120ms" }}>
-            <div className="panel overflow-hidden shadow-[0_1px_2px_rgba(20,20,30,0.04),0_24px_60px_-24px_rgba(20,20,40,0.24)]">
-              <div className="flex items-center justify-between border-b border-border px-4 py-3">
-                <span className="readout flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="status-dot" aria-hidden />
-                  futuredeskai · command deck
-                </span>
-                <span className="readout text-[0.62rem] uppercase tracking-widest text-muted-foreground">
-                  live
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-px bg-border">
-                {TELEMETRY.map((t) => (
-                  <div key={t.label} className="bg-surface px-5 py-6">
-                    <div className="readout text-3xl font-semibold text-foreground">
-                      {t.value}
-                    </div>
-                    <div className="mt-1 text-xs text-muted-foreground">{t.label}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="space-y-2.5 px-5 py-5">
-                {[
-                  { label: "Prompt vault", status: "500+ prompts" },
-                  { label: "Automation kits", status: "11 industries" },
-                  { label: "Guides & courses", status: "ready" },
-                ].map((row) => (
-                  <div key={row.label} className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2.5 text-muted-foreground">
-                      <span className="status-dot" aria-hidden />
-                      {row.label}
-                    </span>
-                    <span className="readout text-xs text-foreground">{row.status}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CATEGORIES ───────────────────────────────────────────── */}
-      <section className="border-b border-border py-16 lg:py-20">
-        <div className="container-page">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <p className="eyebrow">The catalog</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-                Six modules. {catalogCount} tools. One command center.
-              </h2>
-            </div>
-            <Link
-              href="/products"
-              className="hidden shrink-0 text-sm font-medium text-accent hover:underline sm:inline"
-            >
-              View all →
-            </Link>
-          </div>
-          <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {categories.map((cat) => {
-              const sample = products.find((p) => p.category === cat.id);
-              const count = products.filter((p) => p.category === cat.id).length;
-              return (
-                <Link
-                  key={cat.id}
-                  href={`/products?category=${cat.id}`}
-                  className="panel lift group flex items-start gap-4 p-5 hover:border-accent"
-                >
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-border bg-surface-2 text-accent">
-                    <ProductIcon name={sample?.icon ?? "sparkles"} className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold tracking-tight text-foreground">{cat.label}</h3>
-                      <span className="readout text-[0.62rem] text-muted-foreground">{count}</span>
-                    </div>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                      {cat.description}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── LEVELS ───────────────────────────────────────────────── */}
-      <section className="border-b border-border py-16 lg:py-20">
-        <div className="container-page">
-          <div className="max-w-2xl">
-            <p className="eyebrow">Start where you are</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-              Built for every level — nobody left behind
-            </h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              Never touched AI, or automating a whole business? There&rsquo;s a
-              clear next step for you either way.
-            </p>
-          </div>
-          <div className="mt-9 grid gap-4 md:grid-cols-3">
-            {[
-              { level: "Beginner", tag: "New to AI", desc: "Start with the plain-English EASY AI book and learn the exact way to get great results — zero jargon.", href: "/products/easy-ai-prompt-mastery", cta: "Start learning" },
-              { level: "Intermediate", tag: "Ready to speed up", desc: "Grab the prompt vault and templates that turn AI into a daily time-saver across your work.", href: "/products?category=prompts", cta: "Level up" },
-              { level: "Advanced", tag: "Go pro", desc: "Master prompt engineering and automate whole workflows with the masterclass and certification.", href: "/products?category=courses", cta: "Go deeper" },
-            ].map((l, i) => (
-              <Link key={l.level} href={l.href} className="panel lift group flex flex-col p-6 hover:border-accent">
-                <span className="readout text-xs font-semibold text-accent">
-                  0{i + 1} · {l.tag}
-                </span>
-                <h3 className="mt-3 text-lg font-semibold tracking-tight">{l.level}</h3>
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{l.desc}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors group-hover:text-accent">
-                  {l.cta} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FLAGSHIP: EASY AI BOOK ───────────────────────────────── */}
-      {flagship && (
-        <section className="border-b border-border bg-surface py-20 lg:py-24">
-          <div className="container-page grid items-center gap-14 lg:grid-cols-[0.8fr_1.2fr]">
-            {/* Book cover, CSS */}
-            <div className="mx-auto w-full max-w-[280px]">
-              <div className="panel relative aspect-[3/4] overflow-hidden rounded-lg border-border-strong bg-gradient-to-br from-surface-2 to-background p-6 shadow-[0_30px_60px_-24px_rgba(20,20,40,0.35)]">
-                <div className="relative flex h-full flex-col">
-                  <span className="readout text-[0.62rem] uppercase tracking-[0.2em] text-accent">
-                    FutureDeskAI
-                  </span>
-                  <span className="mt-auto text-[0.7rem] uppercase tracking-widest text-muted-foreground">
-                    Malachi&rsquo;s
-                  </span>
-                  <h3 className="mt-1 text-3xl font-semibold leading-tight tracking-tight">
-                    EASY <span className="text-accent">AI</span>
-                  </h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Prompt Mastery for Beginners
-                  </p>
-                  <div className="mt-4 flex items-center gap-2">
-                    <span className="status-dot" aria-hidden />
-                    <span className="readout text-[0.62rem] text-muted-foreground">
-                      18 chapters · 40-prompt vault
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <p className="eyebrow">Flagship</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-                The complete guide to using AI — with zero jargon.
-              </h2>
-              <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">
-                {flagship.longDescription}
-              </p>
-              <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
-                {flagship.features.slice(0, 6).map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                    <span className="text-foreground">{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Link
-                  href={`/products/${flagship.slug}`}
-                  className={buttonVariants({ size: "lg" })}
-                >
-                  Get the book — {formatPrice(flagship.price)}
-                  <ArrowRight className="h-5 w-5" />
-                </Link>
-                {flagship.originalPrice && (
-                  <span className="readout text-sm text-muted-foreground">
-                    <span className="line-through">{formatPrice(flagship.originalPrice)}</span>{" "}
-                    <span className="text-active">
-                      save {formatPrice(flagship.originalPrice - flagship.price)}
-                    </span>
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── PAIN → FIX ───────────────────────────────────────────── */}
-      <section className="border-b border-border py-20">
-        <div className="container-page">
-          <div className="max-w-2xl">
-            <p className="eyebrow">Why it matters</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-              Every day without a system quietly costs you.
-            </h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              Each tool here targets one of the money-and-time leaks that hit
-              professionals and local businesses hardest.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {PAINS.map((p) => {
-              const Icon = p.icon;
-              return (
-                <div key={p.cost} className="panel flex items-start gap-4 p-5">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-border bg-surface-2 text-accent">
-                    <Icon className="h-5 w-5" strokeWidth={1.6} />
-                  </span>
-                  <div>
-                    <p className="text-sm text-muted-foreground line-through decoration-border-strong">
-                      {p.cost}
-                    </p>
-                    <p className="mt-1 font-medium text-foreground">{p.fix}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FEATURED PRODUCTS ────────────────────────────────────── */}
-      <section className="border-b border-border py-20">
-        <div className="container-page">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <p className="eyebrow">Best sellers</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-                Start with what&rsquo;s working
-              </h2>
-            </div>
-            <Link href="/products" className="shrink-0 text-sm font-medium text-accent hover:underline">
-              All {catalogCount} →
-            </Link>
-          </div>
-          <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ─────────────────────────────────────────── */}
-      <section className="border-b border-border bg-surface py-20">
-        <div className="container-page">
-          <div className="max-w-2xl">
-            <p className="eyebrow">How it works</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-              From checkout to results in three steps
-            </h2>
-          </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {STEPS.map((s) => (
-              <div key={s.n} className="panel p-6">
-                <span className="readout text-sm font-semibold text-accent">{s.n}</span>
-                <h3 className="mt-3 text-lg font-semibold tracking-tight">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-10 flex flex-wrap gap-6 text-sm text-muted-foreground">
-            <span className="flex items-center gap-2"><Download className="h-4 w-4 text-accent" /> Instant delivery</span>
-            <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-accent" /> Secure Stripe checkout</span>
-            <span className="flex items-center gap-2"><Star className="h-4 w-4 text-accent" /> One-time payment</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FOUNDER ──────────────────────────────────────────────── */}
-      <section className="border-b border-border py-20">
-        <div className="container-page grid items-center gap-12 lg:grid-cols-[1fr_0.8fr]">
-          <div>
-            <p className="eyebrow">Built by an operator</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-              Made by someone who needed it to work
-            </h2>
-            <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">
-              I&rsquo;m Malachi. FutureDeskAI started because I watched hard-working
-              people — tradespeople, small-business owners, professionals —
-              lose hours and leads to work that AI can handle in seconds, if
-              someone just hands them the exact tools. So that&rsquo;s what this is:
-              no fluff, no jargon, no hype. Just tools that do the work.
-            </p>
-            <Link href="/about" className={buttonVariants({ variant: "outline", className: "mt-7" })}>
-              Read the story
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          <div className="panel p-8">
-            <div className="flex flex-col gap-4">
-              {[
-                { k: "Approach", v: "Practical over hype" },
-                { k: "Pricing", v: "Buy once, own it" },
-                { k: "Support", v: "Real, human replies" },
-                { k: "Promise", v: "Tools that ship results" },
-              ].map((row) => (
-                <div key={row.k} className="flex items-center justify-between border-b border-border pb-3 last:border-0 last:pb-0">
-                  <span className="eyebrow eyebrow-muted">{row.k}</span>
-                  <span className="text-sm font-medium text-foreground">{row.v}</span>
-                </div>
+          <div className="ticket p-6">
+            <p className="eyebrow eyebrow-muted">We can&rsquo;t (by law)</p>
+            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+              {["Cannabis of any kind", "Buying alcohol or tobacco on your behalf", "Prescriptions — unless your pharmacy authorizes the pickup", "Anything unsafe or that won't fit the vehicle"].map((x) => (
+                <li key={x} className="flex items-start gap-2.5">
+                  <span className="mt-1.5 h-1.5 w-1.5 flex-none rounded-full bg-border-strong" /> {x}
+                </li>
               ))}
-            </div>
+            </ul>
+            <p className="readout mt-5 border-t border-border pt-3 text-xs text-muted-foreground">
+              Final rules confirmed with New York counsel before launch.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ─────────────────────────────────────────── */}
-      <section className="border-b border-border bg-surface py-20">
-        <div className="container-page">
-          <div className="max-w-2xl">
-            <p className="eyebrow">Field reports</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-              Real results from real businesses
-            </h2>
-          </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {TESTIMONIALS.map((t) => (
-              <figure key={t.name} className="panel flex flex-col p-6">
-                <div className="mb-4 flex gap-0.5" aria-label="5 out of 5 stars">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-accent text-accent" />
-                  ))}
-                </div>
-                <blockquote className="flex-1 text-sm leading-relaxed text-foreground">
-                  &ldquo;{t.text}&rdquo;
-                </blockquote>
-                <figcaption className="mt-5 flex items-center gap-3 border-t border-border pt-4">
-                  <span className="readout grid h-9 w-9 place-items-center rounded-full border border-border bg-surface-2 text-xs font-semibold text-accent">
-                    {t.initials}
-                  </span>
-                  <span>
-                    <span className="block text-sm font-medium text-foreground">{t.name}</span>
-                    <span className="block text-xs text-muted-foreground">{t.role}</span>
-                  </span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── GIVE BACK ────────────────────────────────────────────── */}
-      <section className="border-b border-border bg-surface py-20">
-        <div className="container-page">
-          <div className="panel ticks relative overflow-hidden p-8 lg:p-12">
-            <div
-              className="pointer-events-none absolute right-0 top-0 h-64 w-64 opacity-15 blur-[90px]"
-              style={{ background: "radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--accent) 60%, transparent), transparent 70%)" }}
-              aria-hidden
-            />
-            <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-              <div>
-                <p className="eyebrow flex items-center gap-2">
-                  <Heart className="h-3.5 w-3.5" fill="currentColor" /> The mission
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-                  Every purchase gives half of itself away.
-                </h2>
-                <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">
-                  FutureDeskAI isn&rsquo;t only about buying back your time —
-                  it&rsquo;s about paying it forward. <span className="font-medium text-foreground">50% of every
-                  sale</span> is donated, split between two causes that matter:
-                  St. Jude Children&rsquo;s Research Hospital, and organizations
-                  that help homeless veterans get back on their feet. When you
-                  learn AI here, a child&rsquo;s treatment and a veteran&rsquo;s
-                  second chance get funded too.
-                </p>
-              </div>
-              <div className="grid gap-3">
-                {[
-                  { name: "St. Jude Children's Research Hospital", note: "Life-saving care, never a family bill" },
-                  { name: "Homeless veterans support", note: "Housing and a hand back up for those who served" },
-                ].map((c) => (
-                  <div key={c.name} className="rounded-lg border border-border bg-background p-4">
-                    <div className="flex items-center gap-2.5">
-                      <Heart className="h-4 w-4 shrink-0 text-accent" fill="currentColor" />
-                      <span className="text-sm font-semibold text-foreground">{c.name}</span>
-                    </div>
-                    <p className="mt-1.5 pl-6 text-sm text-muted-foreground">{c.note}</p>
-                  </div>
-                ))}
-                <p className="readout px-1 text-[0.68rem] leading-relaxed text-muted-foreground">
-                  A giving commitment from FutureDeskAI — an independent pledge,
-                  not a claim of official partnership.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FINAL CTA ────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden py-24">
-        <div className="grid-blueprint absolute inset-0 opacity-30" aria-hidden />
-        <div
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[280px] w-[640px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-15 blur-[130px]"
-          style={{ background: "radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--accent) 55%, transparent), transparent 70%)" }}
-          aria-hidden
-        />
-        <div className="container-page relative text-center">
-          <h2 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
-            Stop paying for time you could automate.
+      {/* ---------- Final CTA ---------- */}
+      <section className="border-t border-border bg-grape-tint">
+        <div className="container-page py-20 text-center">
+          <h2 className="mx-auto max-w-2xl text-4xl sm:text-5xl">
+            Got something that needs a drive?
           </h2>
-          <p className="mx-auto mt-4 max-w-xl leading-relaxed text-muted-foreground">
-            Pick one tool, put it to work today, and feel the difference by the
-            end of the week.
+          <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
+            One local call and it&rsquo;s handled. Consider it done.
           </p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/products" className={buttonVariants({ size: "lg" })}>
-              Browse all products
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-            <Link href="/local-business" className={buttonVariants({ variant: "outline", size: "lg" })}>
-              Find my industry kit
-            </Link>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <a href={telHref(site.phoneDigits)} className={buttonVariants({ size: "lg" })}>
+              <Phone className="h-4 w-4" /> Call {phone}
+            </a>
+            <a href={smsHref(site.phoneDigits)} className={buttonVariants({ variant: "outline", size: "lg" })}>
+              <MessageSquare className="h-4 w-4" /> Text us
+            </a>
           </div>
         </div>
       </section>

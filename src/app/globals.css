@@ -1,66 +1,73 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   FutureDeskAI — "The Command Center" design system
-   Concept: the site behaves like the well-built control panel the product
-   promises. Deep slate + warm paper, ONE signal-amber accent (hard-hat /
-   powered-on), IBM Plex Sans (UI) + IBM Plex Mono (readouts, labels, stats).
-   Dark mode is class-based (.dark on <html>) so the toggle can override the OS.
+   Chautauqua County Courier — "The Dispatch Desk" design system
+   Concept: a living county dispatch board with the warmth of a hand-labeled map
+   and a paper dispatch ticket. Palette drawn from the county itself — Concord
+   GRAPE (Welch's grape belt), road-sign MARIGOLD (the signal + CTA), Lake Erie
+   TEAL (the map). Display = Bricolage Grotesque, body = Hanken Grotesk, and a
+   Spline Sans Mono "readout" for stops, coordinates, and status.
+   Light warm-paper theme is the default (senior-friendly); dark is class-based.
    ========================================================================== */
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Premium light theme — the default. Expensive through restraint. */
-  --background: #fafafb;
-  --surface: #ffffff;
-  --surface-2: #f3f3f6;
-  --foreground: #16161c;
-  --muted-foreground: #62626f;
-  --border: #e7e7ee;
-  --border-strong: #d4d4de;
+  /* Warm paper — the default ground. Confident, not clinical. */
+  --background: #f3ede2;
+  --surface: #fbf7ef;
+  --surface-2: #ece3d4;
+  --foreground: #23162a;
+  --muted-foreground: #6d5f6f;
+  --border: #ded2c0;
+  --border-strong: #cbbca4;
 
-  /* Electric violet — the single signal accent, drawn from the FD logo */
-  --accent: #5b3df5;
-  --accent-hover: #4a2ee0;
+  /* Concord grape — the structural brand color */
+  --grape: #5a2a82;
+  --grape-deep: #3c1a5b;
+  --grape-tint: #efe6f5;
+
+  /* Road-sign marigold — the ONE signal accent (CTAs, the route, status) */
+  --accent: #d9822b;
+  --accent-hover: #c26f1f;
   --accent-foreground: #ffffff;
-  --accent-tint: #efeafe;
+  --accent-tint: #f8ecd9;
 
-  /* Structural steel + operational status */
-  --steel: #4a4a63;
-  --chrome: #8f8fb0;
-  --active: #1f9d63;
-  --active-tint: #e4f3ea;
+  /* Lake Erie teal — secondary, for the map + quiet supporting marks */
+  --lake: #1f6f6b;
+  --lake-tint: #dcece9;
 
   --ring: var(--accent);
-  --radius: 0.4rem;
+  --radius: 0.7rem;
 
-  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-spline-mono), ui-monospace, "SF Mono", Menlo, monospace;
 
   color-scheme: light;
 }
 
 .dark {
-  /* Near-black violet ground — the powered command deck (brand default) */
-  --background: #0a0910;
-  --surface: #14121f;
-  --surface-2: #1b1830;
-  --foreground: #e9e8f0;
-  --muted-foreground: #9b98ad;
-  --border: #262338;
-  --border-strong: #383350;
+  /* Aubergine night — the dispatch board after dark */
+  --background: #17101c;
+  --surface: #211829;
+  --surface-2: #2a1f34;
+  --foreground: #f1eae0;
+  --muted-foreground: #a99dae;
+  --border: #322740;
+  --border-strong: #453754;
 
-  /* Electric violet, brighter on the dark ground */
-  --accent: #8b7bff;
-  --accent-hover: #a394ff;
-  --accent-foreground: #0a0910;
-  --accent-tint: #191634;
+  --grape: #b98ce0;
+  --grape-deep: #9a6bc7;
+  --grape-tint: #241832;
 
-  --steel: #4b4a63;
-  --chrome: #b9b8d4;
-  --active: #35d18a;
-  --active-tint: #10241b;
+  --accent: #f0a13f;
+  --accent-hover: #f4b45f;
+  --accent-foreground: #1c1206;
+  --accent-tint: #2a1e12;
+
+  --lake: #4fb3ae;
+  --lake-tint: #16302e;
 
   --ring: var(--accent);
   color-scheme: dark;
@@ -74,23 +81,25 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
+  --color-grape: var(--grape);
+  --color-grape-deep: var(--grape-deep);
+  --color-grape-tint: var(--grape-tint);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-tint: var(--accent-tint);
-  --color-steel: var(--steel);
-  --color-chrome: var(--chrome);
-  --color-active: var(--active);
-  --color-active-tint: var(--active-tint);
+  --color-lake: var(--lake);
+  --color-lake-tint: var(--lake-tint);
   --color-ring: var(--ring);
 
-  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
   --font-mono: var(--font-mono);
 
-  --radius-sm: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 4px);
-  --radius-xl: calc(var(--radius) + 10px);
+  --radius-xl: calc(var(--radius) + 12px);
 }
 
 @layer base {
@@ -104,7 +113,9 @@
   body {
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-sans);
+    font-family: var(--font-body);
+    font-size: 1.02rem;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -115,23 +126,26 @@
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: 3px;
   }
   h1, h2, h3, h4 {
+    font-family: var(--font-display);
     text-wrap: balance;
     letter-spacing: -0.02em;
+    line-height: 1.05;
+    font-weight: 700;
   }
 }
 
 @layer components {
   .container-page {
     width: 100%;
-    max-width: 76rem;
+    max-width: 74rem;
     margin-inline: auto;
     padding-inline: 1.25rem;
   }
 
-  /* Signature 1 — the instrument readout: mono, tabular, tracked caps */
+  /* Signature — the dispatch-ticket readout: mono, tracked caps, tabular */
   .readout {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
@@ -140,28 +154,40 @@
   .eyebrow {
     font-family: var(--font-mono);
     font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
+    font-weight: 500;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--accent);
   }
-  .eyebrow-muted {
-    color: var(--muted-foreground);
+  .eyebrow-grape { color: var(--grape); }
+  .eyebrow-muted { color: var(--muted-foreground); }
+
+  /* A dispatch ticket: paper panel with a perforated top edge */
+  .ticket {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  .ticket--perf::before {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    top: 0.55rem;
+    height: 0;
+    border-top: 2px dashed color-mix(in oklab, var(--border-strong) 90%, transparent);
   }
 
-  /* Signature 2 — status dot with soft power-glow */
+  /* Status dot with a soft "on-shift" pulse */
   .status-dot {
     position: relative;
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 9999px;
-    background: var(--active);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--active) 22%, transparent);
+    background: var(--lake);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--lake) 20%, transparent);
     flex: none;
-  }
-  .status-dot--amber {
-    background: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 22%, transparent);
   }
   @media (prefers-reduced-motion: no-preference) {
     .status-dot::after {
@@ -170,82 +196,17 @@
       inset: 0;
       border-radius: 9999px;
       background: inherit;
-      animation: pulse-ring 2.4s ease-out infinite;
+      animation: pulse-ring 2.6s ease-out infinite;
     }
   }
 
-  /* Signature 3 — blueprint corner ticks framing key panels */
-  .panel {
-    position: relative;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-  }
-  .ticks::before,
-  .ticks::after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-color: var(--accent);
-    border-style: solid;
-    opacity: 0.75;
-    pointer-events: none;
-  }
-  .ticks::before {
-    top: 8px;
-    left: 8px;
-    border-width: 1.5px 0 0 1.5px;
-  }
-  .ticks::after {
-    bottom: 8px;
-    right: 8px;
-    border-width: 0 1.5px 1.5px 0;
-  }
-
-  /* Blueprint grid ground */
-  .grid-blueprint {
-    background-image:
-      linear-gradient(to right, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px);
-    background-size: 44px 44px;
-  }
-  .dark .grid-blueprint {
-    background-image:
-      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  }
-
-  /* Chrome wordmark — echoes the metallic FD logo */
-  .chrome-text {
-    background: linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--foreground) 92%, white) 0%,
-      var(--foreground) 42%,
-      color-mix(in oklab, var(--foreground) 55%, var(--chrome)) 60%,
-      color-mix(in oklab, var(--foreground) 88%, white) 100%
+  /* Faint contour ground — evokes a topographic map without shouting */
+  .contour {
+    background-image: radial-gradient(
+      color-mix(in oklab, var(--grape) 12%, transparent) 1px,
+      transparent 1.4px
     );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  /* Disciplined accent glow — used behind ONE focal element per view, not everywhere */
-  .accent-glow {
-    position: relative;
-  }
-  .accent-glow::before {
-    content: "";
-    position: absolute;
-    inset: -30% -10%;
-    z-index: -1;
-    background: radial-gradient(
-      50% 50% at 50% 45%,
-      color-mix(in oklab, var(--accent) 40%, transparent) 0%,
-      transparent 70%
-    );
-    filter: blur(38px);
-    pointer-events: none;
+    background-size: 22px 22px;
   }
 
   .hairline {
@@ -253,7 +214,6 @@
     border-top: 1px solid var(--border);
   }
 
-  /* Lift interaction on cards */
   .lift {
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
@@ -262,20 +222,53 @@
       transform: translateY(-3px);
     }
   }
+
+  /* ---- The signature: county route map ---- */
+  /* Default state (also the reduced-motion state): route fully drawn. */
+  .route-line {
+    stroke-dashoffset: 0;
+  }
+  .courier-dot {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .route-line {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: route-draw 2.4s cubic-bezier(0.65, 0, 0.35, 1) 0.35s forwards;
+    }
+    .courier-dot {
+      opacity: 1;
+      animation: courier-run 5.5s cubic-bezier(0.5, 0, 0.5, 1) 2.6s infinite;
+    }
+    .map-pin {
+      opacity: 0;
+      animation: pin-drop 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+  }
 }
 
 @keyframes pulse-ring {
   0% { transform: scale(1); opacity: 0.5; }
   70%, 100% { transform: scale(2.4); opacity: 0; }
 }
-
+@keyframes route-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes courier-run {
+  0% { offset-distance: 0%; opacity: 0; }
+  6% { opacity: 1; }
+  94% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+@keyframes pin-drop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 @media (prefers-reduced-motion: no-preference) {
-  .fade-up {
-    animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
+  .fade-up { animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
 }

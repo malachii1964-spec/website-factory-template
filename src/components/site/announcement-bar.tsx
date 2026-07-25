@@ -1,18 +1,15 @@
-import { Heart } from "lucide-react";
-
 /**
- * Owner's pledge, stated in the brand's own words. Not an official St. Jude
- * partnership claim — no St. Jude logo/branding is used.
+ * Slim status strip — reads like a dispatch board header. Honest framing of the
+ * Pip's gap (no date/reason stated as fact).
  */
 export function AnnouncementBar() {
   return (
     <div className="border-b border-border bg-surface-2 text-center">
-      <p className="container-page flex items-center justify-center gap-2 py-2 text-xs text-muted-foreground sm:text-[0.8rem]">
-        <Heart className="h-3.5 w-3.5 shrink-0 text-accent" fill="currentColor" />
+      <p className="container-page readout flex items-center justify-center gap-2 py-1.5 text-[0.72rem] text-muted-foreground sm:text-xs">
+        <span className="status-dot" aria-hidden />
         <span>
-          <span className="font-medium text-foreground">50% of every sale</span>{" "}
-          supports St. Jude Children&rsquo;s Research Hospital &amp; homeless
-          veterans.
+          <span className="font-medium text-foreground">Now serving all of Chautauqua County</span>
+          <span className="hidden sm:inline"> — filling the gap Pip&rsquo;s Delivery left.</span>
         </span>
       </p>
     </div>
