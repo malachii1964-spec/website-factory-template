@@ -25,7 +25,11 @@ better on every variable. Owner: Malachi.
   implying official partnership. (Carried over from factory standing rules.)
 
 ## OPEN — needs the owner (blocking the build)
-1. **Interview answers 2–8** unanswered: phone number, hours, service area,
+1. **Named dispatcher / face of the brand** — brand-critic's key fix: our "one
+   local person" edge is copyable as a slogan; making a REAL named dispatcher the
+   center of the brand ("same name, same number, every time — you talk to ___")
+   turns it into a moat. Who is it? (Malachi? spouse? both?) Blocks final copy.
+2. **Interview answers 2–8** unanswered: phone number, hours, service area,
    which of the 8 services launch, pricing display (formula-only vs real starting
    rates), request-intake method, legal-exclusions page, look/feel reference.
 3. **Pricing inputs** missing: vehicle + MPG, labor rate, insurance cost, avg
@@ -42,7 +46,19 @@ better on every variable. Owner: Malachi.
 Owner picks the name → dispatch brand-strategist (positioning, tagline, message
 hierarchy) → brand-critic review → then collect interview answers 2–8 → build.
 
+## Brand foundation
+- BRAND.md is now LAW (positioning, tagline "One call. Consider it done.", 3 proof
+  pillars, voice, branded-house architecture, CCC logo direction). Built by
+  brand-strategist, red-teamed by brand-critic (verdict FIX-THEN-SHIP), all copy
+  fixes applied. Truth gates ("insured", "guaranteed price", restricted items) +
+  named-dispatcher moat still open (see RISKS / OPEN).
+
 ## Session log (newest first)
+- 2026-07-25: Locked name (Chautauqua County Courier). Ran brand-strategist →
+  brand-critic → wrote BRAND.md with fixes. Dispatched compliance-advisor on the
+  three legal live wires (insurance/"insured", "guaranteed price", restricted-goods
+  can-carry table) + privacy/data-minimization. Awaiting: named-dispatcher decision
+  + interview answers 2–8 + compliance-advisor results.
 - 2026-07-23: Built 9-agent roster + dispatch router (CLAUDE.md) + this memory
   file + autonomy policy. Scored names against the OS-doc rubric; recommended
   GO-TO 716 (runner-up WE GOT YOU 716 / GRAPE ROUTE). Awaiting name lock.
