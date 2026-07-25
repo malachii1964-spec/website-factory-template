@@ -114,12 +114,14 @@ export function CountyMap({ className }: { className?: string }) {
             />
           )}
           <text
-            x={s.x + (s.base ? 12 : 8)}
-            y={s.y + 3.5}
+            x={s.x > 288 ? s.x - (s.base ? 12 : 8) : s.x + (s.base ? 12 : 8)}
+            y={s.y + 3.8}
+            textAnchor={s.x > 288 ? "end" : "start"}
             className="readout"
-            fontSize="10.5"
+            fontSize="12"
+            fontWeight={s.onRoute ? 600 : 500}
             fill="var(--color-foreground)"
-            fillOpacity={s.onRoute ? 0.92 : 0.62}
+            fillOpacity={s.onRoute ? 0.95 : 0.82}
           >
             {s.name}
           </text>

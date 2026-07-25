@@ -27,10 +27,12 @@
   --grape-deep: #3c1a5b;
   --grape-tint: #efe6f5;
 
-  /* Road-sign marigold — the ONE signal accent (CTAs, the route, status) */
+  /* Road-sign marigold — the ONE signal accent (CTAs, the route, status).
+     Foreground is dark ink, not white: dark-on-marigold clears WCAG AA (~6:1)
+     AND reinforces the road-sign identity (marigold sign, dark legend). */
   --accent: #d9822b;
   --accent-hover: #c26f1f;
-  --accent-foreground: #ffffff;
+  --accent-foreground: #2a1508;
   --accent-tint: #f8ecd9;
 
   /* Lake Erie teal — secondary, for the map + quiet supporting marks */

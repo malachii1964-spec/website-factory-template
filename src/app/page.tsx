@@ -12,8 +12,8 @@ export default function Home() {
       {/* ---------- Hero ---------- */}
       <section className="relative overflow-hidden contour">
         <div className="container-page grid items-center gap-12 py-16 lg:grid-cols-[1.05fr_1fr] lg:py-24">
-          <div className="fade-up">
-            <p className="eyebrow flex items-center gap-2">
+          <div>
+            <p className="eyebrow eyebrow-grape flex items-center gap-2">
               <span className="status-dot" aria-hidden />
               Chautauqua County · On call
             </p>
@@ -134,7 +134,7 @@ export default function Home() {
               { n: "03", t: "Consider it done", d: "We run it, keep you posted, and hand you every receipt. Same name, same number, next time." },
             ].map((step) => (
               <div key={step.n} className="ticket p-6">
-                <p className="readout text-2xl font-semibold text-accent">{step.n}</p>
+                <p className="readout text-2xl font-semibold text-grape">{step.n}</p>
                 <p className="mt-3 font-display text-xl font-bold">{step.t}</p>
                 <p className="mt-2 text-sm text-muted-foreground">{step.d}</p>
               </div>
