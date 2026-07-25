@@ -3,7 +3,7 @@
 > end. This is the single source of truth for what's decided, what's open, and
 > what happens next. If it's not written here, it isn't remembered.
 
-Last updated: 2026-07-23
+Last updated: 2026-07-25
 
 ## The mission (one line)
 Launch a countywide on-demand delivery / errands / courier / concierge service in
@@ -11,6 +11,10 @@ Chautauqua County, NY — filling the void left by Pip's Delivery (closed Mar 20
 better on every variable. Owner: Malachi.
 
 ## Decisions LOCKED (do not relitigate)
+- **NAME LOCKED: Chautauqua County Courier** (owner Malachi + wife approved,
+  2026-07-25). Yields the CCC triple-C monogram; "Triple-C"/"CCC" carries the
+  verbal/phone load so no one has to spell "Chautauqua." Sub-services (incl.
+  "Reservation Runs") are line items UNDER this master brand.
 - Build approach: the "local-business" template, extended with a guaranteed-quote
   request intake. Boring, small, fast — per stack defaults.
 - The team: 9 specialist agents in `.claude/agents/` + main session as orchestrator,
@@ -21,9 +25,7 @@ better on every variable. Owner: Malachi.
   implying official partnership. (Carried over from factory standing rules.)
 
 ## OPEN — needs the owner (blocking the build)
-1. **Name not locked.** Finalists: GO-TO 716 · WE GOT YOU 716 · GRAPE ROUTE.
-   Next step once picked: brand-strategist → brand-critic finalize positioning.
-2. **Interview answers 2–8** unanswered: phone number, hours, service area,
+1. **Interview answers 2–8** unanswered: phone number, hours, service area,
    which of the 8 services launch, pricing display (formula-only vs real starting
    rates), request-intake method, legal-exclusions page, look/feel reference.
 3. **Pricing inputs** missing: vehicle + MPG, labor rate, insurance cost, avg
