@@ -53,6 +53,21 @@ hierarchy) → brand-critic review → then collect interview answers 2–8 → 
   fixes applied. Truth gates ("insured", "guaranteed price", restricted items) +
   named-dispatcher moat still open (see RISKS / OPEN).
 
+## Build state
+- HOME PAGE LIVE (branch, not deployed). "Dispatch Desk" design: warm-paper light
+  default + aubergine dark, Concord-grape + marigold + Lake-Erie-teal, Bricolage/
+  Hanken/Spline Mono, signature = animated Chautauqua County route map + CCC
+  monogram. Sections: hero (tap-to-call ticket), trust strip, 8 services in 3
+  buckets, how-it-works, coverage, honest pricing model, can/can't-carry, CTA.
+  All Rule 3 gates green; verified in browser (desktop light/dark + 375px).
+  design-critic dispatched (Rule 6).
+- Old FutureDeskAI pages (/products, /membership, /about, /local-business,
+  /free-toolkit, /checkout, /legal, /api/*) STILL PRESENT on this branch, now
+  off-brand/unlinked. TODO: remove or rebuild for CCC. They build fine but should
+  be cleaned before deploy.
+- PLACEHOLDERS in code: site.phoneDigits (716-555-0176, fake), hours. Swap before
+  launch. Quote intake is currently tap-to-call/text only (no form/API yet).
+
 ## Session log (newest first)
 - 2026-07-25: Locked name (Chautauqua County Courier). Ran brand-strategist →
   brand-critic → wrote BRAND.md with fixes. Dispatched compliance-advisor on the
