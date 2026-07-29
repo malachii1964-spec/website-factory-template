@@ -111,6 +111,7 @@ async function main(): Promise<void> {
       k: { type: "string", default: "20" },
       json: { type: "boolean", default: false },
       expand: { type: "boolean", default: false },
+      ablate: { type: "string" },
     },
   });
 
@@ -129,6 +130,23 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   if (values.conversations) dataset = dataset.slice(0, Number(values.conversations));
+
+  // Ablations answer "which signal is actually carrying retrieval?" by zeroing
+  // one term and redistributing its weight across the rest, so scores stay on
+  // the same 0..1 scale and remain comparable to the baseline.
+  const baseConfig = loadConfig();
+  const weights = { ...baseConfig.weights };
+  if (values.ablate === "no-vector" || values.ablate === "no-lexical") {
+    const drop = values.ablate === "no-vector" ? "similarity" : "lexical";
+    const freed = weights[drop];
+    weights[drop] = 0;
+    const rest = (Object.keys(weights) as (keyof typeof weights)[]).filter((k) => weights[k] > 0);
+    const total = rest.reduce((sum, k) => sum + weights[k], 0);
+    for (const k of rest) weights[k] += (freed * weights[k]) / total;
+  } else if (values.ablate) {
+    process.stderr.write(`unknown --ablate ${values.ablate} (use no-vector | no-lexical)\n`);
+    process.exit(1);
+  }
 
   const embedder = defaultEmbedder();
   const overall = newBucket(cutoffs);
@@ -149,7 +167,7 @@ async function main(): Promise<void> {
     const store = new MemoryStore(
       openBrain(":memory:"),
       embedder,
-      { ...loadConfig(), dbPath: ":memory:" },
+      { ...baseConfig, weights, dbPath: ":memory:" },
     );
 
     const ingestStart = performance.now();
@@ -261,7 +279,7 @@ async function main(): Promise<void> {
 
   process.stdout.write(
     `\nLoCoMo — retrieval only (not comparable to end-to-end LoCoMo scores)\n` +
-      `embedder ${embedder.id}${values.expand ? " · second-hop expansion ON" : ""}\n` +
+      `embedder ${embedder.id}${values.expand ? " · second-hop expansion ON" : ""}${values.ablate ? ` · ABLATION: ${values.ablate}` : ""}\n` +
       `${dataset.length} conversations, ${totalTurns} turns ingested, ${overall.questions} scored questions` +
       `${skipped > 0 ? `, ${skipped} skipped (no evidence label)` : ""}\n\n` +
       `${"".padEnd(20)}${cutoffs.map((k) => `any@${k}`.padStart(8)).join("")}` +
