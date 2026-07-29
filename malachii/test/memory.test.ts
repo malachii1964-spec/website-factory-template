@@ -191,3 +191,66 @@ describe("unverified guesses do not gain confidence by recurring", () => {
     expect(brain().get(first.id)!.confidence).toBeGreaterThan(first.confidence);
   });
 });
+
+describe("bulk writes batch their embedding calls", () => {
+  it("embeds many memories in a handful of calls, not one per memory", async () => {
+    const calls: number[] = [];
+    const counting = {
+      id: "counting-embedder",
+      dim: 4,
+      nearDuplicate: 0.9,
+      async embed(texts: string[]): Promise<Float32Array[]> {
+        calls.push(texts.length);
+        return texts.map(() => Float32Array.from([1, 0, 0, 0]));
+      },
+    };
+    const { openBrain } = await import("../src/core/db.ts");
+    const { loadConfig } = await import("../src/core/config.ts");
+    const { MemoryStore } = await import("../src/memory/store.ts");
+    const bulk = new MemoryStore(openBrain(":memory:"), counting, {
+      ...loadConfig(),
+      dbPath: ":memory:",
+    });
+
+    const inputs = Array.from({ length: 300 }, (_, i) => ({
+      kind: "episodic" as const,
+      title: `Turn ${i}`,
+      body: `Utterance number ${i}`,
+      dedupe: false,
+    }));
+    await bulk.rememberMany(inputs, 128);
+
+    expect(bulk.stats().total).toBe(300);
+    expect(bulk.stats().embedded).toBe(300);
+    // 300 memories at a batch size of 128 is three calls, not three hundred.
+    expect(calls).toEqual([128, 128, 44]);
+    bulk.close();
+  });
+
+  it("keeps the memories even when a whole embedding batch fails", async () => {
+    const failing = {
+      id: "failing-embedder",
+      dim: 4,
+      nearDuplicate: 0.9,
+      async embed(): Promise<Float32Array[]> {
+        throw new Error("provider unreachable");
+      },
+    };
+    const { openBrain } = await import("../src/core/db.ts");
+    const { loadConfig } = await import("../src/core/config.ts");
+    const { MemoryStore } = await import("../src/memory/store.ts");
+    const bulk = new MemoryStore(openBrain(":memory:"), failing, {
+      ...loadConfig(),
+      dbPath: ":memory:",
+    });
+
+    await bulk.rememberMany([
+      { kind: "semantic", title: "A", body: "first" },
+      { kind: "semantic", title: "B", body: "second" },
+    ]);
+    expect(bulk.stats().total).toBe(2);
+    expect(bulk.stats().embedded).toBe(0);
+    expect(bulk.recentEvents(10).map((e) => e.kind)).toContain("embedding.failed");
+    bulk.close();
+  });
+});

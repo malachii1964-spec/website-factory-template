@@ -87,6 +87,13 @@ export interface RecallOptions {
    */
   markUsed?: boolean;
   /**
+   * A pre-computed vector for `query`, skipping the embedding call. With a
+   * hosted embedder, embedding one query per recall means one network round
+   * trip per recall; a caller running many queries can embed them all in a few
+   * batched calls and pass the vectors in.
+   */
+  queryVector?: Float32Array | null;
+  /**
    * Second-hop expansion. A multi-hop question needs several memories, but only
    * the first is reachable from the question's own wording — the rest are
    * reachable from *it*. When enabled, the best first-hop results are used as

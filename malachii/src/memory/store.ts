@@ -72,6 +72,16 @@ export class MemoryStore {
   // ---------------------------------------------------------------- writing
 
   async remember(input: RememberInput): Promise<Memory> {
+    const { memory, isNew } = this.#insertMemory(input);
+    if (isNew) await this.#embedMemory(memory);
+    return memory;
+  }
+
+  /**
+   * The synchronous half of a write: de-duplication, the row insert, and the
+   * journal entry. Embedding is separated out so bulk writers can batch it.
+   */
+  #insertMemory(input: RememberInput): { memory: Memory; isNew: boolean } {
     const now = Date.now();
     const project = input.project ?? null;
     const baseHash = contentHash({
@@ -92,7 +102,7 @@ export class MemoryStore {
         // of misread harness output climbed to 0.53 confidence purely by
         // recurring across sessions.
         if (!existing.tags.includes("unverified")) this.reinforce(existing.id, 0.05);
-        return this.get(existing.id) ?? existing;
+        return { memory: this.get(existing.id) ?? existing, isNew: false };
       }
     }
 
@@ -149,25 +159,61 @@ export class MemoryStore {
       memory.contentHash,
     );
 
-    await this.#embedMemory(memory);
     this.logEvent({
       kind: "memory.written",
       project,
       summary: `Learned (${memory.kind}): ${memory.title}`,
       payload: { id: memory.id, origin: memory.origin },
     });
-    return memory;
+    return { memory, isNew: true };
   }
 
-  /** Batch write, sharing a single embedding round trip. Used by ingestion. */
-  async rememberMany(inputs: RememberInput[]): Promise<Memory[]> {
+  /**
+   * Bulk write that embeds in batches rather than one call per memory.
+   *
+   * With the local embedder the difference is invisible. With a hosted one it
+   * is the difference between a few dozen requests and several thousand: rows
+   * are inserted first, then every new memory's text is embedded in batched
+   * calls, then the vectors are attached.
+   */
+  async rememberMany(inputs: RememberInput[], batchSize = 128): Promise<Memory[]> {
     const written: Memory[] = [];
-    for (const input of inputs) written.push(await this.remember(input));
+    const pending: Memory[] = [];
+
+    for (const input of inputs) {
+      const existing = this.#insertMemory(input);
+      written.push(existing.memory);
+      if (existing.isNew) pending.push(existing.memory);
+    }
+
+    for (let i = 0; i < pending.length; i += batchSize) {
+      const chunk = pending.slice(i, i + batchSize);
+      let vectors: Float32Array[];
+      try {
+        vectors = await this.embedder.embed(chunk.map((m) => embedText(m)));
+      } catch (error) {
+        // A failed batch costs recall quality, never the memories themselves.
+        this.logEvent({
+          kind: "embedding.failed",
+          summary: `Could not embed a batch of ${chunk.length} memories`,
+          payload: { error: String(error) },
+        });
+        continue;
+      }
+      const stmt = this.db.prepare(
+        "INSERT OR REPLACE INTO embeddings (memory_id, model, dim, vec) VALUES (?, ?, ?, ?)",
+      );
+      for (const [index, memory] of chunk.entries()) {
+        const vec = vectors[index];
+        if (vec) stmt.run(memory.id, this.embedder.id, vec.length, toBlob(vec));
+      }
+    }
+
     return written;
   }
 
   async #embedMemory(memory: Memory): Promise<void> {
-    const text = [memory.title, memory.appliesWhen ?? "", memory.body].join("\n").trim();
+    const text = embedText(memory);
     let vec: Float32Array;
     try {
       const [first] = await this.embedder.embed([text]);
@@ -258,12 +304,14 @@ export class MemoryStore {
     if (pool.length === 0) return [];
 
     const vectors = this.#loadVectors(pool.map((m) => m.id));
-    let queryVector: Float32Array | null = null;
-    try {
-      const [vec] = await this.embedder.embed([options.query]);
-      queryVector = vec ?? null;
-    } catch {
-      queryVector = null; // Lexical-only recall is degraded, not broken.
+    let queryVector: Float32Array | null = options.queryVector ?? null;
+    if (!queryVector) {
+      try {
+        const [vec] = await this.embedder.embed([options.query]);
+        queryVector = vec ?? null;
+      } catch {
+        queryVector = null; // Lexical-only recall is degraded, not broken.
+      }
     }
 
     const scored = scoreCandidates({
@@ -690,4 +738,9 @@ function defaultConfidence(origin: Origin): number {
     case "self":
       return 0.4;
   }
+}
+
+/** The text a memory is embedded from. One definition, used by both write paths. */
+function embedText(memory: Memory): string {
+  return [memory.title, memory.appliesWhen ?? "", memory.body].join("\n").trim();
 }

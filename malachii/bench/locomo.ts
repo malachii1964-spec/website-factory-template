@@ -171,18 +171,37 @@ async function main(): Promise<void> {
     );
 
     const ingestStart = performance.now();
-    for (const turn of turns) {
-      await store.remember({
-        kind: "episodic",
+    // Bulk write so a hosted embedder sees a few dozen batched requests rather
+    // than one round trip per turn.
+    await store.rememberMany(
+      turns.map((turn) => ({
+        kind: "episodic" as const,
         title: turn.speaker,
         body: turn.text,
-        origin: "session",
+        origin: "session" as const,
         originRef: turn.dia_id,
         // Identical utterances at different points are distinct events here.
         dedupe: false,
-      });
-    }
+      })),
+    );
     ingestMs += performance.now() - ingestStart;
+
+    // Same reasoning for the questions: embed them all up front, then hand the
+    // vectors to recall so no query pays for its own network call.
+    const scorable = conversation.qa.filter((qa) => (qa.evidence ?? []).length > 0);
+    const questionVectors = new Map<string, Float32Array>();
+    for (let i = 0; i < scorable.length; i += 128) {
+      const chunk = scorable.slice(i, i + 128);
+      try {
+        const vecs = await embedder.embed(chunk.map((qa) => qa.question));
+        for (const [j, qa] of chunk.entries()) {
+          const vec = vecs[j];
+          if (vec) questionVectors.set(qa.question, vec);
+        }
+      } catch {
+        // Fall through: recall embeds the query itself when no vector is given.
+      }
+    }
 
     for (const qa of conversation.qa) {
       const gold = new Set(qa.evidence ?? []);
@@ -198,6 +217,7 @@ async function main(): Promise<void> {
         // Read-only: marking these used would leak recency into later questions.
         markUsed: false,
         expand: values.expand,
+        queryVector: questionVectors.get(qa.question) ?? null,
       });
       queryMs += performance.now() - queryStart;
       queries++;
