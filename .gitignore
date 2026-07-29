@@ -39,3 +39,9 @@ next-env.d.ts
 # Paid product files (never commit)
 private/downloads/*.pdf
 private/downloads/*.zip
+
+# The brain. Lives in ~/.malachii by default, but never commit one if
+# MALACHII_HOME is pointed inside the repo — it is plaintext personal memory.
+.malachii/
+brain.db
+brain.db-*

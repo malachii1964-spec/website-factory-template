@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The intelligence kernel is a separate Node package with its own
+    // tsconfig, module resolution, and gates. Linting it with the Next
+    // config reports errors that are correct for the browser and wrong here.
+    "malachii/**",
   ]),
 ]);
 
