@@ -127,6 +127,8 @@ Roster (each owns a distinct domain; no overlap):
 - brand-critic       — adversarial review of brand/positioning/copy before ship
 - design-critic      — adversarial review of every user-facing page vs design.md
 - reviewer           — adversarial code review of every completed feature (Rule 5)
+- creative-technologist — signature immersive/3D/spatial builds (WebGL, GSAP, shaders);
+  depth over decoration; always ships a fast, accessible fallback (perf + a11y gated)
 
 Dispatch router (default flows — deviate only with reason):
 - New brand/name/positioning  → market-researcher → brand-strategist → brand-critic (fix ≤3 before ship)
