@@ -119,7 +119,12 @@ export class VoyageEmbedder implements Embedder {
   readonly #apiKey: string;
   readonly #model: string;
 
-  constructor(apiKey: string, model = "voyage-3.5") {
+  // voyage-4 is the current generation and carries a 200M-token free
+  // allocation per account; the legacy voyage-3.x line lost its free tier.
+  // Override with VOYAGE_MODEL. The stored vector length comes from the
+  // response itself, so a model with different dimensions still records
+  // correctly — `dim` here is only what we advertise up front.
+  constructor(apiKey: string, model = "voyage-4") {
     this.#apiKey = apiKey;
     this.#model = model;
     this.id = `voyage:${model}`;
@@ -148,7 +153,7 @@ export class VoyageEmbedder implements Embedder {
 
 export function defaultEmbedder(): Embedder {
   const key = process.env["VOYAGE_API_KEY"];
-  if (key) return new VoyageEmbedder(key, process.env["VOYAGE_MODEL"] ?? "voyage-3.5");
+  if (key) return new VoyageEmbedder(key, process.env["VOYAGE_MODEL"] ?? "voyage-4");
   return new LocalEmbedder();
 }
 
