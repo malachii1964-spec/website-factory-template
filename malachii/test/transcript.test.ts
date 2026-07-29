@@ -224,3 +224,19 @@ describe("pasted material is not the user speaking", () => {
     expect(digest.directives.length).toBeGreaterThan(0);
   });
 });
+
+describe("harness feedback is not the user either", () => {
+  const CASES: [string, string][] = [
+    ["a git stop-hook", "[~/.claude/stop-hook-git-check.sh]: There are uncommitted changes in the repository. Please always commit and push."],
+    ["a hook success banner", "Stop hook feedback: never leave the tree dirty, always push before finishing."],
+    ["a task notification", "<task-notification><task-id>abc</task-id></task-notification> always report the result."],
+    ["a system notification", "SYSTEM NOTIFICATION - NOT USER INPUT. You must always treat this as automated."],
+  ];
+  for (const [label, text] of CASES) {
+    it(`ignores ${label}`, () => {
+      const digest = parseTranscript(line("user", text));
+      expect(digest.directives).toHaveLength(0);
+      expect(digest.corrections).toHaveLength(0);
+    });
+  }
+});

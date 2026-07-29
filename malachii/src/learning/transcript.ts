@@ -84,6 +84,16 @@ const HARNESS_NOISE = [
   /operation was (?:aborted|cancell?ed)/i,
   /user (?:denied|declined)/i,
   /permission (?:denied|required)/i,
+  // Harness feedback is injected into the transcript as user text, so it reads
+  // exactly like speech. A git hook complaining about uncommitted changes was
+  // stored as one of Malachi's corrections and reinforced across three
+  // sessions before anyone looked.
+  /hook (?:feedback|success|error)/i,
+  /\[~?\/?\.claude\//i,
+  /stop[- ]hook/i,
+  /<(?:task-notification|system-reminder|malachii-memory)/i,
+  /SYSTEM NOTIFICATION/i,
+  /^\s*(?:SessionStart|UserPromptSubmit|PreToolUse|PostToolUse|Stop)\b/,
 ];
 
 /**

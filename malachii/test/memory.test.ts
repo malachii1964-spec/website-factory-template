@@ -167,3 +167,27 @@ describe("the life log", () => {
     expect(stats.lessons.meanConfidence).toBeGreaterThan(0);
   });
 });
+
+describe("unverified guesses do not gain confidence by recurring", () => {
+  const guess = {
+    kind: "procedural" as const,
+    title: "Auto-extracted guess",
+    body: "Some rule an extractor guessed at.",
+    tags: ["unverified"],
+    confidence: 0.5,
+  };
+
+  it("does not reinforce an unverified memory that is re-derived", async () => {
+    const first = await brain().remember(guess);
+    for (let i = 0; i < 5; i++) await brain().remember(guess);
+    expect(brain().get(first.id)?.confidence).toBeCloseTo(first.confidence, 6);
+    expect(brain().get(first.id)?.wins).toBe(0);
+  });
+
+  it("still treats repetition of a confirmed memory as evidence", async () => {
+    const stated = { kind: "semantic" as const, title: "Fact", body: "Dark mode is the default." };
+    const first = await brain().remember(stated);
+    await brain().remember(stated);
+    expect(brain().get(first.id)!.confidence).toBeGreaterThan(first.confidence);
+  });
+});

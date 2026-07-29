@@ -86,7 +86,12 @@ export class MemoryStore {
     if (input.dedupe !== false) {
       const existing = this.#findByHash(baseHash);
       if (existing) {
-        this.reinforce(existing.id, 0.05);
+        // Repetition is evidence — but only when something independent produced
+        // it. An automated extractor re-deriving the same unverified guess is
+        // the same mistake twice, not confirmation. Without this guard a piece
+        // of misread harness output climbed to 0.53 confidence purely by
+        // recurring across sessions.
+        if (!existing.tags.includes("unverified")) this.reinforce(existing.id, 0.05);
         return this.get(existing.id) ?? existing;
       }
     }
