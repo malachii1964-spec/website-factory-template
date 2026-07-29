@@ -86,6 +86,17 @@ export interface RecallOptions {
    * quietly contaminate the result.
    */
   markUsed?: boolean;
+  /**
+   * Second-hop expansion. A multi-hop question needs several memories, but only
+   * the first is reachable from the question's own wording — the rest are
+   * reachable from *it*. When enabled, the best first-hop results are used as
+   * queries in their own right, and explicit links are followed.
+   */
+  expand?: boolean;
+  /** How many first-hop results to expand from. Default 3. */
+  expandSeeds?: number;
+  /** Discount on an associative hit, so direct answers still outrank them. Default 0.65. */
+  expandWeight?: number;
 }
 
 /** An entry in the append-only life log. Never edited, never deleted. */

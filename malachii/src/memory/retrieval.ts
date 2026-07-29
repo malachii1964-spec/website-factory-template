@@ -62,6 +62,14 @@ export function scoreCandidates(input: ScoringInput): ScoredMemory[] {
     .map((memory): ScoredMemory => {
       const vec = vectors.get(memory.id);
       // Cosine lands in -1..1; fold to 0..1 so it can't cancel other signals.
+      //
+      // This is deliberately NOT `max(0, cos)`, which is the more principled
+      // choice — an unrelated memory should score 0, not half marks. Measured
+      // on LoCoMo, clamping instead of folding costs 2 points of any@10 and
+      // 0.016 of MRR. With an embedder this weak (0.67 cosine on a true
+      // paraphrase) the similarity signal is noisy, and widening its dynamic
+      // range amplifies the noise faster than the signal. Revisit this the day
+      // the embedder is upgraded; it should flip.
       const similarity =
         queryVector && vec ? Math.max(0, (cosine(queryVector, vec) + 1) / 2) : 0;
       const halfLife = config.halfLifeDays[memory.kind] ?? 180;

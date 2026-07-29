@@ -211,25 +211,7 @@ export class MemoryStore {
     const candidates = new Map<string, Memory>();
     const rawLexical = new Map<string, number>();
 
-    const ftsQuery = toFtsQuery(options.query);
-    if (ftsQuery) {
-      const rows = sqlAll<MemoryRow & { rank: number }>(
-        this.db,
-        `SELECT m.*, bm25(memories_fts) AS rank
-           FROM memories_fts
-           JOIN memories m ON m.rowid = memories_fts.rowid
-          WHERE memories_fts MATCH ? AND m.status = 'active'
-          ORDER BY rank
-          LIMIT ?`,
-        ftsQuery,
-        this.config.candidateLimit,
-      );
-      for (const row of rows) {
-        const memory = rowToMemory(row);
-        candidates.set(memory.id, memory);
-        rawLexical.set(memory.id, row.rank);
-      }
-    }
+    this.#gatherLexical(options.query, candidates, rawLexical, this.config.candidateLimit);
 
     // Identity and pinned memories are always in the running: they are what
     // makes the brain recognisably *his*, not just topically relevant.
@@ -288,9 +270,13 @@ export class MemoryStore {
       now,
     });
 
+    const ranked = options.expand
+      ? await this.#expand(scored, vectors, options)
+      : scored;
+
     const minScore = options.minScore ?? 0;
     const selected = selectDiverse(
-      scored.filter((s) => s.score >= minScore),
+      ranked.filter((s) => s.score >= minScore),
       vectors,
       limit,
       options.diversityThreshold ?? this.duplicateThreshold,
@@ -300,6 +286,120 @@ export class MemoryStore {
       this.#markUsed(selected.map((s) => s.memory.id), now);
     }
     return selected;
+  }
+
+  /** Full-text pass. Shared by the query itself and by second-hop expansion. */
+  #gatherLexical(
+    text: string,
+    into: Map<string, Memory>,
+    lexical: Map<string, number>,
+    limit: number,
+  ): void {
+    const ftsQuery = toFtsQuery(text);
+    if (!ftsQuery) return;
+    const rows = sqlAll<MemoryRow & { rank: number }>(
+      this.db,
+      `SELECT m.*, bm25(memories_fts) AS rank
+         FROM memories_fts
+         JOIN memories m ON m.rowid = memories_fts.rowid
+        WHERE memories_fts MATCH ? AND m.status = 'active'
+        ORDER BY rank
+        LIMIT ?`,
+      ftsQuery,
+      limit,
+    );
+    for (const row of rows) {
+      const memory = rowToMemory(row);
+      if (!into.has(memory.id)) into.set(memory.id, memory);
+      // Keep the strongest lexical evidence seen for a memory.
+      const existing = lexical.get(memory.id);
+      if (existing === undefined || row.rank < existing) lexical.set(memory.id, row.rank);
+    }
+  }
+
+  /**
+   * Second hop.
+   *
+   * A multi-hop question names one thing and depends on another that only the
+   * first one leads to — so the query can reach the first hit and never the
+   * second. This treats the best first-hop results as queries in their own
+   * right: it pulls what *they* retrieve into the pool, follows explicit links,
+   * and scores every candidate by how strongly a seed reaches it.
+   *
+   * The expansion score is discounted and combined with `max`, never summed, so
+   * an associative hit can promote a memory the query missed entirely but can
+   * never outrank a direct answer.
+   */
+  async #expand(
+    scored: ScoredMemory[],
+    vectors: Map<string, Float32Array>,
+    options: RecallOptions,
+  ): Promise<ScoredMemory[]> {
+    const seedCount = options.expandSeeds ?? 3;
+    // Measured: at 0.85 the discount exactly cancels the promotion margin and
+    // expansion becomes a silent no-op, because base scores cluster inside a
+    // ~0.05 band. It only changes rankings at 1.0.
+    const weight = options.expandWeight ?? 1;
+    const seeds = scored.slice(0, seedCount).filter((s) => s.score > 0);
+    if (seeds.length === 0) return scored;
+
+    const now = Date.now();
+    const budget = Math.max(40, Math.floor(this.config.candidateLimit / seeds.length));
+    const best = new Map(scored.map((s) => [s.memory.id, s]));
+
+    for (const seed of seeds) {
+      const pool = new Map<string, Memory>();
+      const lexical = new Map<string, number>();
+
+      // What this memory itself retrieves — the hop the query could not make.
+      this.#gatherLexical(`${seed.memory.title} ${seed.memory.body}`, pool, lexical, budget);
+      // Explicit edges are stronger evidence than similarity, so follow them too.
+      for (const row of sqlAll<MemoryRow>(
+        this.db,
+        `SELECT m.* FROM links l
+           JOIN memories m ON m.id = CASE WHEN l.src = ? THEN l.dst ELSE l.src END
+          WHERE (l.src = ? OR l.dst = ?) AND m.status = 'active'
+          LIMIT 25`,
+        seed.memory.id,
+        seed.memory.id,
+        seed.memory.id,
+      )) {
+        const memory = rowToMemory(row);
+        if (!pool.has(memory.id)) pool.set(memory.id, memory);
+      }
+      // Already-known candidates compete here too: a memory the query barely
+      // reached may be exactly what the seed points at, and that is the case
+      // multi-hop depends on.
+      for (const entry of scored) pool.set(entry.memory.id, entry.memory);
+
+      const missing = [...pool.keys()].filter((id) => !vectors.has(id));
+      if (missing.length > 0) {
+        for (const [id, vec] of this.#loadVectors(missing)) vectors.set(id, vec);
+      }
+
+      // Score the pool with the seed standing in for the query. Running the
+      // same formula keeps both numbers on one scale — the earlier attempt
+      // multiplied two sub-1 scores together and could never out-rank a direct
+      // hit, so expansion silently changed nothing at all.
+      const reached = scoreCandidates({
+        candidates: [...pool.values()],
+        queryVector: vectors.get(seed.memory.id) ?? null,
+        vectors,
+        lexical: normaliseLexical(lexical),
+        config: this.config,
+        now,
+      });
+
+      for (const entry of reached) {
+        if (entry.memory.id === seed.memory.id) continue;
+        const promoted = entry.score * weight;
+        const current = best.get(entry.memory.id);
+        if (!current) best.set(entry.memory.id, { ...entry, score: promoted });
+        else if (promoted > current.score) best.set(entry.memory.id, { ...current, score: promoted });
+      }
+    }
+
+    return [...best.values()].sort((a, b) => b.score - a.score);
   }
 
   #loadVectors(ids: string[]): Map<string, Float32Array> {

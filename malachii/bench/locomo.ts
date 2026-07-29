@@ -110,6 +110,7 @@ async function main(): Promise<void> {
       conversations: { type: "string" },
       k: { type: "string", default: "20" },
       json: { type: "boolean", default: false },
+      expand: { type: "boolean", default: false },
     },
   });
 
@@ -178,6 +179,7 @@ async function main(): Promise<void> {
         limit: maxK,
         // Read-only: marking these used would leak recency into later questions.
         markUsed: false,
+        expand: values.expand,
       });
       queryMs += performance.now() - queryStart;
       queries++;
@@ -259,7 +261,7 @@ async function main(): Promise<void> {
 
   process.stdout.write(
     `\nLoCoMo — retrieval only (not comparable to end-to-end LoCoMo scores)\n` +
-      `embedder ${embedder.id}\n` +
+      `embedder ${embedder.id}${values.expand ? " · second-hop expansion ON" : ""}\n` +
       `${dataset.length} conversations, ${totalTurns} turns ingested, ${overall.questions} scored questions` +
       `${skipped > 0 ? `, ${skipped} skipped (no evidence label)` : ""}\n\n` +
       `${"".padEnd(20)}${cutoffs.map((k) => `any@${k}`.padStart(8)).join("")}` +
