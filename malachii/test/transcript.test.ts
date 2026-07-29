@@ -171,3 +171,56 @@ describe("noise rejection (regressions from the live brain)", () => {
     expect(digest.directives).toHaveLength(0);
   });
 });
+
+describe("pasted material is not the user speaking", () => {
+  // Verbatim from the live brain: a pasted architecture doc was stored as
+  // Malachi's own standing directive, and a web page's error string as his
+  // correction.
+  const PASTED_DOC = [
+    "Check out the latest from our partner:",
+    "",
+    "1. Architectural Backbone & Safety Layer",
+    "* Dual-Kernel Architecture: Separate the Core Logic from the AI Brain. The AI should never execute code directly.",
+    "* Ephemeral Sandboxed Execution: Any code it generates must always run inside an isolated container.",
+    "* Deterministic Guardrails: Implement semantic firewalls. Never let unsafe prompts reach the LLM.",
+    "* Human-in-the-Loop Triggers: High-risk tasks freeze until you authorize them.",
+    "",
+    "See https://milvus.io/ and https://www.home-assistant.io/ for details.",
+    "Something went wrong and the content wasn't generated.",
+  ].join("\n");
+
+  it("does not attribute a pasted document's rules to Malachi", () => {
+    const digest = parseTranscript(line("user", PASTED_DOC));
+    expect(digest.directives).toHaveLength(0);
+    expect(digest.corrections).toHaveLength(0);
+  });
+
+  it("still hears a short instruction he actually typed", () => {
+    const digest = parseTranscript(line("user", "Always run the benchmark before claiming an improvement."));
+    expect(digest.directives).toHaveLength(1);
+  });
+
+  it("ignores a bullet line even outside a long paste", () => {
+    const digest = parseTranscript(
+      line("user", "* Always use a deterministic kernel for execution decisions."),
+    );
+    expect(digest.directives).toHaveLength(0);
+  });
+
+  it("ignores a sentence carrying a link", () => {
+    const digest = parseTranscript(
+      line("user", "You should always use https://milvus.io/ for the vector store."),
+    );
+    expect(digest.directives).toHaveLength(0);
+  });
+
+  it("keeps mining a long message he genuinely wrote as prose", () => {
+    const prose =
+      "I have been thinking about where this goes next and I want to be clear about how we work together. " +
+      "The benchmark matters more than the architecture diagrams we keep collecting from other people. " +
+      "Always measure a change before we claim it improved anything. " +
+      "I would rather ship one verified improvement than five plausible ones. ".repeat(3);
+    const digest = parseTranscript(line("user", prose));
+    expect(digest.directives.length).toBeGreaterThan(0);
+  });
+});

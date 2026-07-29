@@ -86,12 +86,49 @@ const HARNESS_NOISE = [
   /permission (?:denied|required)/i,
 ];
 
+/**
+ * A pasted document is not Malachi speaking.
+ *
+ * When he pastes an article, another model's answer, or a spec, its sentences
+ * match the same keyword markers his own instructions do — and the brain ends
+ * up storing someone else's architecture opinions, and even a web page's error
+ * string, as *his* standing directives. Observed live, three times.
+ *
+ * The asymmetry decides the threshold: missing a real instruction costs
+ * nothing, because he can always state it again or run `mal learn`. Inventing
+ * one puts words in his mouth and then recalls them as his. So this errs
+ * heavily toward skipping.
+ */
+const MARKUP_LINE = /^\s*(?:[*\-•|>]|#{1,6}\s|\d+\.\s)/;
+
+function looksQuoted(text: string): boolean {
+  const markupLines = text.split("\n").filter((line) => MARKUP_LINE.test(line)).length;
+  const urls = (text.match(/https?:\/\//g) ?? []).length;
+  return markupLines >= 4 || urls >= 2 || text.includes("```");
+}
+
+/**
+ * A bullet's marker governs its whole line, but sentence splitting throws that
+ * marker away after the first full stop — so "* Some Heading: do a thing. Never
+ * do the other thing." leaks its second half through as a rule. Structured
+ * lines are therefore dropped whole, before any sentence splitting happens.
+ */
+function speechOnly(text: string): string {
+  return text
+    .split("\n")
+    .filter((line) => !MARKUP_LINE.test(line))
+    .join("\n");
+}
+
 /** A durable rule is short, declarative, and reads like an instruction. */
 function looksLikeRule(sentence: string): boolean {
   const words = sentence.split(/\s+/).length;
   if (sentence.length < 12 || sentence.length > 240) return false;
   if (words < 4 || words > 40) return false;
   if (sentence.endsWith("?")) return false; // a question is not a rule
+  // Markup and links are the fingerprints of quoted material, not speech.
+  if (/https?:\/\//.test(sentence) || sentence.includes("```")) return false;
+  if (/^\s*(?:[*\-•#]|\d+\.)\s/.test(sentence)) return false;
   return !TASK_REQUEST.some((re) => re.test(sentence));
 }
 
@@ -191,10 +228,12 @@ export function parseTranscript(jsonl: string): SessionDigest {
     // Tool results and injected reminders are replayed as user turns; they are
     // not the human speaking, and must never be mined for instructions.
     if (text.startsWith("<") || HARNESS_NOISE.some((re) => re.test(text))) continue;
+    // Quoted material carries someone else's instructions, not his.
+    if (looksQuoted(text)) continue;
 
     // Sentence-level, not turn-level: capture the rule, not the paragraph
     // that happens to contain it.
-    for (const sentence of splitSentences(text)) {
+    for (const sentence of splitSentences(speechOnly(text))) {
       if (!looksLikeRule(sentence)) continue;
       if (DIRECTIVE_MARKERS.some((re) => re.test(sentence))) digest.directives.push(sentence);
       else if (CORRECTION_MARKERS.some((re) => re.test(sentence))) digest.corrections.push(sentence);
