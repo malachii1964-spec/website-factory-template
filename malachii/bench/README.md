@@ -55,3 +55,43 @@ on a true paraphrase.
 
 Re-run after setting `VOYAGE_API_KEY` to separate the embedder's contribution
 from the retrieval architecture's.
+
+## Ablation — what is actually carrying retrieval, 2026-07-29
+
+Same corpus, one scoring term zeroed at a time and its weight redistributed.
+
+| config | any@5 | any@10 | any@20 | all@10 | MRR |
+|---|---|---|---|---|---|
+| hybrid (baseline) | 52.6% | 60.7% | 68.0% | 48.7% | 0.396 |
+| **vectors off** (BM25 + priors) | 51.6% | **61.5%** | **68.6%** | **49.5%** | 0.395 |
+| **lexical off** (vectors + priors) | 17.7% | **24.3%** | 33.3% | 19.7% | 0.126 |
+
+**The local hashed embedder contributes nothing to retrieval.** Removing it
+entirely moves every metric by less than a point, and moves most of them
+*upward*. Removing BM25 instead collapses the system — multi-hop `all@10` goes
+from 11.3% to 0.7%.
+
+So "hybrid retrieval" is not hybrid in practice. BM25 does effectively all of
+the work, and the vector half is cost without benefit on the hot path: an embed
+call per write, a blob per memory, a vector load and a dot product per
+candidate per query.
+
+This also corrects an earlier reading of the baseline. Multi-hop was diagnosed
+as needing traversal; it more likely needs a semantic signal to traverse
+*with*. Lexical-only multi-hop (10.6%) is statistically indistinguishable from
+hybrid (11.3%) — there is no semantic contribution to build on.
+
+**Consequences, in order of value:**
+
+1. A real embedding model is the single highest-value change available, and now
+   has a measured before-number to prove any gain against. Set `VOYAGE_API_KEY`
+   and re-run all three configs.
+2. If a real embedder is not adopted, the vector path should be deleted from
+   retrieval rather than left in place looking like it does something. It would
+   still earn its keep in near-duplicate detection during `mal sleep` and in
+   diversity selection — but both of those deserve their own measurement first,
+   since a noisy similarity signal may be actively harming diversity selection.
+
+Cost note: second-hop expansion raises full-corpus runtime from 5.5 min to
+45.8 min — roughly 8x — because each query fans out into several more. Any gain
+it shows has to be weighed against that.
