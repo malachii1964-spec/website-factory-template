@@ -95,3 +95,59 @@ hybrid (11.3%) — there is no semantic contribution to build on.
 Cost note: second-hop expansion raises full-corpus runtime from 5.5 min to
 45.8 min — roughly 8x — because each query fans out into several more. Any gain
 it shows has to be weighed against that.
+
+## Scoring modes, and a limit of this benchmark — 2026-07-29
+
+The original scorer adds every term:
+
+```
+score = 0.34·similarity + 0.26·lexical + 0.14·recency + 0.14·importance + 0.12·confidence
+```
+
+That has a noise floor. Priors alone put a completely irrelevant memory at
+~0.26, and folded cosine adds ~0.17 more, so an unrelated memory sits near 0.43
+while a perfect match tops out near 0.86. Relevance only ever decides the top
+half of the scale. This is also why second-hop expansion could not promote
+anything: a discounted associative score could never clear that floor.
+
+`relevance-first` fixes it in principle — relevance *is* the score, and priors
+scale it, so something the query does not match scores zero however trusted it
+is:
+
+```
+relevance = (w_sim·similarity + w_lex·lexical) / (w_sim + w_lex)
+prior     = 1 + 0.35·(importance−½) + 0.30·(confidence−½) + 0.25·(recency−½)
+score     = relevance × prior   (+ pin bonus)
+```
+
+**Measured, one conversation, n=150:**
+
+| config | any@10 | all@10 | MRR |
+|---|---|---|---|
+| additive | 60.0% | 50.0% | 0.361 |
+| relevance-first | 58.0% | 48.7% | 0.345 |
+| additive, vectors off | 60.0% | 50.0% | 0.371 |
+| relevance-first, vectors off | 60.0% | 50.0% | 0.371 |
+
+Two findings.
+
+**With the current embedder, relevance-first is slightly worse.** It gives the
+similarity term 57% of the relevance weight instead of 34% of the total — and
+that term is measured noise. Better structure, more weight on the broken input.
+
+**With vectors off, the two modes are byte-identical**, and that is not luck.
+Every LoCoMo memory is written in the same instant, with the same kind, the
+same importance (0.40) and the same confidence (0.50). The prior term is
+therefore a *constant* across every candidate, so `w·lex + C` and `lex × C`
+produce the same ordering.
+
+**LoCoMo is structurally blind to prior handling.** It measures relevance
+ranking over a flat corpus. It cannot see trust, decay, or confidence — which
+are exactly the things that distinguish this system from a search index. A
+second benchmark is needed for that machinery, over a corpus where memories
+differ in age and trustworthiness and some of them are wrong.
+
+The default therefore stays `additive`, on evidence rather than preference.
+`relevance-first` ships as an option (`MALACHII_SCORING`), with both behaviours
+pinned by tests. Re-run this comparison the day a real embedder lands; the
+argument should flip, because the noise it amplifies will have become signal.

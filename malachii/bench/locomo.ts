@@ -112,6 +112,7 @@ async function main(): Promise<void> {
       json: { type: "boolean", default: false },
       expand: { type: "boolean", default: false },
       ablate: { type: "string" },
+      scoring: { type: "string" },
     },
   });
 
@@ -135,6 +136,9 @@ async function main(): Promise<void> {
   // one term and redistributing its weight across the rest, so scores stay on
   // the same 0..1 scale and remain comparable to the baseline.
   const baseConfig = loadConfig();
+  if (values.scoring === "additive" || values.scoring === "relevance-first") {
+    baseConfig.scoring = values.scoring;
+  }
   const weights = { ...baseConfig.weights };
   if (values.ablate === "no-vector" || values.ablate === "no-lexical") {
     const drop = values.ablate === "no-vector" ? "similarity" : "lexical";
@@ -299,7 +303,7 @@ async function main(): Promise<void> {
 
   process.stdout.write(
     `\nLoCoMo — retrieval only (not comparable to end-to-end LoCoMo scores)\n` +
-      `embedder ${embedder.id}${values.expand ? " · second-hop expansion ON" : ""}${values.ablate ? ` · ABLATION: ${values.ablate}` : ""}\n` +
+      `embedder ${embedder.id}${values.expand ? " · second-hop expansion ON" : ""}${values.ablate ? ` · ABLATION: ${values.ablate}` : ""} · scoring=${baseConfig.scoring}\n` +
       `${dataset.length} conversations, ${totalTurns} turns ingested, ${overall.questions} scored questions` +
       `${skipped > 0 ? `, ${skipped} skipped (no evidence label)` : ""}\n\n` +
       `${"".padEnd(20)}${cutoffs.map((k) => `any@${k}`.padStart(8)).join("")}` +

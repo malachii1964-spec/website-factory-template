@@ -58,20 +58,21 @@ export function scoreCandidates(input: ScoringInput): ScoredMemory[] {
   const { candidates, queryVector, vectors, lexical, config, now } = input;
   const w = config.weights;
 
+  const relevanceFirst = config.scoring === "relevance-first";
+
   return candidates
     .map((memory): ScoredMemory => {
       const vec = vectors.get(memory.id);
-      // Cosine lands in -1..1; fold to 0..1 so it can't cancel other signals.
+      // Cosine lands in -1..1 and how it is mapped depends on the scoring mode.
       //
-      // This is deliberately NOT `max(0, cos)`, which is the more principled
-      // choice — an unrelated memory should score 0, not half marks. Measured
-      // on LoCoMo, clamping instead of folding costs 2 points of any@10 and
-      // 0.016 of MRR. With an embedder this weak (0.67 cosine on a true
-      // paraphrase) the similarity signal is noisy, and widening its dynamic
-      // range amplifies the noise faster than the signal. Revisit this the day
-      // the embedder is upgraded; it should flip.
-      const similarity =
-        queryVector && vec ? Math.max(0, (cosine(queryVector, vec) + 1) / 2) : 0;
+      // Additive folds to 0..1, because clamping there measured worse: with a
+      // weak embedder the signal is noisy and widening its range amplifies the
+      // noise. Relevance-first clamps instead, because "unrelated" must mean
+      // zero — half marks for irrelevance is exactly the noise floor this mode
+      // exists to remove.
+      const raw = queryVector && vec ? cosine(queryVector, vec) : 0;
+      const similarity = queryVector && vec ? (relevanceFirst ? Math.max(0, raw) : Math.max(0, (raw + 1) / 2)) : 0;
+
       const halfLife = config.halfLifeDays[memory.kind] ?? 180;
       const recency = recencyScore(now - (memory.lastUsedAt ?? memory.createdAt), halfLife);
       const parts = {
@@ -81,12 +82,35 @@ export function scoreCandidates(input: ScoringInput): ScoredMemory[] {
         importance: memory.importance,
         confidence: memory.confidence,
       };
-      const base =
-        w.similarity * parts.similarity +
-        w.lexical * parts.lexical +
-        w.recency * parts.recency +
-        w.importance * parts.importance +
-        w.confidence * parts.confidence;
+
+      let base: number;
+      if (relevanceFirst) {
+        // Relevance decides the score outright, renormalised so the two
+        // relevance terms span the full 0..1 range on their own.
+        const relevanceWeight = w.similarity + w.lexical;
+        const relevance =
+          relevanceWeight > 0
+            ? (w.similarity * parts.similarity + w.lexical * parts.lexical) / relevanceWeight
+            : 0;
+        // Priors swing that relevance up or down around 1×. They can promote a
+        // trusted, fresh memory over a stale doubtful one — but they can never
+        // manufacture relevance a memory does not have.
+        const k = config.priorInfluence;
+        const prior =
+          1 +
+          k.importance * (parts.importance - 0.5) +
+          k.confidence * (parts.confidence - 0.5) +
+          k.recency * (parts.recency - 0.5);
+        base = relevance * Math.max(0, prior);
+      } else {
+        base =
+          w.similarity * parts.similarity +
+          w.lexical * parts.lexical +
+          w.recency * parts.recency +
+          w.importance * parts.importance +
+          w.confidence * parts.confidence;
+      }
+
       const score = Math.min(1, base + (memory.pinned ? config.pinBonus : 0));
       return { memory, score, parts };
     })

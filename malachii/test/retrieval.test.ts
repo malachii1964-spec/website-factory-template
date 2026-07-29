@@ -162,3 +162,49 @@ describe("selectDiverse", () => {
     expect(selectDiverse(scored, vectors, 2, 1.01)).toHaveLength(2);
   });
 });
+
+describe("relevance-first scoring", () => {
+  const relevanceFirst = { ...loadConfig(), scoring: "relevance-first" as const };
+
+  it("gives an irrelevant memory a score of zero, however trusted it is", () => {
+    const trusted = fakeMemory({ id: "trusted", importance: 1, confidence: 1 });
+    const [scored] = scoreCandidates({
+      candidates: [trusted],
+      queryVector: null,
+      vectors: new Map(),
+      lexical: new Map(), // matched nothing
+      config: relevanceFirst,
+      now: Date.now(),
+    });
+    expect(scored!.score).toBe(0);
+  });
+
+  it("still lets priors order two memories that are equally relevant", () => {
+    const strong = fakeMemory({ id: "strong", importance: 0.9, confidence: 0.9 });
+    const weak = fakeMemory({ id: "weak", importance: 0.1, confidence: 0.1 });
+    const scored = scoreCandidates({
+      candidates: [weak, strong],
+      queryVector: null,
+      vectors: new Map(),
+      lexical: new Map([["strong", 1], ["weak", 1]]),
+      config: relevanceFirst,
+      now: Date.now(),
+    });
+    expect(scored[0]?.memory.id).toBe("strong");
+    expect(scored[1]!.score).toBeGreaterThan(0);
+  });
+
+  it("under the additive default, an irrelevant memory still floats on priors", () => {
+    // The defect this mode exists to fix, pinned as a test so the difference
+    // between the two modes is visible rather than argued about.
+    const [scored] = scoreCandidates({
+      candidates: [fakeMemory({ id: "x", importance: 0.9, confidence: 0.9 })],
+      queryVector: null,
+      vectors: new Map(),
+      lexical: new Map(),
+      config: { ...loadConfig(), scoring: "additive" },
+      now: Date.now(),
+    });
+    expect(scored!.score).toBeGreaterThan(0.25);
+  });
+});
