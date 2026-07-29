@@ -26,6 +26,15 @@ export interface RememberInput {
   importance?: number;
   confidence?: number;
   pinned?: boolean;
+  /**
+   * Whether an identical existing memory should absorb this write instead of a
+   * new row being created. Defaults to true.
+   *
+   * Set false when identical text genuinely represents distinct events — two
+   * people both saying "sounds good" in a transcript are two moments, not one,
+   * and collapsing them loses the second one entirely.
+   */
+  dedupe?: boolean;
 }
 
 const clamp01 = (n: number): number => Math.min(1, Math.max(0, n));
@@ -65,7 +74,7 @@ export class MemoryStore {
   async remember(input: RememberInput): Promise<Memory> {
     const now = Date.now();
     const project = input.project ?? null;
-    const hash = contentHash({
+    const baseHash = contentHash({
       kind: input.kind,
       title: input.title,
       body: input.body,
@@ -74,13 +83,18 @@ export class MemoryStore {
 
     // Re-learning something already known is not a new memory — it's evidence
     // for the one that exists. Reinforce instead of duplicating.
-    const existing = this.#findByHash(hash);
-    if (existing) {
-      this.reinforce(existing.id, 0.05);
-      return this.get(existing.id) ?? existing;
+    if (input.dedupe !== false) {
+      const existing = this.#findByHash(baseHash);
+      if (existing) {
+        this.reinforce(existing.id, 0.05);
+        return this.get(existing.id) ?? existing;
+      }
     }
 
     const id = newId(input.kind.slice(0, 3), now);
+    // With de-duplication off the hash must still be unique, or the write
+    // trips the uniqueness index that de-duplication normally relies on.
+    const hash = input.dedupe === false ? `${baseHash}:${id}` : baseHash;
     const memory: Memory = {
       id,
       kind: input.kind,
@@ -282,7 +296,9 @@ export class MemoryStore {
       options.diversityThreshold ?? this.duplicateThreshold,
     );
 
-    this.#markUsed(selected.map((s) => s.memory.id), now);
+    if (options.markUsed !== false) {
+      this.#markUsed(selected.map((s) => s.memory.id), now);
+    }
     return selected;
   }
 

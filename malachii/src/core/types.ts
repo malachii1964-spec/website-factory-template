@@ -79,6 +79,13 @@ export interface RecallOptions {
   /** Skip near-duplicates of already-selected results. 0..1, higher = more permissive. */
   diversityThreshold?: number;
   minScore?: number;
+  /**
+   * Whether retrieval counts as a use. Defaults to true. Set false for
+   * read-only recall — previewing, auditing, or benchmarking — where marking
+   * memories as freshly used would feed recency back into later queries and
+   * quietly contaminate the result.
+   */
+  markUsed?: boolean;
 }
 
 /** An entry in the append-only life log. Never edited, never deleted. */

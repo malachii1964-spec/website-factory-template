@@ -45,3 +45,6 @@ private/downloads/*.zip
 .malachii/
 brain.db
 brain.db-*
+
+# LoCoMo dataset — fetched on demand, not vendored (2.8MB, upstream licence)
+malachii/bench/data/
