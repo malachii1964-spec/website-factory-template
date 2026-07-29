@@ -12,6 +12,7 @@ import { consolidate } from "../memory/consolidate.ts";
 import { ingestFile, ingestUrl } from "../memory/ingest.ts";
 import { activeLessons, learn, report } from "../learning/lessons.ts";
 import { distill } from "../learning/distill.ts";
+import { openProposals, reflect } from "../learning/reflect.ts";
 import { readTranscript } from "../learning/transcript.ts";
 
 /**
@@ -35,6 +36,8 @@ const HELP = `malachii v3 — Malachi's intelligence
   mal show <id>                  Full detail on one memory
   mal ingest <path|url>          Learn from a file or page    [--project --tags]
   mal capture --transcript <p>   Distill a finished session   [--project --session]
+  mal reflect <what you built>   Record the two-pass reflex   [--tighten --escalate]
+  mal proposals                  The 10x ideas waiting on a decision
   mal sleep                      Consolidate: fade, merge, retire, promote  [--dry-run]
   mal stats                      What it knows
   mal log                        Recent life log      [--n --kind]
@@ -95,6 +98,8 @@ async function main(): Promise<void> {
       importance: { type: "string" },
       confidence: { type: "string" },
       when: { type: "string" },
+      tighten: { type: "string" },
+      escalate: { type: "string" },
       k: { type: "string" },
       budget: { type: "string" },
       transcript: { type: "string" },
@@ -287,6 +292,50 @@ async function main(): Promise<void> {
               `${result.usedModel ? " (model-distilled)" : " (heuristics only)"}\n`,
           );
         }
+        break;
+      }
+
+      case "reflect": {
+        const subject = rest.join(" ").trim();
+        if (!subject) fail("say what you are reflecting on");
+        const result = await reflect(store, {
+          subject,
+          tighten: values.tighten ?? null,
+          escalate: values.escalate ?? null,
+          project: projectOf(values.project),
+        });
+        process.stdout.write(`reflected ${result.record.id}\n`);
+        if (result.proposal) process.stdout.write(`proposal  ${result.proposal.id}\n`);
+        if (result.foundNothing) {
+          process.stdout.write("no change worth the churn — recorded as such\n");
+        }
+        break;
+      }
+
+      case "proposals": {
+        const open = openProposals(
+          store,
+          values.project === undefined ? undefined : projectOf(values.project),
+        );
+        if (values.json) {
+          process.stdout.write(`${JSON.stringify(open, null, 2)}\n`);
+          break;
+        }
+        if (open.length === 0) {
+          process.stdout.write("no open proposals\n");
+          break;
+        }
+        for (const proposal of open) {
+          const scope = proposal.project ? `[${proposal.project}]` : "[global]";
+          process.stdout.write(
+            `${proposal.id}  ${scope}\n  ${proposal.body.split("\n")[0]}\n` +
+              `  raised ${new Date(proposal.createdAt).toISOString().slice(0, 10)}\n\n`,
+          );
+        }
+        process.stdout.write(
+          `${open.length} awaiting a decision. Accept one with \`mal confirm <id>\`, ` +
+            `drop it with \`mal forget <id> "<why>"\`.\n`,
+        );
         break;
       }
 

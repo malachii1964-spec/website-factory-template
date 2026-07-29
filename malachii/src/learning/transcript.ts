@@ -7,6 +7,11 @@ import { readFileSync } from "node:fs";
  * stable contract, so every field here is treated as optional and anything
  * unrecognised is skipped rather than throwing — a distiller that crashes on
  * an unfamiliar line is a distiller that stops learning.
+ *
+ * The hard part is not parsing, it is *restraint*. An extractor that captures
+ * everything matching a keyword fills memory with noise, and noise compounds:
+ * it gets recalled, eats context, and eventually misleads. Everything below is
+ * built to throw away more than it keeps.
  */
 
 export interface TranscriptTurn {
@@ -22,16 +27,15 @@ export interface ToolFailure {
 export interface SessionDigest {
   turns: TranscriptTurn[];
   failures: ToolFailure[];
-  /** User turns that read as a correction of something the assistant just did. */
+  /** Individual sentences that read as a correction — not the whole turn. */
   corrections: string[];
-  /** Statements the user explicitly framed as durable ("always", "never", "remember"). */
+  /** Individual sentences stating a durable rule — not the whole turn. */
   directives: string[];
   turnCount: number;
 }
 
 const CORRECTION_MARKERS = [
-  /\bno[,.\s]/i,
-  /\bthat's (not|wrong|incorrect)\b/i,
+  /\bthat'?s (not|wrong|incorrect)\b/i,
   /\bdon'?t\b/i,
   /\bstop\b/i,
   /\bactually\b/i,
@@ -51,6 +55,53 @@ const DIRECTIVE_MARKERS = [
   /\bevery time\b/i,
 ];
 
+/**
+ * Sentences that describe *this task* rather than a standing rule. Without
+ * this, "I want to build X, and it should always be fast" is stored as the
+ * rule "I want to build X…" — the exact defect that put a 1,200-character
+ * prompt into memory at 0.80 confidence.
+ */
+const TASK_REQUEST = [
+  /^(?:i|we)\s+(?:want|need|would like)\s+(?:to|you to)?\s*(?:build|make|create|add|do|start|get)\b/i,
+  /^(?:let'?s|lets)\b/i,
+  /^(?:can|could|would)\s+you\b/i,
+  /^please\s+(?:build|make|create|add|write|do)\b/i,
+  /^(?:so|and|but|then)\b.*\bi want\b/i,
+];
+
+/**
+ * Failures that say something about the harness rather than about the work.
+ * A tool-protocol error or a declined permission prompt is not a lesson; it is
+ * an artifact of how the session was driven, and storing it teaches nothing.
+ */
+const HARNESS_NOISE = [
+  /tool_use_error/i,
+  /has not been read yet/i,
+  /tool use was rejected/i,
+  /(?:doesn'?t|does not) want to proceed/i,
+  /requested changes to the tool input/i,
+  /interrupted by (?:the )?user/i,
+  /operation was (?:aborted|cancell?ed)/i,
+  /user (?:denied|declined)/i,
+  /permission (?:denied|required)/i,
+];
+
+/** A durable rule is short, declarative, and reads like an instruction. */
+function looksLikeRule(sentence: string): boolean {
+  const words = sentence.split(/\s+/).length;
+  if (sentence.length < 12 || sentence.length > 240) return false;
+  if (words < 4 || words > 40) return false;
+  if (sentence.endsWith("?")) return false; // a question is not a rule
+  return !TASK_REQUEST.some((re) => re.test(sentence));
+}
+
+export function splitSentences(text: string): string[] {
+  return text
+    .split(/(?<=[.!?])\s+|\n+/)
+    .map((s) => s.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+}
+
 function extractText(content: unknown): string {
   if (typeof content === "string") return content;
   if (!Array.isArray(content)) return "";
@@ -65,16 +116,35 @@ function extractText(content: unknown): string {
   return parts.join("\n");
 }
 
-function extractFailures(content: unknown): ToolFailure[] {
+/** Collect `tool_use` ids so a later `tool_result` can name the tool that failed. */
+function collectToolNames(content: unknown, into: Map<string, string>): void {
+  if (!Array.isArray(content)) return;
+  for (const block of content) {
+    if (typeof block !== "object" || block === null) continue;
+    const record = block as Record<string, unknown>;
+    if (record["type"] !== "tool_use") continue;
+    const id = record["id"];
+    const name = record["name"];
+    if (typeof id === "string" && typeof name === "string") into.set(id, name);
+  }
+}
+
+function extractFailures(content: unknown, toolNames: Map<string, string>): ToolFailure[] {
   if (!Array.isArray(content)) return [];
   const failures: ToolFailure[] = [];
   for (const block of content) {
     if (typeof block !== "object" || block === null) continue;
     const record = block as Record<string, unknown>;
     if (record["type"] !== "tool_result" || record["is_error"] !== true) continue;
-    const detail = extractText(record["content"]) || String(record["content"] ?? "");
+
+    const detail = (extractText(record["content"]) || String(record["content"] ?? "")).trim();
+    if (!detail || HARNESS_NOISE.some((re) => re.test(detail))) continue;
+
+    const useId = record["tool_use_id"];
+    const resolved = typeof useId === "string" ? toolNames.get(useId) : undefined;
     failures.push({
-      tool: typeof record["name"] === "string" ? record["name"] : "tool",
+      // Never invent a tool name — an unresolved one is reported as unknown.
+      tool: resolved ?? (typeof record["name"] === "string" ? record["name"] : "unknown tool"),
       detail: detail.slice(0, 500),
     });
   }
@@ -89,6 +159,7 @@ export function parseTranscript(jsonl: string): SessionDigest {
     directives: [],
     turnCount: 0,
   };
+  const toolNames = new Map<string, string>();
 
   for (const line of jsonl.split("\n")) {
     const trimmed = line.trim();
@@ -109,17 +180,24 @@ export function parseTranscript(jsonl: string): SessionDigest {
     if (role !== "user" && role !== "assistant") continue;
 
     digest.turnCount++;
-    digest.failures.push(...extractFailures(record["content"]));
+    if (role === "assistant") collectToolNames(record["content"], toolNames);
+    digest.failures.push(...extractFailures(record["content"], toolNames));
 
     const text = extractText(record["content"]).trim();
     if (!text) continue;
     digest.turns.push({ role, text });
+    if (role !== "user") continue;
 
-    if (role === "user") {
-      // Tool results are replayed as user turns; they are not the human speaking.
-      if (text.startsWith("<") || text.length > 4000) continue;
-      if (CORRECTION_MARKERS.some((re) => re.test(text))) digest.corrections.push(text);
-      if (DIRECTIVE_MARKERS.some((re) => re.test(text))) digest.directives.push(text);
+    // Tool results and injected reminders are replayed as user turns; they are
+    // not the human speaking, and must never be mined for instructions.
+    if (text.startsWith("<") || HARNESS_NOISE.some((re) => re.test(text))) continue;
+
+    // Sentence-level, not turn-level: capture the rule, not the paragraph
+    // that happens to contain it.
+    for (const sentence of splitSentences(text)) {
+      if (!looksLikeRule(sentence)) continue;
+      if (DIRECTIVE_MARKERS.some((re) => re.test(sentence))) digest.directives.push(sentence);
+      else if (CORRECTION_MARKERS.some((re) => re.test(sentence))) digest.corrections.push(sentence);
     }
   }
 

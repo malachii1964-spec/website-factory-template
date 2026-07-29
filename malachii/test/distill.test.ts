@@ -19,7 +19,7 @@ function line(role: string, content: unknown): string {
 }
 
 describe("distilling a finished session", () => {
-  it("learns a durable instruction with high confidence", async () => {
+  it("learns a durable instruction, but does not trust it yet", async () => {
     const digest = parseTranscript(
       [
         line("user", "build the checkout flow"),
@@ -29,8 +29,12 @@ describe("distilling a finished session", () => {
     );
     const result = await distill(brain(), digest, { project: "fda" });
     expect(result.lessons).toHaveLength(1);
-    expect(result.lessons[0]?.confidence).toBeGreaterThan(0.7);
     expect(result.lessons[0]?.origin).toBe("user");
+    // A keyword match is weak evidence. It enters provisional and has to earn
+    // the trusted tier through outcomes — entering at 0.8 is the defect that
+    // installed a whole prompt as a standing rule.
+    expect(result.lessons[0]?.confidence).toBeGreaterThan(0.4);
+    expect(result.lessons[0]?.confidence).toBeLessThan(0.6);
   });
 
   it("does not learn the same sentence twice as both directive and correction", async () => {

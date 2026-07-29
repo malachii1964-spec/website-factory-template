@@ -130,6 +130,55 @@ At the end of every working session:
    by impact — but do NOT build them until approved
 3. Update the Project Log below, and put anything durable into the brain
 
+## Rule 8 — The reflex (run after every substantive task, before reporting done)
+Finishing the work is not the same as finishing the thinking. After the gates
+pass, stop and run two passes. They are deliberately opposite: the first
+tightens what exists, the second questions whether it should exist in that
+shape. Asking both questions at once produces neither answer.
+
+`efficiency.md` is law here — it defines what "better" actually means, for the
+model and for the machine.
+
+**Pass 1 — Tighten (convergent).** Look at what you just built and ask: is this
+the best version of *this*? Against concrete criteria, not vibes:
+- **Resources** — tokens, queries, network calls, algorithmic complexity. What
+  is unbounded? What runs on every prompt that could run once? What is being
+  recomputed that could be cached?
+- **Correctness** — which failure and boundary case is unhandled? What happens
+  on empty, malformed, huge, or absent?
+- **Simplicity** — what can be deleted outright? Deletion beats refactoring.
+- **Proof** — is there a test that would fail if this broke? If not, that is
+  the finding.
+Fix what you find, re-run the gates, and state what changed with a number.
+
+**Pass 2 — Escalate (divergent).** Now zoom out and ask a different question
+entirely: what would make this **10× better**, or make the problem disappear?
+- Which constraint did I assume that isn't actually real?
+- What am I doing by hand that should be automatic?
+- What would this look like built for 10× the scale, or a tenth of the cost?
+- Is there a version of this that needs no maintenance at all?
+
+**The guardrails, which matter as much as the passes:**
+- **"Nothing worth changing" is a valid and expected answer.** A mechanism that
+  always produces output regardless of whether there is anything to say is the
+  same defect as a distiller that learns every sentence containing "always."
+  Say "no improvement worth the churn" and move on. That is a real result.
+- **Pass 1 you apply. Pass 2 you propose — never build it unprompted.** A 10×
+  idea is usually an architecture decision, and those are Malachi's. Write it
+  down and put it in front of him.
+- **Skip the reflex on trivial work.** A typo fix does not get a two-pass
+  review. Reflection that runs on everything becomes ritual, then noise, then
+  it gets switched off.
+- **Grade it.** An insight worth keeping goes in as a lesson (`mal learn`), and
+  lessons are graded by outcomes like everything else. That is what makes the
+  reflex itself improve over time instead of generating unmeasured advice
+  forever.
+- **Every efficiency claim carries a number.** "Faster" is an opinion.
+  "Bounded the scan at 300 candidates instead of every row" is a result.
+
+Record it with `mal reflect "<what you built>" --tighten "<what you changed>"
+--escalate "<the bigger idea>"` so reflections are auditable and compound.
+
 ## Project Log (keep current — this is the project's memory)
 ### Current state
 - **Malachii Intelligence v3 built** (`malachii/`). Zero-runtime-dependency

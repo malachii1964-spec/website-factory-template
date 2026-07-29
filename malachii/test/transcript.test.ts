@@ -80,3 +80,94 @@ describe("digestToPrompt", () => {
     expect(prompt.indexOf("Explicit instructions")).toBeLessThan(prompt.indexOf("Conversation"));
   });
 });
+
+// ── Regression tests written from real defects found in the live brain ──
+// Three pieces of junk got learned on the first day the hooks ran. Each of
+// these locks the door behind one of them.
+
+describe("noise rejection (regressions from the live brain)", () => {
+  it("captures the rule sentence, not the whole prompt that contained it", () => {
+    const digest = parseTranscript(
+      line(
+        "user",
+        "before I work on anything else. I want to Build Malachii Intelligence v3 - taking " +
+          "everything we have learned about how we handle prompts and the logic behind it. " +
+          "It should be programmed to always run the typecheck before reporting done.",
+      ),
+    );
+    expect(digest.directives).toHaveLength(1);
+    expect(digest.directives[0]).toContain("always run the typecheck");
+    expect(digest.directives[0]!.length).toBeLessThan(120);
+    expect(digest.directives[0]).not.toContain("Malachii Intelligence v3");
+  });
+
+  it("rejects a task request even when it contains a directive keyword", () => {
+    const digest = parseTranscript(
+      line("user", "I want to build something that is always fast and hungry to improve."),
+    );
+    expect(digest.directives).toHaveLength(0);
+  });
+
+  it("does not learn from tool-protocol errors", () => {
+    const digest = parseTranscript(
+      line("user", [
+        {
+          type: "tool_result",
+          is_error: true,
+          tool_use_id: "t1",
+          content: "<tool_use_error>File has not been read yet. Read it first.</tool_use_error>",
+        },
+      ]),
+    );
+    expect(digest.failures).toHaveLength(0);
+  });
+
+  it("does not learn from a declined permission prompt", () => {
+    const digest = parseTranscript(
+      line("user", [
+        {
+          type: "tool_result",
+          is_error: true,
+          tool_use_id: "t1",
+          content: "The user doesn't want to proceed with this tool use. The tool use was rejected.",
+        },
+      ]),
+    );
+    expect(digest.failures).toHaveLength(0);
+  });
+
+  it("names the tool that actually failed by resolving its tool_use id", () => {
+    const digest = parseTranscript(
+      [
+        JSON.stringify({
+          type: "assistant",
+          message: { role: "assistant", content: [{ type: "tool_use", id: "t1", name: "Bash" }] },
+        }),
+        line("user", [
+          { type: "tool_result", is_error: true, tool_use_id: "t1", content: "tsc: 3 errors" },
+        ]),
+      ].join("\n"),
+    );
+    expect(digest.failures[0]?.tool).toBe("Bash");
+  });
+
+  it("says so rather than inventing a name when the tool cannot be resolved", () => {
+    const digest = parseTranscript(
+      line("user", [{ type: "tool_result", is_error: true, tool_use_id: "gone", content: "boom" }]),
+    );
+    expect(digest.failures[0]?.tool).toBe("unknown tool");
+  });
+
+  it("keeps a real correction that stands on its own", () => {
+    const digest = parseTranscript(
+      line("user", "No, that's wrong. Use the catalog price instead of a hardcoded amount."),
+    );
+    expect(digest.corrections.length).toBeGreaterThan(0);
+    expect(digest.corrections.some((c) => c.includes("catalog price"))).toBe(true);
+  });
+
+  it("ignores a question, which is never a standing rule", () => {
+    const digest = parseTranscript(line("user", "Should I always run the tests first?"));
+    expect(digest.directives).toHaveLength(0);
+  });
+});

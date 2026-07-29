@@ -116,17 +116,22 @@ export async function distill(
   const sessionRef = context.sessionRef ?? null;
   const result: DistillResult = { lessons: [], facts: [], usedModel: false };
 
-  // --- Heuristic pass: free, always runs, never wrong about what was said. ---
+  // --- Heuristic pass: free, always runs, and deliberately unsure of itself. ---
+  //
+  // A keyword match is weak evidence even when the sentence is well-shaped, so
+  // nothing from this pass enters the trusted tier. It proposes; outcomes
+  // promote. Entering at 0.8 is what previously let a regex hit on the word
+  // "always" install itself as a standing rule.
   for (const directive of digest.directives.slice(0, 5)) {
     result.lessons.push(
       await learn(store, {
-        rule: directive.trim().slice(0, 400),
+        rule: directive,
         when: "working on anything for Malachi",
         project,
         origin: "user",
         originRef: sessionRef,
-        confidence: 0.8,
-        tags: ["directive"],
+        confidence: 0.5,
+        tags: ["directive", "unverified"],
       }),
     );
   }
@@ -139,13 +144,13 @@ export async function distill(
   for (const correction of corrections.slice(0, 4)) {
     result.lessons.push(
       await learn(store, {
-        rule: `Malachi corrected this: "${correction.trim().slice(0, 300)}". Do not repeat the behaviour that prompted it.`,
+        rule: `Malachi pushed back with: "${correction}" — do not repeat what prompted it.`,
         when: "about to take a similar action in this project",
         project,
         origin: "user",
         originRef: sessionRef,
-        confidence: 0.65,
-        tags: ["correction"],
+        confidence: 0.45,
+        tags: ["correction", "unverified"],
       }),
     );
   }
@@ -156,8 +161,8 @@ export async function distill(
         project,
         origin: "self",
         originRef: sessionRef,
-        confidence: 0.35,
-        tags: ["failure-pattern"],
+        confidence: 0.3,
+        tags: ["failure-pattern", "unverified"],
       }),
     );
   }

@@ -35,6 +35,7 @@ The intelligence is real. The aliveness is architecture. Both things are true.
 | Learns from you | Directives and corrections distilled out of finished sessions | `malachii/src/learning/distill.ts` |
 | Learns from the web | Chunked ingestion with citations and lower default trust | `malachii/src/memory/ingest.ts` |
 | Tidies itself | Sleep cycle: fade, merge, retire, promote | `malachii/src/memory/consolidate.ts` |
+| Critiques its own work | Two-pass reflex: tighten, then escalate to 10x | `malachii/src/learning/reflect.ts` |
 | Lives in your workflow | Claude Code hooks on every prompt and every stop | `.claude/hooks/` |
 
 ---
@@ -119,6 +120,8 @@ mal refute <id> <reason>       That lesson led it wrong
 mal show <id>                  Full detail, including provenance
 mal ingest <path|url>          Learn from a file or a page
 mal capture --transcript <p>   Distill a finished session
+mal reflect <what you built>   The two-pass reflex    [--tighten --escalate]
+mal proposals                  10x ideas awaiting a decision
 mal sleep                      Consolidate            [--dry-run]
 mal stats                      What it knows
 mal log                        The life log
@@ -164,7 +167,7 @@ Every hook fails silently. A broken brain must never break a session.
 
 ## Where this goes next
 
-Built and working (v3.0):
+Built and working (v3.1):
 
 - The memory kernel, hybrid recall, and the budgeted brief
 - The lesson lifecycle and the confidence mechanics

@@ -23,6 +23,7 @@ Two halves of one repo:
 | `.claude/agents/` | `reviewer` (adversarial code review) and `design-critic` (looks at the page) |
 | `design.md` | Taste, written once, inherited by every build |
 | `performance.md` | Core Web Vitals budgets, JS/image/font limits, verification steps |
+| `efficiency.md` | How to get the most out of the model and the machine — effort, caching, batching, bounded work |
 | `templates/` | 12 website blueprints — the interview offers them as a menu |
 | `design-library/` | Style directions, palettes, the immersive-3D contract, ideas backlog |
 | `.env.example` | Where service keys go |
