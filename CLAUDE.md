@@ -204,7 +204,9 @@ Record it with `mal reflect "<what you built>" --tighten "<what you changed>"
   the thousandth action as on the first. Fires on `rm -rf`, pipe-to-shell/eval,
   `--no-verify`, credential exfiltration, force-push, hard reset/clean, DROP,
   chmod 777, broad kills, and writes to secrets/keys/git internals/brain.db.
-  Fails open by design. Guard fires go to the **life log** (`mal event`), never
+  Recursive deletes are also caught behind `xargs`/`parallel`, where the targets
+  come from stdin and cannot be read from the command — that one asks rather than
+  denies, since piped cleanup is ordinary work. Fails open by design. Guard fires go to the **life log** (`mal event`), never
   to memory — as memories they entered the retrieval pool at 0.90 confidence and
   surfaced in unrelated briefs.
 - **Identity slots** (`src/knowledge/identity.ts`, `mal me`): six slots fillable
