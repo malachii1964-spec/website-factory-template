@@ -26,6 +26,7 @@ function entry(overrides: Partial<Memory>, score = 0.5): ScoredMemory {
       updatedAt: 0,
       lastUsedAt: null,
       contentHash: "h",
+      staleAfter: null,
       ...overrides,
     },
     score,

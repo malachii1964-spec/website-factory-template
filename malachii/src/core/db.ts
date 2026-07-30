@@ -4,7 +4,7 @@ import { dirname } from "node:path";
 import type { Memory, MemoryKind, MemoryStatus, Origin } from "./types.ts";
 
 /** Bumped whenever `MIGRATIONS` grows. Stored in `meta` so upgrades are one-way and idempotent. */
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 const MIGRATIONS: string[] = [
   /* v1 — the founding schema */ `
@@ -91,6 +91,10 @@ const MIGRATIONS: string[] = [
   CREATE INDEX events_ts ON events(ts DESC);
   CREATE INDEX events_kind ON events(kind, ts DESC);
   `,
+  /* v2 — standards expire on a clock, so they carry their own deadline */ `
+  ALTER TABLE memories ADD COLUMN stale_after INTEGER;
+  CREATE INDEX memories_stale ON memories(kind, stale_after) WHERE stale_after IS NOT NULL;
+  `,
 ];
 
 export function openBrain(dbPath: string): DatabaseSync {
@@ -158,6 +162,7 @@ export interface MemoryRow {
   updated_at: number;
   last_used_at: number | null;
   content_hash: string;
+  stale_after: number | null;
 }
 
 export function rowToMemory(row: MemoryRow): Memory {
@@ -190,5 +195,6 @@ export function rowToMemory(row: MemoryRow): Memory {
     updatedAt: row.updated_at,
     lastUsedAt: row.last_used_at,
     contentHash: row.content_hash,
+    staleAfter: row.stale_after ?? null,
   };
 }

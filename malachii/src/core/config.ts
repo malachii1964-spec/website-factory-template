@@ -77,6 +77,9 @@ export function loadConfig(): BrainConfig {
       episodic: 21,
       procedural: 180,
       source: 120,
+      // A standard does not fade with disuse — it is either current or expired,
+      // and `staleAfter` decides which. Recency decay would double-penalise it.
+      standard: Number.POSITIVE_INFINITY,
     },
     // Stays `additive` on evidence, not preference. `relevance-first` is the
     // better-argued design, but the only measurement that can currently tell

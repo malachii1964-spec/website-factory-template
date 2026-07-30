@@ -26,6 +26,8 @@ export interface RememberInput {
   importance?: number;
   confidence?: number;
   pinned?: boolean;
+  /** Standards only: when this must be re-verified before being quoted as current. */
+  staleAfter?: number | null;
   /**
    * Whether an identical existing memory should absorb this write instead of a
    * new row being created. Defaults to true.
@@ -132,14 +134,15 @@ export class MemoryStore {
       updatedAt: now,
       lastUsedAt: null,
       contentHash: hash,
+      staleAfter: input.staleAfter ?? null,
     };
 
     this.#insert ??= this.db.prepare(`
       INSERT INTO memories (
         id, kind, title, body, applies_when, tags, project, origin, origin_ref,
         importance, confidence, uses, wins, losses, pinned, status, superseded_by,
-        created_at, updated_at, last_used_at, content_hash
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, ?, 'active', NULL, ?, ?, NULL, ?)
+        created_at, updated_at, last_used_at, content_hash, stale_after
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, ?, 'active', NULL, ?, ?, NULL, ?, ?)
     `);
     this.#insert.run(
       memory.id,
@@ -157,6 +160,7 @@ export class MemoryStore {
       memory.createdAt,
       memory.updatedAt,
       memory.contentHash,
+      memory.staleAfter,
     );
 
     this.logEvent({
@@ -721,6 +725,10 @@ function defaultImportance(kind: MemoryKind): number {
       return 0.4;
     case "source":
       return 0.35;
+    // A standard is the bar the work is measured against, so it must surface
+    // whenever it applies — just below a lesson, which is Malachi's own ruling.
+    case "standard":
+      return 0.7;
   }
 }
 

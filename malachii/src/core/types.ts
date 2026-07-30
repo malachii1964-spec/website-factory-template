@@ -18,6 +18,13 @@ export const MEMORY_KINDS = [
   "procedural",
   /** Raw ingested material (a page, a doc, a file chunk) kept for citation. */
   "source",
+  /**
+   * An external definition of "good" for some class of work — current best
+   * practice, sourced and dated. Distinct from the other kinds because it is
+   * about the world's bar, not about Malachi or this project, and because it
+   * goes stale on a clock rather than fading with disuse.
+   */
+  "standard",
 ] as const;
 
 export type MemoryKind = (typeof MEMORY_KINDS)[number];
@@ -54,6 +61,12 @@ export interface Memory {
   updatedAt: number;
   lastUsedAt: number | null;
   contentHash: string;
+  /**
+   * Standards only: the moment after which this must be re-verified before it
+   * may be quoted as current. A standard does not decay gracefully — a version
+   * number is either right or wrong — so it expires rather than fading.
+   */
+  staleAfter: number | null;
 }
 
 /** A memory plus the scoring that surfaced it. */

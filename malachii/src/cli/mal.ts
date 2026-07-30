@@ -15,6 +15,14 @@ import { activeLessons, learn, report } from "../learning/lessons.ts";
 import { distill } from "../learning/distill.ts";
 import { openProposals, reflect } from "../learning/reflect.ts";
 import { readTranscript } from "../learning/transcript.ts";
+import {
+  VOLATILITY_DAYS,
+  lookupStandards,
+  recordStandard,
+  staleStandards,
+  trustStandard,
+  type Volatility,
+} from "../knowledge/standards.ts";
 
 /**
  * `mal` — the brain's command surface.
@@ -40,6 +48,9 @@ const HELP = `malachii v3 — Malachi's intelligence
   mal capture --transcript <p>   Distill a finished session   [--project --session]
   mal reflect <what you built>   Record the two-pass reflex   [--tighten --escalate]
   mal proposals                  The 10x ideas waiting on a decision
+  mal standard <claim> --for <scope> --source <url>   Shelve an external standard  [--volatility --trusted]
+  mal standards [scope]          What "good" means, and what expired  [--stale]
+  mal vouch <id>                 Take a standard out of quarantine
   mal sleep                      Consolidate: fade, merge, retire, promote  [--dry-run]
   mal stats                      What it knows
   mal log                        Recent life log      [--n --kind]
@@ -76,6 +87,11 @@ const OPTIONS = {
   transcript: { type: "string" },
   session: { type: "string" },
   n: { type: "string" },
+  for: { type: "string" },
+  source: { type: "string" },
+  volatility: { type: "string" },
+  trusted: { type: "boolean", default: false },
+  stale: { type: "boolean", default: false },
   json: { type: "boolean", default: false },
   pin: { type: "boolean", default: false },
   "dry-run": { type: "boolean", default: false },
@@ -138,6 +154,26 @@ function projectOf(explicit: string | undefined): string | null {
 function firstLine(text: string, max = 90): string {
   const line = text.split("\n")[0]!.trim();
   return line.length <= max ? line : `${line.slice(0, max - 1)}…`;
+}
+
+function parseVolatility(value: string | undefined): Volatility | undefined {
+  if (value === undefined) return undefined;
+  if (value in VOLATILITY_DAYS) return value as Volatility;
+  fail(`--volatility must be one of: ${Object.keys(VOLATILITY_DAYS).join(", ")}`);
+}
+
+function describeStandard(standard: import("../core/types.ts").Memory): string {
+  const until = standard.staleAfter
+    ? new Date(standard.staleAfter).toISOString().slice(0, 10)
+    : "no expiry";
+  const flags = [
+    standard.tags.includes("quarantined") ? "quarantined" : "vouched",
+    standard.staleAfter && standard.staleAfter <= Date.now() ? "EXPIRED" : `until ${until}`,
+  ].join(" · ");
+  return (
+    `${standard.id}  [${flags}]\n  for: ${standard.appliesWhen ?? "—"}\n` +
+    `  ${firstLine(standard.body, 110)}\n  source: ${standard.originRef ?? "—"}`
+  );
 }
 
 function statsSummary(store: MemoryStore): string {
@@ -383,6 +419,88 @@ async function dispatch(store: MemoryStore, parsed: Parsed): Promise<void> {
         `${open.length} awaiting a decision. Accept one with \`mal confirm <id>\`, ` +
           `drop it with \`mal forget <id> "<why>"\`.\n`,
       );
+      break;
+    }
+
+    case "standard": {
+      const claim = rest.join(" ").trim();
+      if (!claim) fail("pass the standard itself as an argument");
+      if (!values.for) fail("a standard needs --for <scope>, or nothing can ever match it");
+      if (!values.source) fail("a standard needs --source <url|spec>; an unsourced standard is an opinion");
+      const volatility = parseVolatility(values.volatility);
+      const standard = await recordStandard(store, {
+        claim,
+        scope: values.for,
+        source: values.source,
+        project: projectOf(values.project),
+        tags,
+        trusted: values.trusted,
+        ...(volatility ? { volatility } : {}),
+      });
+      process.stdout.write(
+        `shelved ${standard.id}\n${describe(standard)}\n` +
+          `  current until ${new Date(standard.staleAfter!).toISOString().slice(0, 10)}` +
+          `${values.trusted ? "" : " · quarantined — `mal vouch <id>` before it may gate work"}\n`,
+      );
+      break;
+    }
+
+    case "standards": {
+      if (values.stale) {
+        const stale = staleStandards(store);
+        if (stale.length === 0) {
+          process.stdout.write("nothing expired\n");
+          break;
+        }
+        for (const standard of stale) {
+          process.stdout.write(
+            `EXPIRED ${new Date(standard.staleAfter!).toISOString().slice(0, 10)}  ${standard.id}\n` +
+              `  ${standard.appliesWhen ?? "—"}\n  ${firstLine(standard.body, 110)}\n`,
+          );
+        }
+        process.stdout.write(`\n${stale.length} need re-verifying before they can be quoted.\n`);
+        break;
+      }
+
+      const scope = rest.join(" ").trim();
+      if (!scope) {
+        const all = store.list({ kind: "standard", limit: 200 });
+        if (all.length === 0) {
+          process.stdout.write("the shelf is empty — add one with `mal standard`\n");
+          break;
+        }
+        for (const standard of all) process.stdout.write(`${describeStandard(standard)}\n`);
+        break;
+      }
+
+      const found = await lookupStandards(store, scope, { project: projectOf(values.project) });
+      if (values.json) {
+        process.stdout.write(`${JSON.stringify(found, null, 2)}\n`);
+        break;
+      }
+      if (found.usable.length === 0 && found.unusable.length === 0) {
+        process.stdout.write(
+          `no standard for "${scope}" — nothing to measure the work against yet.\n`,
+        );
+        break;
+      }
+      for (const standard of found.usable) {
+        process.stdout.write(`${describeStandard(standard)}\n`);
+      }
+      for (const { standard, reason } of found.unusable) {
+        process.stdout.write(`${describeStandard(standard)}   << ${reason}, cannot gate work\n`);
+      }
+      break;
+    }
+
+    case "vouch": {
+      const id = rest[0];
+      if (!id) fail("pass a standard id");
+      const standard = store.get(id);
+      if (!standard) fail(`no memory ${id}`);
+      if (standard.kind !== "standard") fail(`${id} is a ${standard.kind}, not a standard`);
+      const vouched = trustStandard(store, id);
+      process.stdout.write(`out of quarantine — ${vouched?.title}\n`);
       break;
     }
 

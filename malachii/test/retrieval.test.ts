@@ -35,6 +35,7 @@ function fakeMemory(overrides: Partial<Memory> = {}): Memory {
     updatedAt: Date.now(),
     lastUsedAt: null,
     contentHash: "h",
+    staleAfter: null,
     ...overrides,
   };
 }
