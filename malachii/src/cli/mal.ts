@@ -15,6 +15,7 @@ import { activeLessons, learn, report } from "../learning/lessons.ts";
 import { distill } from "../learning/distill.ts";
 import { openProposals, reflect } from "../learning/reflect.ts";
 import { readTranscript } from "../learning/transcript.ts";
+import { IDENTITY_SLOTS, identityStatus, recordIdentity, slotById } from "../knowledge/identity.ts";
 import {
   VOLATILITY_DAYS,
   lookupStandards,
@@ -48,6 +49,8 @@ const HELP = `malachii v3 — Malachi's intelligence
   mal capture --transcript <p>   Distill a finished session   [--project --session]
   mal reflect <what you built>   Record the two-pass reflex   [--tighten --escalate]
   mal proposals                  The 10x ideas waiting on a decision
+  mal me                         What it knows about you, and what it doesn't
+  mal me <slot> <answer>         Answer one thing, any time  (slots: ${IDENTITY_SLOTS.map((s) => s.id).join(", ")})
   mal standard <claim> --for <scope> --source <url>   Shelve an external standard  [--volatility --trusted]
   mal standards [scope]          What "good" means, and what expired  [--stale]
   mal vouch <id>                 Take a standard out of quarantine
@@ -423,6 +426,40 @@ async function dispatch(store: MemoryStore, parsed: Parsed): Promise<void> {
       break;
     }
 
+    case "me": {
+      const [slotId, ...answerParts] = rest;
+
+      if (!slotId) {
+        const status = identityStatus(store);
+        if (status.answers.length === 0) {
+          process.stdout.write("I don't know anything about you yet.\n\n");
+        }
+        for (const { slot, answer } of status.answers) {
+          process.stdout.write(`${slot.id}\n  ${slot.question}\n  → ${answer}\n\n`);
+        }
+        if (status.missing.length > 0) {
+          process.stdout.write(`Still unknown (${status.missing.length}):\n`);
+          for (const slot of status.missing) {
+            process.stdout.write(`  ${slot.id.padEnd(11)} ${slot.question}\n`);
+            process.stdout.write(`${" ".repeat(13)}${slot.because}\n`);
+          }
+          process.stdout.write(`\nAnswer any one with: mal me <slot> <your answer>\n`);
+        } else {
+          process.stdout.write("Every slot answered.\n");
+        }
+        break;
+      }
+
+      if (!slotById(slotId)) {
+        fail(`no slot "${slotId}" — try one of: ${IDENTITY_SLOTS.map((s) => s.id).join(", ")}`);
+      }
+      const answer = answerParts.join(" ").trim();
+      if (!answer) fail(`pass your answer: mal me ${slotId} "<your answer>"`);
+      const memory = await recordIdentity(store, slotId, answer);
+      process.stdout.write(`got it — ${slotId}\n${describe(memory)}\n`);
+      break;
+    }
+
     case "standard": {
       const claim = rest.join(" ").trim();
       if (!claim) fail("pass the standard itself as an argument");
@@ -617,6 +654,16 @@ async function startConsole(store: MemoryStore): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  // `mal lessons | head` closes stdout early, which without this crashes with an
+  // EPIPE stack trace instead of just stopping. Piping into `head` or `grep -q`
+  // is ordinary use, and the hooks pipe output too.
+  for (const stream of [process.stdout, process.stderr]) {
+    stream.on("error", (error: NodeJS.ErrnoException) => {
+      if (error.code === "EPIPE") process.exit(0);
+      throw error;
+    });
+  }
+
   const store = MemoryStore.open();
   try {
     await dispatch(store, parseCommand(process.argv.slice(2)));
