@@ -182,10 +182,35 @@ Record it with `mal reflect "<what you built>" --tighten "<what you changed>"
 ## Project Log (keep current — this is the project's memory)
 ### Current state
 - **Malachii Intelligence v3 built** (`malachii/`). Zero-runtime-dependency
-  memory kernel on `node:sqlite`: five memory kinds, hybrid recall (vector +
+  memory kernel on `node:sqlite`: six memory kinds, hybrid recall (vector +
   BM25 + recency + importance + confidence), budgeted context packing, lesson
   confidence lifecycle, session distillation, file/web ingestion, consolidation
-  ("sleep"). `mal` CLI. 70 tests, typecheck clean. Full design in `MALACHII.md`.
+  ("sleep"). `mal` CLI. 172 tests, typecheck clean. Full design in `MALACHII.md`.
+- **Console** (`mal console`): a REPL over the same command surface, one open
+  db connection instead of a process per command. Commands run through a serial
+  queue so pasted input can't race its own async output.
+- **Standards shelf** (`src/knowledge/standards.ts`, `mal standard/standards/
+  vouch`): a `standard` memory kind for sourced, dated external best practice —
+  the answer to "compared to what?", since comparing work only against its own
+  previous version measures motion, not quality. Standards *expire* on a clock
+  (fast 30d / medium 120d / slow 365d) rather than fading with disuse, and
+  arrive **quarantined**: a search result is a claim, not an authority, and
+  cannot gate work until something vouches for it. Relevance is confirmed by
+  term overlap, not by score — the additive scorer puts an irrelevant memory
+  near 0.4 on priors alone, which returned an unrelated standard for an
+  unresearched scope.
+- **Safety guard** (`src/safety/risk.ts` + `.claude/hooks/guard.mjs`, PreToolUse):
+  a pure three-tier classifier — no model call, so the verdict is identical on
+  the thousandth action as on the first. Fires on `rm -rf`, pipe-to-shell/eval,
+  `--no-verify`, credential exfiltration, force-push, hard reset/clean, DROP,
+  chmod 777, broad kills, and writes to secrets/keys/git internals/brain.db.
+  Fails open by design. Guard fires go to the **life log** (`mal event`), never
+  to memory — as memories they entered the retrieval pool at 0.90 confidence and
+  surfaced in unrelated briefs.
+- **Identity slots** (`src/knowledge/identity.ts`, `mal me`): six slots fillable
+  one line at a time in any order, because a six-question interview is a chore
+  and a chore gets deferred forever. Never inferred (origin is always the user),
+  pinned, and re-answering supersedes rather than leaving a contradiction.
 - **Claude Code integration live**: `.claude/hooks/` — SessionStart brief,
   UserPromptSubmit recall, Stop capture + blocking quality gate.
   `.claude/agents/` — reviewer, design-critic. These were promised by the old
@@ -208,14 +233,33 @@ Record it with `mal reflect "<what you built>" --tighten "<what you changed>"
   not guessed (local 0.85, Voyage 0.93).
 - Nothing is ever deleted from memory; it is superseded or retired, and stays
   readable.
+- **Standards are external and expire; memories are personal and fade.** Two
+  different mechanisms on purpose — a version number is right until it is wrong,
+  while a preference gently loses relevance. Do not merge them.
+- **A found standard is quarantined until vouched for.** Same principle as the
+  `unverified` tag on lessons: repetition by an automated process is not
+  independent confirmation.
+- **The guard is a speed bump for accidents, not a security boundary.** Shell
+  quoting defeats pattern matching and always will. It is scoped to catch the
+  destructive command typed while moving fast — claiming more would be the kind
+  of overstatement this project exists to avoid.
+- **A guard that fires on ordinary work gets switched off.** False positives on
+  `deny` are the expensive kind. When in doubt, `ask`.
 - FutureDeskAI: dark is the DEFAULT theme; single source of truth for pricing
   (src/lib/pricing.ts); no money-back guarantee (owner's choice); Dan Martell =
   strategy lens only, no name/face/quotes on site; St. Jude pledge stated in the
   brand's own words, no St. Jude logo or partnership claim.
 ### Known issues / TODO
-- **Malachii**: no console UI yet — the brain is only reachable through `mal`.
-  This is the single highest-value next build.
 - **Malachii**: no scheduled autonomy (nightly sleep + ingest + morning brief).
+  This would also drive the standards shelf's refresh queue (`mal standards
+  --stale`), which currently nothing walks automatically.
+- **Malachii**: nothing yet *populates* the standards shelf from research — the
+  storage, expiry and quarantine mechanics exist and are tested, but a standard
+  still has to be entered by hand. Wiring "look up the current bar before
+  building" into the build flow is the next step, and it needs web access.
+- **Malachii**: the identity slots are empty. Six one-line answers (`mal me
+  <slot> "<answer>"`) and recall starts being recognisably his rather than just
+  topical.
 - **Malachii**: local embeddings miss paraphrase (measured: 0.67 cosine on a
   true restatement). Set `VOYAGE_API_KEY` and re-embed to fix properly.
 - **Malachii**: distillation quality is heuristic-only without `ANTHROPIC_API_KEY`.
