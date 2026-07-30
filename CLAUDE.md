@@ -259,9 +259,20 @@ Record it with `mal reflect "<what you built>" --tighten "<what you changed>"
   storage, expiry and quarantine mechanics exist and are tested, but a standard
   still has to be entered by hand. Wiring "look up the current bar before
   building" into the build flow is the next step, and it needs web access.
-- **Malachii**: the identity slots are empty. Six one-line answers (`mal me
-  <slot> "<answer>"`) and recall starts being recognisably his rather than just
-  topical.
+- **Malachii**: identity slots are DONE — all six answered, so recall now leads
+  with who it works for rather than what the topic is. `work` is the one that
+  changes decisions: Malachi is an entrepreneur in the making, Lake Erie Cannabis
+  is the lead venture, and the other ventures are active rather than side quests.
+  Malachii is the means, not a separate project.
+- **Malachii**: three assistant memory exports imported (`src/knowledge/
+  exports.ts`, `prompts/memory-extraction.md`) — 57 memories from ChatGPT,
+  Claude and Grok, all second-hand: capped at 0.55/0.35 confidence and forced to
+  `semantic` so his own word supersedes them. 24 sensitive lines held back and
+  never stored. Qwen had no cross-session memory and said so, which is the
+  prompt working. All six identity slots disagreed across all three sources —
+  one gave "Big Daddy" as OBSERVED — so slots were answered by Malachi, never
+  harvested. TODO: nothing yet marks an unratified claim as a distinct state;
+  the 57 are just a lower number than his 0.90.
 - **Malachii**: local embeddings miss paraphrase (measured: 0.67 cosine on a
   true restatement). Set `VOYAGE_API_KEY` and re-embed to fix properly.
 - **Malachii**: distillation quality is heuristic-only without `ANTHROPIC_API_KEY`.
