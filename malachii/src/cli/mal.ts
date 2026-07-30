@@ -53,6 +53,7 @@ const HELP = `malachii v3 — Malachi's intelligence
   mal vouch <id>                 Take a standard out of quarantine
   mal sleep                      Consolidate: fade, merge, retire, promote  [--dry-run]
   mal stats                      What it knows
+  mal event <summary>            Append to the life log only, never to memory  [--kind]
   mal log                        Recent life log      [--n --kind]
   mal console                    Interactive session — same commands, one open connection
 
@@ -521,6 +522,22 @@ async function dispatch(store: MemoryStore, parsed: Parsed): Promise<void> {
         break;
       }
       process.stdout.write(statsSummary(store));
+      break;
+    }
+
+    case "event": {
+      const summary = rest.join(" ").trim();
+      if (!summary) fail("pass what happened as an argument");
+      // Deliberately not a memory. An audit record is something that happened,
+      // not something the brain knows — and writing it to memory would put an
+      // unbounded stream of them into the retrieval pool, where they crowd out
+      // real knowledge in every brief.
+      store.logEvent({
+        kind: values.kind ?? "note",
+        project: projectOf(values.project),
+        summary,
+      });
+      if (!values.quiet) process.stdout.write("logged\n");
       break;
     }
 
