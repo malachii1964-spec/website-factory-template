@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { Memory } from "../core/types.ts";
 import type { MemoryStore } from "../memory/store.ts";
 import { hasClaude, structured } from "../llm/claude.ts";
-import { learn } from "./lessons.ts";
+import { learn, type LessonInput } from "./lessons.ts";
 import { digestToPrompt, type SessionDigest } from "./transcript.ts";
 
 /**
@@ -116,6 +116,15 @@ export async function distill(
   const sessionRef = context.sessionRef ?? null;
   const result: DistillResult = { lessons: [], facts: [], usedModel: false };
 
+  // `learn` refuses anything touching a topic the boundaries slot rules out, so
+  // every candidate here may come back null. Skipping quietly is right: the
+  // refusal is already on the life log, and one blocked line must not stop the
+  // rest of the session being distilled.
+  const record = async (input: LessonInput): Promise<void> => {
+    const lesson = await learn(store, input);
+    if (lesson) result.lessons.push(lesson);
+  };
+
   // --- Heuristic pass: free, always runs, and deliberately unsure of itself. ---
   //
   // A keyword match is weak evidence even when the sentence is well-shaped, so
@@ -123,17 +132,15 @@ export async function distill(
   // promote. Entering at 0.8 is what previously let a regex hit on the word
   // "always" install itself as a standing rule.
   for (const directive of digest.directives.slice(0, 5)) {
-    result.lessons.push(
-      await learn(store, {
-        rule: directive,
-        when: "working on anything for Malachi",
-        project,
-        origin: "user",
-        originRef: sessionRef,
-        confidence: 0.5,
-        tags: ["directive", "unverified"],
-      }),
-    );
+    await record({
+      rule: directive,
+      when: "working on anything for Malachi",
+      project,
+      origin: "user",
+      originRef: sessionRef,
+      confidence: 0.5,
+      tags: ["directive", "unverified"],
+    });
   }
   // "Never hardcode the amount" reads as both a directive and a correction.
   // The directive form is the better-phrased, higher-confidence one, so a turn
@@ -142,29 +149,25 @@ export async function distill(
   const corrections = digest.corrections.filter((c) => !captured.has(c.trim()));
 
   for (const correction of corrections.slice(0, 4)) {
-    result.lessons.push(
-      await learn(store, {
-        rule: `Malachi pushed back with: "${correction}" — do not repeat what prompted it.`,
-        when: "about to take a similar action in this project",
-        project,
-        origin: "user",
-        originRef: sessionRef,
-        confidence: 0.45,
-        tags: ["correction", "unverified"],
-      }),
-    );
+    await record({
+      rule: `Malachi pushed back with: "${correction}" — do not repeat what prompted it.`,
+      when: "about to take a similar action in this project",
+      project,
+      origin: "user",
+      originRef: sessionRef,
+      confidence: 0.45,
+      tags: ["correction", "unverified"],
+    });
   }
   for (const pattern of failurePatterns(digest)) {
-    result.lessons.push(
-      await learn(store, {
-        ...pattern,
-        project,
-        origin: "self",
-        originRef: sessionRef,
-        confidence: 0.3,
-        tags: ["failure-pattern", "unverified"],
-      }),
-    );
+    await record({
+      ...pattern,
+      project,
+      origin: "self",
+      originRef: sessionRef,
+      confidence: 0.3,
+      tags: ["failure-pattern", "unverified"],
+    });
   }
 
   // --- Model pass: better phrasing, real synthesis, only if a key exists. ---
@@ -180,18 +183,16 @@ export async function distill(
     if (candidates) {
       result.usedModel = true;
       for (const lesson of candidates.lessons) {
-        result.lessons.push(
-          await learn(store, {
-            rule: lesson.rule,
-            when: lesson.when,
-            project,
-            origin: "session",
-            originRef: sessionRef,
-            // The model's own read of the evidence is capped: it proposes, outcomes decide.
-            confidence: Math.min(0.6, lesson.confidence),
-            tags: ["distilled"],
-          }),
-        );
+        await record({
+          rule: lesson.rule,
+          when: lesson.when,
+          project,
+          origin: "session",
+          originRef: sessionRef,
+          // The model's own read of the evidence is capped: it proposes, outcomes decide.
+          confidence: Math.min(0.6, lesson.confidence),
+          tags: ["distilled"],
+        });
       }
       for (const fact of candidates.facts) {
         result.facts.push(

@@ -243,6 +243,13 @@ async function dispatch(store: MemoryStore, parsed: Parsed): Promise<void> {
         origin: "user",
         ...(confidence !== undefined ? { confidence } : {}),
       });
+      // Refused rather than stored: the boundaries slot rules the topic out,
+      // and it says "even if asked in the moment" — so a direct `mal learn`
+      // is exactly the moment it has to hold.
+      if (!lesson) {
+        process.stdout.write("refused — that touches a topic the boundaries slot rules out.\n");
+        break;
+      }
       process.stdout.write(`learned ${lesson.id}\n${describe(lesson)}\n`);
       break;
     }

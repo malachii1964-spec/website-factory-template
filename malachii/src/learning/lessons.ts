@@ -1,4 +1,5 @@
 import type { Memory } from "../core/types.ts";
+import { sensitiveTopic } from "../safety/sensitive.ts";
 import type { MemoryStore } from "../memory/store.ts";
 
 /**
@@ -23,7 +24,25 @@ export interface LessonInput {
   confidence?: number;
 }
 
-export async function learn(store: MemoryStore, input: LessonInput): Promise<Memory> {
+/**
+ * Refused when the rule touches a topic the boundaries slot rules out.
+ *
+ * Returns null rather than throwing: a blocked lesson must never take down the
+ * session distiller that produced it, or the whole capture mechanism becomes a
+ * thing that crashes and then gets switched off.
+ */
+export async function learn(store: MemoryStore, input: LessonInput): Promise<Memory | null> {
+  const blocked = sensitiveTopic(`${input.rule} ${input.when}`);
+  if (blocked) {
+    store.logEvent({
+      kind: "lesson.refused",
+      project: input.project ?? null,
+      summary: `Refused a lesson touching ${blocked}`,
+      payload: { topic: blocked, when: input.when },
+    });
+    return null;
+  }
+
   const title = input.rule.length > 90 ? `${input.rule.slice(0, 89)}…` : input.rule;
   const lesson = await store.remember({
     kind: "procedural",
