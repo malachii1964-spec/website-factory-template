@@ -1,5 +1,6 @@
 packages:
   - malachii
+  - sites/*
 
 ignoredBuiltDependencies:
   - sharp
