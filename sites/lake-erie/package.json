@@ -1,0 +1,9 @@
+{
+  "name": "lake-erie-cannabis",
+  "private": true,
+  "scripts": {
+    "dev": "../../node_modules/.bin/next dev --port 3100",
+    "build": "../../node_modules/.bin/next build",
+    "start": "../../node_modules/.bin/next start --port 3100"
+  }
+}
