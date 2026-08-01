@@ -64,10 +64,13 @@ hierarchy) → brand-critic review → then collect interview answers 2–8 → 
   design-critic run (Rule 6): verdict FIX-THEN-SHIP; all findings ≤3 fixed —
   WCAG AA contrast on marigold CTAs (dark ink foreground), grape eyebrow/step
   numbers, larger non-clipping map labels, 44px tap targets. Re-verified.
-- Old FutureDeskAI pages (/products, /membership, /about, /local-business,
-  /free-toolkit, /checkout, /legal, /api/*) STILL PRESENT on this branch, now
-  off-brand/unlinked. TODO: remove or rebuild for CCC. They build fine but should
-  be cleaned before deploy.
+- FutureDeskAI leftovers REMOVED from this branch (2026-07-29): only courier
+  routes remain (/, /request, /api/request). FDA preserved untouched on `main`
+  (verified). Branch is deploy-clean.
+- DEPLOY.md added: step-by-step for the owner to deploy on Vercel (free) from the
+  branch `claude/goto-716-delivery-launch-ehujho` (NOT main — main is FDA), point
+  chautauquacountycourier.com, and set Resend env for the form. I cannot deploy
+  for him (needs his Vercel/GitHub OAuth); prep is done, his part is ~5-10 min.
 - PLACEHOLDERS in code: site.phoneDigits (716-555-0176, fake), hours. Swap before
   launch. Quote intake is currently tap-to-call/text only (no form/API yet).
 
