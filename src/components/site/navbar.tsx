@@ -9,10 +9,11 @@ import { Wordmark } from "@/components/site/wordmark";
 import { site, telHref, formatPhone } from "@/lib/site";
 
 const NAV = [
-  { href: "#services", label: "Services" },
-  { href: "#how", label: "How it works" },
-  { href: "#coverage", label: "Coverage" },
-  { href: "#pricing", label: "Pricing" },
+  { href: "/#services", label: "Services" },
+  { href: "/#how", label: "How it works" },
+  { href: "/#coverage", label: "Coverage" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/request", label: "Request a run" },
 ];
 
 export function Navbar() {

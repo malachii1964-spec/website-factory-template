@@ -8,8 +8,8 @@ export const site = {
   tagline: "One call. Consider it done.",
   descriptor: "Countywide delivery, errands & concierge runs — one guaranteed price before we go.",
   base: "Westfield, NY",
-  // PLACEHOLDER phone — obviously fake (555). Replace with the real line before launch.
-  phoneDigits: "7165550176",
+  // Live line (set 2026-07-29). Swap here if it changes down the road.
+  phoneDigits: "7162240829",
   // PLACEHOLDER hours — confirm with owner.
   hours: [
     { days: "Mon – Sat", time: "8am – 8pm" },

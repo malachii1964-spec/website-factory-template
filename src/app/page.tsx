@@ -1,4 +1,5 @@
-import { Phone, MessageSquare, Check, MapPin, Clock } from "lucide-react";
+import Link from "next/link";
+import { Phone, MessageSquare, Check, MapPin, Clock, ArrowRight } from "lucide-react";
 import { CountyMap } from "@/components/ccc/county-map";
 import { buttonVariants } from "@/components/ui/button";
 import { serviceGroups } from "@/lib/services";
@@ -51,6 +52,12 @@ export default function Home() {
               <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
                 <Check className="h-4 w-4 text-lake" /> You approve the price before we go.
               </p>
+              <Link
+                href="/request"
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-grape hover:underline"
+              >
+                Prefer online? Request a run <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </div>
 
@@ -198,11 +205,11 @@ export default function Home() {
           </div>
 
           <div className="mt-10 flex flex-wrap gap-3">
-            <a href={telHref(site.phoneDigits)} className={buttonVariants({ size: "lg" })}>
-              <Phone className="h-4 w-4" /> Get your price — {phone}
-            </a>
-            <a href={smsHref(site.phoneDigits)} className={buttonVariants({ variant: "outline", size: "lg" })}>
-              <MessageSquare className="h-4 w-4" /> Text us the details
+            <Link href="/request" className={buttonVariants({ size: "lg" })}>
+              Get your guaranteed price <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a href={telHref(site.phoneDigits)} className={buttonVariants({ variant: "outline", size: "lg" })}>
+              <Phone className="h-4 w-4" /> Call {phone}
             </a>
           </div>
           <p className="readout mt-4 text-xs text-muted-foreground">
@@ -256,11 +263,11 @@ export default function Home() {
             One local call and it&rsquo;s handled. Consider it done.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <a href={telHref(site.phoneDigits)} className={buttonVariants({ size: "lg" })}>
+            <Link href="/request" className={buttonVariants({ size: "lg" })}>
+              Request a run <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a href={telHref(site.phoneDigits)} className={buttonVariants({ variant: "outline", size: "lg" })}>
               <Phone className="h-4 w-4" /> Call {phone}
-            </a>
-            <a href={smsHref(site.phoneDigits)} className={buttonVariants({ variant: "outline", size: "lg" })}>
-              <MessageSquare className="h-4 w-4" /> Text us
             </a>
           </div>
         </div>
