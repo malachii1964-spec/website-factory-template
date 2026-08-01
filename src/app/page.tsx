@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Phone, MessageSquare, Check, MapPin, Clock, ArrowRight } from "lucide-react";
 import { CountyMap } from "@/components/ccc/county-map";
+import { DispatchBoard } from "@/components/ccc/dispatch-board";
 import { buttonVariants } from "@/components/ui/button";
 import { serviceGroups } from "@/lib/services";
 import { site, coverage, formatPhone, telHref, smsHref } from "@/lib/site";
@@ -61,15 +62,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* The signature — the county route map */}
+          {/* The signature — the operable Dispatch Board */}
           <div className="relative">
-            <div className="ticket p-4 sm:p-6">
-              <div className="mb-3 flex items-center justify-between">
-                <p className="eyebrow eyebrow-grape">Today&rsquo;s route</p>
-                <p className="readout text-xs text-muted-foreground">Westfield → Jamestown</p>
-              </div>
-              <CountyMap />
-            </div>
+            <DispatchBoard />
           </div>
         </div>
       </section>

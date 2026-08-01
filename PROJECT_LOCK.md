@@ -86,7 +86,13 @@ FIRST BUILD: refactor county-map.tsx nodes → focusable buttons; add pick-up/dr
 control (click-two-nodes + 2-select fallback) that redraws route + stamps a 4-part
 ballpark into a .ticket manifest; "Send this run" → /request. Needs a small pairwise
 road-miles model (node distance × ~1.3 × per-mile rate, labeled BALLPARK).
-STATUS: awaiting owner GO to build the first piece.
+STATUS: BUILT (Tier-0/1 core). DispatchBoard is the hero: tap/select pickup +
+dropoff (+ up to 2 stops) -> route draws (WAAPI, reduced-motion safe) -> manifest
+ticket assembles the 4-part ballpark -> "Send this run" prefills /request. Nodes
+are focusable buttons + a two-select fallback (a11y core). Ballpark rates in
+src/lib/estimate.ts are PLACEHOLDERS (labeled) — pricing-strategist to finalize.
+Gates green (tsc, lint, 28 tests, build); verified in browser light+dark.
+reviewer + design-critic dispatched.
 
 ## Session log (newest first)
 - 2026-07-25: Locked name (Chautauqua County Courier). Ran brand-strategist →

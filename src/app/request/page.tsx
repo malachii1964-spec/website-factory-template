@@ -11,7 +11,17 @@ export const metadata: Metadata = {
 
 const phone = formatPhone(site.phoneDigits);
 
-export default function RequestPage() {
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+export default async function RequestPage({ searchParams }: { searchParams: SearchParams }) {
+  const sp = await searchParams;
+  const one = (v: string | string[] | undefined) => (typeof v === "string" ? v : undefined);
+  const initial = {
+    requestType: one(sp.type),
+    pickup: one(sp.pickup),
+    dropoff: one(sp.dropoff),
+    details: one(sp.details),
+  };
   return (
     <section className="container-page py-14 sm:py-20">
       <div className="grid gap-10 lg:grid-cols-[1fr_1.25fr] lg:gap-14">
@@ -51,7 +61,7 @@ export default function RequestPage() {
           </div>
         </div>
 
-        <RequestForm />
+        <RequestForm initial={initial} />
       </div>
     </section>
   );

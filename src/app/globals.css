@@ -211,6 +211,24 @@
     background-size: 22px 22px;
   }
 
+  /* Dispatch board — interactive town nodes */
+  .dispatch-node {
+    outline: none;
+    transition: transform 0.15s ease;
+  }
+  .dispatch-node:focus-visible :is(circle, path) {
+    stroke: var(--accent);
+    stroke-width: 2.5;
+  }
+  @media (hover: hover) {
+    .dispatch-node:hover {
+      transform: translateY(-1px);
+    }
+    .dispatch-node:hover text {
+      fill-opacity: 1;
+    }
+  }
+
   .hairline {
     border: 0;
     border-top: 1px solid var(--border);

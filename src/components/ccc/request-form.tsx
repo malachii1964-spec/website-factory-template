@@ -13,10 +13,18 @@ const inputCls =
   "w-full min-h-11 rounded-md border border-border bg-background px-3.5 py-2.5 text-base text-foreground placeholder:text-muted-foreground focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 const labelCls = "readout mb-1.5 block text-xs font-medium text-muted-foreground";
 
-export function RequestForm() {
+type Initial = Partial<
+  Record<"name" | "phone" | "requestType" | "timing" | "pickup" | "dropoff" | "details", string>
+>;
+
+export function RequestForm({ initial = {} }: { initial?: Initial }) {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<FieldErrors>({});
   const phone = formatPhone(site.phoneDigits);
+  const defaultType =
+    initial.requestType && (REQUEST_TYPES as readonly string[]).includes(initial.requestType)
+      ? initial.requestType
+      : REQUEST_TYPES[0];
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -75,13 +83,13 @@ export function RequestForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Your name" error={errors.name}>
-          <input name="name" required autoComplete="name" placeholder="Mary Jones" className={inputCls} />
+          <input name="name" required autoComplete="name" defaultValue={initial.name} placeholder="Mary Jones" className={inputCls} />
         </Field>
         <Field label="Phone we can reach you at" error={errors.phone}>
-          <input name="phone" required type="tel" autoComplete="tel" placeholder="716-000-0000" className={inputCls} />
+          <input name="phone" required type="tel" autoComplete="tel" defaultValue={initial.phone} placeholder="716-000-0000" className={inputCls} />
         </Field>
         <Field label="What kind of run?" error={errors.requestType}>
-          <select name="requestType" required defaultValue={REQUEST_TYPES[0]} className={inputCls}>
+          <select name="requestType" required defaultValue={defaultType} className={inputCls}>
             {REQUEST_TYPES.map((t) => (
               <option key={t} value={t}>{t}</option>
             ))}
@@ -95,10 +103,10 @@ export function RequestForm() {
           </select>
         </Field>
         <Field label="Pickup (optional)" error={errors.pickup}>
-          <input name="pickup" autoComplete="off" placeholder="Store, address, or town" className={inputCls} />
+          <input name="pickup" autoComplete="off" defaultValue={initial.pickup} placeholder="Store, address, or town" className={inputCls} />
         </Field>
         <Field label="Dropoff (optional)" error={errors.dropoff}>
-          <input name="dropoff" autoComplete="off" placeholder="Where it's going" className={inputCls} />
+          <input name="dropoff" autoComplete="off" defaultValue={initial.dropoff} placeholder="Where it's going" className={inputCls} />
         </Field>
         <div className="sm:col-span-2">
           <Field label="What do you need?" error={errors.details}>
@@ -106,6 +114,7 @@ export function RequestForm() {
               name="details"
               required
               rows={4}
+              defaultValue={initial.details}
               placeholder="Tell us the run — what to grab, where from, where to, anything special."
               className={`${inputCls} resize-y`}
             />
