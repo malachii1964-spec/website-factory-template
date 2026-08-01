@@ -2,15 +2,24 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Phone, RotateCcw, ArrowRight } from "lucide-react";
+import { Phone, RotateCcw, ArrowRight, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { TOWNS, townByName, type Town } from "@/lib/towns";
+import {
+  EMPTY_RUN,
+  MAX_STOPS,
+  type RunState,
+  tapTown,
+  setPickup,
+  setDropoff,
+  addStop,
+  removeStop,
+  runPoints,
+} from "@/lib/run-select";
 import { estimateRun, usd } from "@/lib/estimate";
 import { site, formatPhone, telHref } from "@/lib/site";
 
-type Role = "pickup" | "dropoff" | "stop" | null;
-
-// Build a gently-arced path through the ordered stops (compositor-friendly draw).
+// Gently-arced path through the ordered stops (compositor-friendly draw).
 function buildPath(points: Town[]): string {
   if (points.length < 2) return "";
   let d = `M${points[0].x} ${points[0].y}`;
@@ -34,52 +43,35 @@ function star(cx: number, cy: number, outer: number, inner: number): string {
   return `M${pts.join(" L")} Z`;
 }
 
+const selectCls =
+  "min-h-11 w-full rounded-md border border-border bg-background px-2.5 text-sm focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+
 export function DispatchBoard() {
-  const [pickup, setPickup] = useState<Town | null>(null);
-  const [dropoff, setDropoff] = useState<Town | null>(null);
-  const [stops, setStops] = useState<Town[]>([]);
+  const [run, setRun] = useState<RunState>(EMPTY_RUN);
+  const { pickup, dropoff, stops } = run;
   const pathRef = useRef<SVGPathElement | null>(null);
   const dotRef = useRef<SVGCircleElement | null>(null);
 
-  const points = useMemo(() => {
-    if (pickup && dropoff) return [pickup, ...stops, dropoff];
-    if (pickup) return [pickup];
-    return [];
-  }, [pickup, dropoff, stops]);
-
+  const points = useMemo(() => runPoints(run), [run]);
   const routeD = useMemo(() => buildPath(points), [points]);
   const estimate = pickup && dropoff ? estimateRun(pickup, dropoff, stops) : null;
 
-  function roleOf(t: Town): Role {
-    if (t === pickup) return "pickup";
-    if (t === dropoff) return "dropoff";
-    if (stops.includes(t)) return "stop";
+  function roleOf(t: Town) {
+    if (t === pickup) return "pickup" as const;
+    if (t === dropoff) return "dropoff" as const;
+    if (stops.includes(t)) return "stop" as const;
     return null;
   }
 
-  function selectTown(t: Town) {
-    if (!pickup) return setPickup(t);
-    if (!dropoff) {
-      if (t === pickup) return;
-      return setDropoff(t);
-    }
-    if (t === pickup || t === dropoff || stops.includes(t)) return;
-    if (stops.length < 2) setStops((s) => [...s, t]);
-  }
-
-  function reset() {
-    setPickup(null);
-    setDropoff(null);
-    setStops([]);
-  }
-
-  // Draw the route + run the courier marker on each change (WAAPI, reduced-motion safe).
+  // Draw the route + run the courier marker on each change (WAAPI, reduced-motion
+  // safe). Animations are cancelled on cleanup so they don't accumulate.
   useEffect(() => {
     const path = pathRef.current;
     const dot = dotRef.current;
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const anims: Animation[] = [];
 
     if (path && routeD) {
       const len = path.getTotalLength();
@@ -87,9 +79,12 @@ export function DispatchBoard() {
       if (reduce) {
         path.style.strokeDashoffset = "0";
       } else {
-        path.animate(
-          [{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
-          { duration: 620, easing: "cubic-bezier(.65,0,.35,1)", fill: "forwards" },
+        anims.push(
+          path.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], {
+            duration: 620,
+            easing: "cubic-bezier(.65,0,.35,1)",
+            fill: "forwards",
+          }),
         );
       }
     }
@@ -99,24 +94,28 @@ export function DispatchBoard() {
       if (reduce) {
         dot.style.setProperty("offset-distance", "100%");
       } else {
-        dot.animate(
-          [{ offsetDistance: "0%" }, { offsetDistance: "100%" }],
-          { duration: 1500, easing: "cubic-bezier(.5,0,.5,1)", fill: "forwards" },
+        anims.push(
+          dot.animate([{ offsetDistance: "0%" }, { offsetDistance: "100%" }], {
+            duration: 1500,
+            easing: "cubic-bezier(.5,0,.5,1)",
+            fill: "forwards",
+          }),
         );
       }
     }
     if (dot && !routeD) dot.style.opacity = "0";
+
+    return () => anims.forEach((a) => a.cancel());
   }, [routeD]);
 
   const instruction = !pickup
-    ? "Tap a town to set your pickup."
+    ? "Tap the map — or use the menus — to set your pickup."
     : !dropoff
-      ? "Now tap where it's going."
-      : stops.length < 2
-        ? "Add up to 2 more stops, or send your run."
+      ? "Now set where it's going."
+      : stops.length < MAX_STOPS
+        ? "Add a stop, or send your run."
         : "Looks good — send your run.";
 
-  // Prefill the request form from the built run.
   const sendHref = (() => {
     if (!pickup || !dropoff) return "/request";
     const via = stops.length ? ` via ${stops.map((s) => s.name).join(", ")}` : "";
@@ -127,6 +126,10 @@ export function DispatchBoard() {
     return `/request?${q.toString()}`;
   })();
 
+  const stopOptions = TOWNS.filter(
+    (t) => t !== pickup && t !== dropoff && !stops.includes(t),
+  );
+
   return (
     <div>
       <div className="ticket p-4 sm:p-5">
@@ -136,20 +139,20 @@ export function DispatchBoard() {
           </p>
           <button
             type="button"
-            onClick={reset}
+            onClick={() => setRun(EMPTY_RUN)}
             className="readout inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <RotateCcw className="h-3.5 w-3.5" /> Reset
           </button>
         </div>
 
+        {/* Decorative + pointer-enhancement map. The menus below are the
+            accessible, reliable input on every device. */}
         <svg viewBox="0 0 420 320" className="h-auto w-full" aria-hidden>
-          {/* Lake Erie edge */}
           <path d="M0 40 Q120 96 210 70 T420 20 L420 0 L0 0 Z" fill="var(--color-lake-tint)" />
           <path d="M0 40 Q120 96 210 70 T420 20" fill="none" stroke="var(--color-lake)" strokeWidth="1.5" strokeOpacity="0.55" />
           <text x="34" y="30" className="readout" fontSize="9" letterSpacing="3" fill="var(--color-lake)" opacity="0.8">LAKE ERIE</text>
 
-          {/* County body */}
           <path
             d="M40 96 Q150 60 250 92 T392 150 Q404 220 340 268 Q250 316 150 288 Q52 262 34 176 Q30 130 40 96 Z"
             fill="color-mix(in oklab, var(--color-grape) 7%, transparent)"
@@ -158,40 +161,26 @@ export function DispatchBoard() {
             strokeDasharray="2 5"
           />
 
-          {/* The run */}
-          <path ref={pathRef} d={routeD} fill="none" stroke="var(--color-accent)" strokeWidth="3" strokeLinecap="round" />
+          <path ref={pathRef} d={routeD} fill="none" stroke="var(--color-accent-hover)" strokeWidth="3.5" strokeLinecap="round" />
           <circle ref={dotRef} r="5" fill="var(--color-accent)" stroke="var(--color-surface)" strokeWidth="2" style={{ opacity: 0 }} />
 
-          {/* Towns — real, focusable controls */}
           {TOWNS.map((t) => {
             const role = roleOf(t);
             const active = role !== null;
             const color =
               role === "pickup" ? "var(--color-accent)" : role === "dropoff" ? "var(--color-grape)" : role === "stop" ? "var(--color-lake)" : "var(--color-grape)";
-            const badge = role === "pickup" ? "A" : role === "dropoff" ? "B" : null;
+            const badge = role === "pickup" ? "A" : role === "dropoff" ? "B" : role === "stop" ? "•" : null;
             return (
-              <g
-                key={t.name}
-                className="dispatch-node"
-                role="button"
-                tabIndex={0}
-                aria-label={`${t.name}${role ? ` — ${role}` : ""}. ${!pickup ? "Set as pickup" : !dropoff ? "Set as dropoff" : "Add as a stop"}`}
-                onClick={() => selectTown(t)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    selectTown(t);
-                  }
-                }}
-                style={{ cursor: "pointer" }}
-              >
+              <g key={t.name} className="dispatch-node" onClick={() => setRun((s) => tapTown(s, t))} style={{ cursor: "pointer" }}>
+                {/* Enlarged transparent hit area for pointer/touch */}
+                <circle cx={t.x} cy={t.y} r="16" fill="transparent" />
                 {active && <circle cx={t.x} cy={t.y} r="11" fill={color} opacity="0.16" />}
                 {t.base ? (
                   <path d={star(t.x, t.y, 6.5, 3)} fill="var(--color-accent)" stroke="var(--color-surface)" strokeWidth="1" />
                 ) : (
                   <circle cx={t.x} cy={t.y} r={active ? 5.5 : 4} fill={color} stroke="var(--color-surface)" strokeWidth="1.5" />
                 )}
-                {badge && (
+                {badge && badge !== "•" && (
                   <text x={t.x} y={t.y - 12} textAnchor="middle" className="readout" fontSize="10" fontWeight="700" fill={color}>
                     {badge}
                   </text>
@@ -204,7 +193,11 @@ export function DispatchBoard() {
                   fontSize="12"
                   fontWeight={active ? 700 : 500}
                   fill="var(--color-foreground)"
-                  fillOpacity={active ? 1 : 0.7}
+                  fillOpacity={active ? 1 : 0.72}
+                  paintOrder="stroke"
+                  stroke="var(--color-surface)"
+                  strokeWidth="3"
+                  strokeLinejoin="round"
                 >
                   {t.name}
                 </text>
@@ -217,18 +210,14 @@ export function DispatchBoard() {
           {instruction}
         </p>
 
-        {/* No-pointer / keyboard fallback — the accessible core */}
+        {/* The accessible, reliable controls */}
         <div className="mt-3 grid grid-cols-2 gap-2">
           <label className="block">
             <span className="readout mb-1 block text-[0.7rem] text-muted-foreground">Pick up in</span>
             <select
-              className="min-h-11 w-full rounded-md border border-border bg-background px-2.5 text-sm focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className={selectCls}
               value={pickup?.name ?? ""}
-              onChange={(e) => {
-                const t = townByName(e.target.value);
-                setPickup(t);
-                if (t && dropoff === t) setDropoff(null);
-              }}
+              onChange={(e) => setRun((s) => setPickup(s, townByName(e.target.value)))}
             >
               <option value="">Choose a town…</option>
               {TOWNS.map((t) => (
@@ -239,9 +228,9 @@ export function DispatchBoard() {
           <label className="block">
             <span className="readout mb-1 block text-[0.7rem] text-muted-foreground">Drop off in</span>
             <select
-              className="min-h-11 w-full rounded-md border border-border bg-background px-2.5 text-sm focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className={selectCls}
               value={dropoff?.name ?? ""}
-              onChange={(e) => setDropoff(townByName(e.target.value))}
+              onChange={(e) => setRun((s) => setDropoff(s, townByName(e.target.value)))}
             >
               <option value="">Choose a town…</option>
               {TOWNS.filter((t) => t !== pickup).map((t) => (
@@ -250,6 +239,45 @@ export function DispatchBoard() {
             </select>
           </label>
         </div>
+
+        {/* Add-a-stop control — keyboard/screen-reader path to multi-stop runs */}
+        {pickup && dropoff && (
+          <div className="mt-3">
+            <div className="flex flex-wrap items-center gap-2">
+              {stops.map((s) => (
+                <span key={s.name} className="readout inline-flex items-center gap-1 rounded-md bg-lake-tint px-2 py-1 text-xs text-lake">
+                  {s.name}
+                  <button
+                    type="button"
+                    aria-label={`Remove stop ${s.name}`}
+                    onClick={() => setRun((st) => removeStop(st, s))}
+                    className="rounded hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+              {stops.length < MAX_STOPS && stopOptions.length > 0 && (
+                <label className="inline-flex items-center gap-2">
+                  <span className="sr-only">Add a stop</span>
+                  <select
+                    className="min-h-9 rounded-md border border-dashed border-border-strong bg-transparent px-2 text-xs text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    value=""
+                    onChange={(e) => {
+                      const t = townByName(e.target.value);
+                      if (t) setRun((s) => addStop(s, t));
+                    }}
+                  >
+                    <option value="">+ Add a stop</option>
+                    {stopOptions.map((t) => (
+                      <option key={t.name} value={t.name}>{t.name}</option>
+                    ))}
+                  </select>
+                </label>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* The manifest — assembles once a run is set. key replays the settle. */}

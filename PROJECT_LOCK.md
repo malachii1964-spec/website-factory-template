@@ -91,8 +91,16 @@ dropoff (+ up to 2 stops) -> route draws (WAAPI, reduced-motion safe) -> manifes
 ticket assembles the 4-part ballpark -> "Send this run" prefills /request. Nodes
 are focusable buttons + a two-select fallback (a11y core). Ballpark rates in
 src/lib/estimate.ts are PLACEHOLDERS (labeled) — pricing-strategist to finalize.
-Gates green (tsc, lint, 28 tests, build); verified in browser light+dark.
-reviewer + design-critic dispatched.
+Gates green (tsc, lint, 36 tests, build); verified in browser light+dark+mobile.
+reviewer (was BLOCK) + design-critic (was FIX-THEN-SHIP) findings ALL fixed:
+- Pointer-only map nodes (no focusable controls inside aria-hidden SVG); the two
+  selects + an accessible "+ Add a stop" control are the reliable input incl. a
+  keyboard/SR path to multi-stop runs.
+- Selection invariants extracted to pure src/lib/run-select.ts (+8 tests): pickup
+  can't equal dropoff; promoting a stop to an endpoint removes it; stops capped at 2.
+- estimate.ts parts rounded so line items reconcile with the shown ballpark.
+- Route stroke → accent-hover (WCAG 3:1 on paper); label halos + nudged town
+  coords fix crowding; 44px-ish transparent hit-slop on nodes; WAAPI cleanup.
 
 ## Session log (newest first)
 - 2026-07-25: Locked name (Chautauqua County Courier). Ran brand-strategist →

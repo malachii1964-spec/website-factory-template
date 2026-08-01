@@ -32,16 +32,14 @@ export function routeMiles(points: Town[]): number {
 export function estimateRun(pickup: Town, dropoff: Town, stops: Town[] = []): Estimate {
   const miles = routeMiles([pickup, ...stops, dropoff]);
   const minutes = Math.round(10 + miles * 1.2 + stops.length * 8);
-  const mileage = miles * RATES.perMile;
-  const time = minutes * RATES.perMinute;
-  const stopsCost = stops.length * RATES.perStop;
-  const subtotal = RATES.dispatchMin + mileage + time + stopsCost;
+  // Round each displayed part so the line items always sum to the shown total.
   const parts: EstPart[] = [
     { label: "Dispatch minimum", amount: RATES.dispatchMin },
-    { label: `Route mileage · ~${Math.round(miles)} mi`, amount: mileage },
-    { label: `Service time · ~${minutes} min`, amount: time },
-    { label: `Extra stops · ${stops.length}`, amount: stopsCost },
+    { label: `Route mileage · ~${Math.round(miles)} mi`, amount: Math.round(miles * RATES.perMile) },
+    { label: `Service time · ~${minutes} min`, amount: Math.round(minutes * RATES.perMinute) },
+    { label: `Extra stops · ${stops.length}`, amount: stops.length * RATES.perStop },
   ];
+  const subtotal = parts.reduce((sum, p) => sum + p.amount, 0);
   return {
     miles,
     minutes,

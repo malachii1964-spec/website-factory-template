@@ -9,12 +9,12 @@ export const TOWNS: Town[] = [
   { name: "Dunkirk", x: 150, y: 66 },
   { name: "Fredonia", x: 186, y: 92 },
   { name: "Westfield", x: 78, y: 150, base: true },
-  { name: "Sinclairville", x: 244, y: 120 },
+  { name: "Sinclairville", x: 240, y: 118 },
   { name: "Mayville", x: 176, y: 166 },
-  { name: "Cassadaga", x: 300, y: 128 },
-  { name: "Bemus Point", x: 262, y: 196 },
-  { name: "Falconer", x: 356, y: 210 },
-  { name: "Jamestown", x: 330, y: 250 },
+  { name: "Cassadaga", x: 300, y: 146 },
+  { name: "Bemus Point", x: 254, y: 192 },
+  { name: "Falconer", x: 362, y: 222 },
+  { name: "Jamestown", x: 330, y: 252 },
 ];
 
 export function townByName(name?: string | null): Town | null {

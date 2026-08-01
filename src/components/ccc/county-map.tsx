@@ -70,8 +70,8 @@ export function CountyMap({ className }: { className?: string }) {
         pathLength={1}
         className="route-line"
         fill="none"
-        stroke="var(--color-accent)"
-        strokeWidth="3"
+        stroke="var(--color-accent-hover)"
+        strokeWidth="3.5"
         strokeLinecap="round"
       />
 

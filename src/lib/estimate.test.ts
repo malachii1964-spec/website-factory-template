@@ -26,6 +26,14 @@ describe("estimateRun", () => {
     const withStop = estimateRun(westfield, jamestown, [mayville]).subtotal;
     expect(withStop).toBeGreaterThan(direct);
   });
+
+  it("line items reconcile with the shown subtotal and range", () => {
+    const e = estimateRun(westfield, jamestown, [mayville]);
+    const summed = e.parts.reduce((a, p) => a + p.amount, 0);
+    expect(summed).toBe(e.subtotal);
+    expect(e.low).toBeLessThanOrEqual(e.subtotal);
+    expect(e.subtotal).toBeLessThanOrEqual(e.high);
+  });
 });
 
 describe("routeMiles", () => {
