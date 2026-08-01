@@ -71,6 +71,23 @@ hierarchy) → brand-critic review → then collect interview answers 2–8 → 
 - PLACEHOLDERS in code: site.phoneDigits (716-555-0176, fake), hours. Swap before
   launch. Quote intake is currently tap-to-call/text only (no form/API yet).
 
+## Signature experience — "The Dispatch Board" (blueprint approved by creative-technologist)
+Flagship hero concept: the county map becomes an OPERABLE surface. User taps
+pickup + dropoff → route draws along the real corridor → courier-dot runs it → a
+manifest ticket assembles CCC's 4-part ballpark (dispatch min + mileage + time +
+stops) → "Send this run" serializes to /request (prefilled). Differentiator made
+physical: pins MAGNETIZE only to the 9 real towns (can't dispatch into a void =
+"we know this county"). Honest ballpark, never a fake instant price (truth gate).
+Tech: SVG + CSS + thin JS (WAAPI), NOT WebGL — right for rural-senior audience +
+perf budget. Progressive enhancement: Tier0 static SSR SVG (LCP) → Tier1 operable
+board + keyboard + dropdown fallback → Tier2 ambient (time-of-day tint, optional
+snow, gated off on reduced-motion/save-data). Call button present at every tier.
+FIRST BUILD: refactor county-map.tsx nodes → focusable buttons; add pick-up/drop-off
+control (click-two-nodes + 2-select fallback) that redraws route + stamps a 4-part
+ballpark into a .ticket manifest; "Send this run" → /request. Needs a small pairwise
+road-miles model (node distance × ~1.3 × per-mile rate, labeled BALLPARK).
+STATUS: awaiting owner GO to build the first piece.
+
 ## Session log (newest first)
 - 2026-07-25: Locked name (Chautauqua County Courier). Ran brand-strategist →
   brand-critic → wrote BRAND.md with fixes. Dispatched compliance-advisor on the
