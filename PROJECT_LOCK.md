@@ -36,8 +36,9 @@ better on every variable. Owner: Malachi.
    route distance, time per job. pricing-strategist is blocked until these exist.
 
 ## RISKS / must-verify (truth+evidence hard gate)
-- Name is UNCLEARED: domain availability, NY entity search, and USPTO trademark
-  must be checked by owner/lawyer before printing anything. Not done.
+- Domain: SECURED ✅ chautauquacountycourier.com (owner bought it 2026-07-29).
+- Still open: NY entity search + LLC/DBA, and USPTO trademark — owner/lawyer,
+  before heavy brand spend. Not blocking a soft launch on the owned domain.
 - NY delivery legality: cannabis/alcohol/tobacco/Rx are restricted — compliance
   advisor must shape the "what we can/can't carry" copy before launch claims.
 - Insurance/licensing (commercial auto, liability) unconfirmed — owner + insurer.

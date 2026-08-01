@@ -103,7 +103,6 @@ One uniform heavy stroke; solid single color; fully reversible; no gradients/bev
   state the date or reason as fact until sourced.
 
 ## Clear-before-you-print (owner's job — I cannot do these)
-- Buy `chautauquacountycourier.com` + a plain-English, voice-friendly fallback
-  before printing any URL.
+- [DONE 2026-07-29] Domain secured: chautauquacountycourier.com.
 - NYS entity search + file the LLC + a DBA for "CCC"/"Triple-C".
 - USPTO trademark search in courier/delivery classes before building goodwill.
