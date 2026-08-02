@@ -3,7 +3,9 @@
 > end. This is the single source of truth for what's decided, what's open, and
 > what happens next. If it's not written here, it isn't remembered.
 
-Last updated: 2026-07-25
+Last updated: 2026-07-29 — LAUNCH: owner set the Vercel project's production
+branch to the courier branch; this commit triggers the production deploy to
+website-factory-template-bbhg.vercel.app.
 
 ## The mission (one line)
 Launch a countywide on-demand delivery / errands / courier / concierge service in
