@@ -2,13 +2,18 @@
 # Quality gate — Stop hook. This is the "physics" layer of the Website Factory:
 # CLAUDE.md Rule 3 is guidance the agent can talk itself out of; this script is not.
 #
+# Checks the root project AND every independent site under sites/*/ (each has
+# its own package.json, node_modules, and tsconfig — they are siblings, not
+# part of the root app's source tree; see root tsconfig.json/eslint.config.mjs
+# excludes for the other half of that boundary).
+#
 # Exit codes:
-#   0 = gates pass (or genuinely not applicable) -> Claude may stop
-#   2 = gates fail -> the stop is BLOCKED and stderr is fed back to Claude to fix
+#   0 = gates pass everywhere (or genuinely not applicable) -> Claude may stop
+#   2 = a gate failed somewhere -> the stop is BLOCKED and stderr is fed back
 #
 # Loop guard: if this hook already blocked once this turn (stop_hook_active) and
-# the gates are STILL failing, we let Claude stop rather than trapping it forever
-# on something it cannot fix (broken toolchain, no network). The failure is still
+# gates are STILL failing, we let Claude stop rather than trapping it forever on
+# something it cannot fix (broken toolchain, no network). The failure is still
 # printed, and Claude is told to report it honestly instead of claiming success.
 
 set -uo pipefail
@@ -27,69 +32,46 @@ else
   esac
 fi
 
-# Not a JS/TS project yet (docs-only change, fresh template before scaffolding).
-[ -f package.json ] || exit 0
-
-if [ -f pnpm-lock.yaml ]; then
-  PM=pnpm
-elif [ -f yarn.lock ]; then
-  PM=yarn
-else
-  PM=npm
-fi
-
-if [ ! -d node_modules ]; then
-  [ "$ALREADY_BLOCKED" = "true" ] && exit 0
-  {
-    echo "QUALITY GATE: dependencies are not installed, so no gate could run."
-    echo "Run '$PM install', then satisfy CLAUDE.md Rule 3 before finishing."
-  } >&2
-  exit 2
-fi
-
 FAILED=""
 DETAIL=""
+NEEDS_INSTALL=""
 
-# gate <name> <command...>
+# gate <dir> <label> <name> <command...>
+# NOTE: runs the command via `cd "$dir" &&` INSIDE the command substitution
+# (which forks its own subshell only for output capture) so that FAILED/DETAIL
+# assignments below happen in this function's own (non-subshell) scope and are
+# visible to the caller. Do not wrap the whole gate() call in `( ... )`.
 gate() {
-  local name="$1"; shift
+  local dir="$1" label="$2" name="$3"; shift 3
   local out
-  if ! out="$("$@" 2>&1)"; then
-    FAILED="${FAILED}${name} "
+  if ! out="$(cd "$dir" && "$@" 2>&1)"; then
+    FAILED="${FAILED}${label}:${name} "
     DETAIL="${DETAIL}
------ ${name} FAILED -----
+----- ${label} / ${name} FAILED -----
 $(printf '%s' "$out" | tail -n 60)
 "
   fi
 }
 
-has_script() { # has_script <name>
-  node -e "process.exit(require('./package.json').scripts?.['$1'] ? 0 : 1)" 2>/dev/null
+has_script() { # has_script <package.json path> <script name>
+  node -e "process.exit(require('$1').scripts?.['$2'] ? 0 : 1)" 2>/dev/null
 }
 
-gate "typecheck" npx --no-install tsc --noEmit
-has_script lint && gate "lint" "$PM" run lint
-has_script test && gate "tests" "$PM" run test
+# run_project_gates <dir> <label>
+run_project_gates() {
+  local dir="$1" label="$2"
+  [ -f "$dir/package.json" ] || return 0
 
-# `next build` is also a Rule 3 gate, but it is too slow to run on every stop.
-# CI (.github/workflows/quality-gates.yml) runs it on every push instead.
+  local pm=npm
+  [ -f "$dir/pnpm-lock.yaml" ] && pm=pnpm
+  [ -f "$dir/yarn.lock" ] && pm=yarn
 
-if [ -n "$FAILED" ]; then
-  if [ "$ALREADY_BLOCKED" = "true" ]; then
-    {
-      echo "QUALITY GATE still failing: ${FAILED}"
-      echo "Not blocking again. Report this failure to the user honestly — do not claim the work is done."
-      echo "$DETAIL"
-    } >&2
-    exit 0
+  if [ ! -d "$dir/node_modules" ]; then
+    NEEDS_INSTALL="${NEEDS_INSTALL}${label} (run '${pm} install' in ${dir}) "
+    return 0
   fi
-  {
-    echo "QUALITY GATE FAILED: ${FAILED}"
-    echo "CLAUDE.md Rule 3: a feature is not done until typecheck, lint, build and tests pass."
-    echo "Fix these now. Do not skip, delete, or weaken tests to get past this gate."
-    echo "$DETAIL"
-  } >&2
-  exit 2
-fi
 
-exit 0
+  gate "$dir" "$label" "typecheck" npx --no-install tsc --noEmit
+  has_script "$dir/package.json" "lint" && gate "$dir" "$label" "lint" "$pm" run lint
+  has_script "$dir/package.json" "test" && gate "$dir" "$label" "tests" "$pm" run test
+}

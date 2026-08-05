@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // sites/* are independent projects with their own package.json,
+    // tsconfig, and lint config — not part of this app's source tree.
+    "sites/**",
   ]),
 ]);
 
