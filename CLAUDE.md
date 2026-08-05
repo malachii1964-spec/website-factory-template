@@ -115,6 +115,16 @@ At the end of every working session:
   .claude/agents/{reviewer,design-critic}.md, .github/workflows/quality-gates.yml.
   Previously the README described all of these but none had been written, so
   Rules 3/5/6 were unenforced. Gate paths verified by seeding a real type error.
+  Root tsconfig.json/eslint.config.mjs now exclude sites/** — the factory
+  can host multiple independent site projects under sites/*/ (own
+  package.json, tsconfig, gates), and without the exclude the root's tsc/
+  eslint tried to typecheck/lint them against the root's own @/* alias.
+  quality-gate.sh now runs gates for the root project AND every sites/*
+  project independently.
+- First site built with the factory: sites/timmermans-farm-market/ (local-
+  business template, real family fruit stand in Westfield NY, off-repo from
+  FutureDeskAI on purpose). See that directory for its own state/decisions —
+  not duplicated here since it's an unrelated business from FutureDeskAI.
 ### Decisions made (do not relitigate)
 - Full Next.js rebuild (not de-Manus in place). Dark is the DEFAULT theme.
 - Single source of truth for pricing (src/lib/pricing.ts) derives Stripe
