@@ -110,6 +110,11 @@ At the end of every working session:
   signature. Owner = Malachi.
 - Mission (per owner): positioning as an "AI learning center for every level";
   50% of every sale pledged to St. Jude — surface prominently & honestly.
+- Factory enforcement layer now exists (branch claude/website-factory-analysis-arlf9d):
+  .claude/settings.json, .claude/hooks/quality-gate.sh (Stop hook, exit 2),
+  .claude/agents/{reviewer,design-critic}.md, .github/workflows/quality-gates.yml.
+  Previously the README described all of these but none had been written, so
+  Rules 3/5/6 were unenforced. Gate paths verified by seeding a real type error.
 ### Decisions made (do not relitigate)
 - Full Next.js rebuild (not de-Manus in place). Dark is the DEFAULT theme.
 - Single source of truth for pricing (src/lib/pricing.ts) derives Stripe
@@ -120,6 +125,11 @@ At the end of every working session:
 - St. Jude: state the 50% pledge in brand's own words; do NOT use St. Jude
   logo/branding as an official partnership claim.
 ### Known issues / TODO
+- The gates run typecheck/lint/test on stop; `next build` runs only in CI.
+  Browser verification (Rule 3.5) and the design review (Rule 6) still depend
+  on the agent choosing to do them — no hook can enforce those.
+- Prettier is not a dependency here, so format-on-write is currently a no-op.
+  Add it if the owner wants formatting enforced.
 - Logo files needed as real uploads (currently CSS wordmark placeholder).
 - DONE (Stage 2a/2b): HMAC signed secure downloads (/api/download), Stripe
   fulfillment webhook (/api/stripe/webhook) emailing signed link via Resend,
