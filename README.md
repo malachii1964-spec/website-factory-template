@@ -7,9 +7,10 @@ gates the AI physically cannot skip.
 | File | Job |
 |---|---|
 | `CLAUDE.md` | The standing brain: interview rules, stack + service menu, workflow, project log |
-| `.claude/settings.json` | Hooks: auto-format every file on write; quality gate on every stop |
+| `.claude/settings.json` | Hooks (format on write, quality gate on stop) + an allowlist for routine commands |
 | `.claude/hooks/quality-gate.sh` | The enforcer — typecheck, lint, tests must pass or Claude is forced to keep fixing (exit code 2) |
 | `.claude/agents/reviewer.md` | Fresh-eyes adversarial reviewer subagent, dispatched after every feature |
+| `.claude/agents/design-critic.md` | Screenshots the page at 375px and 1440px, then scores it against `design.md` |
 | `.github/workflows/quality-gates.yml` | Re-runs all gates on GitHub's servers — the validator outside the AI |
 | `design.md` | Your taste, written once, inherited by every site |
 | `.env.example` | Where service keys go (Neon/Supabase, Resend, Stripe, Anthropic) |
@@ -33,8 +34,20 @@ gates the AI physically cannot skip.
 - The Stop hook is physics it can't ignore: when Claude tries to finish, the gate
   script runs typecheck + lint + tests. Any failure exits with code 2, which blocks
   the stop and feeds the errors back — Claude must fix them to finish. A loop guard
-  (`stop_hook_active`) prevents infinite retries on genuinely stuck errors.
-- GitHub Actions re-runs everything on push, outside the AI entirely.
+  (`stop_hook_active`) prevents infinite retries on genuinely stuck errors: on the
+  second consecutive failure it stops blocking and tells Claude to report the
+  failure honestly instead of claiming success.
+- `next build` is deliberately **not** in the Stop hook — it's too slow to run every
+  time Claude finishes a thought. CI runs it instead, so it is still a hard gate.
+- GitHub Actions re-runs all four gates on every push, outside the AI entirely.
 
 Three layers: guidance → local enforcement → external verification.
 That's the honest meaning of "foolproof."
+
+### Honest limits
+- The format-on-write hook runs Prettier only if the project has it installed
+  (`node_modules/.bin/prettier`). No Prettier, no formatting — it never fails a write.
+- The Stop hook fires when Claude finishes a turn, not on every file save.
+- Rule 3's browser check and Rule 6's design review need Claude to actually dispatch
+  them. Those are guidance, not physics — CI can't verify that a human-facing page
+  looks right.

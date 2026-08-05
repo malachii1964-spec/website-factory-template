@@ -1,0 +1,52 @@
+name: Quality Gates
+
+# The verification layer outside the AI. The Stop hook can be bypassed by a
+# stuck loop guard or a skipped session; this cannot. Every gate in CLAUDE.md
+# Rule 3 runs here on GitHub's servers, including the `next build` that is too
+# slow to run on every local stop.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Each gate runs even if an earlier one failed, so one push surfaces
+      # every problem instead of one per round trip.
+      - name: Gate 1 — typecheck
+        if: '!cancelled()'
+        run: pnpm exec tsc --noEmit
+
+      - name: Gate 2 — lint
+        if: '!cancelled()'
+        run: pnpm run lint
+
+      - name: Gate 3 — build
+        if: '!cancelled()'
+        run: pnpm run build
+
+      - name: Gate 4 — tests
+        if: '!cancelled()'
+        run: pnpm run test
