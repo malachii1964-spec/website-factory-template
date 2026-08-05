@@ -17,7 +17,6 @@
 @theme inline {
   --font-display: var(--font-fraunces);
   --font-body: var(--font-work-sans);
-  --font-marker: var(--font-caveat);
 
   --color-paper: #fbf3e6;
   --color-paper-deep: #f3e4cc;
@@ -32,58 +31,77 @@
   --color-cream-line: #e3d2ab;
 }
 
-* {
-  border-color: var(--color-cream-line);
-}
+/*
+  Element defaults live in @layer base (not left unlayered) so Tailwind
+  utility classes — which Tailwind itself emits into @layer utilities — can
+  reliably override them. An unlayered rule beats every layered rule
+  regardless of source order or specificity, which previously made
+  `text-paper` on hero <h1>s lose to this file's default espresso color.
+*/
+@layer base {
+  * {
+    border-color: var(--color-cream-line);
+  }
 
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: smooth;
   }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-espresso);
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    color: var(--color-espresso);
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: var(--color-peach);
+    color: var(--color-espresso);
+  }
+
+  /* Visible keyboard focus everywhere — no exceptions. */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 3px solid var(--color-barn);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }
 
-body {
-  background: var(--color-paper);
-  color: var(--color-espresso);
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-}
-
-h1, h2, h3, h4 {
-  font-family: var(--font-display), ui-serif, Georgia, serif;
-  color: var(--color-espresso);
-  letter-spacing: -0.01em;
-}
-
-::selection {
-  background: var(--color-peach);
-  color: var(--color-espresso);
-}
-
-/* Visible keyboard focus everywhere — no exceptions. */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-[tabindex]:focus-visible {
-  outline: 3px solid var(--color-barn);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
+/*
+  Hand-marker accent, done with the site's own display face (italic Fraunces,
+  a slight rotation) instead of a third font family — echoes the stand's
+  hand-lettered signage without breaking the 2-family font budget. Color is
+  set by whatever text-* utility is applied alongside this class (every
+  current usage pairs it with text-barn) rather than hardcoded here, so it
+  doesn't shadow Tailwind's utility with an unlayered rule.
+*/
 .marker-tag {
-  font-family: var(--font-marker), cursive;
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
   transform: rotate(-2deg);
   display: inline-block;
 }

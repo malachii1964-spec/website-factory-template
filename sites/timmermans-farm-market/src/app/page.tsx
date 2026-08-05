@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Award, MapPin, Phone } from "lucide-react";
 import { business, hoursDisplay, seasonDisplay } from "@/lib/business";
 import { OpenNowBadge } from "@/components/site/open-now-badge";
+import { getStandStatus } from "@/lib/hours";
 
 const SEASON_PREVIEW = [
   { src: "/images/product-peaches-1.jpg", alt: "Baskets of ripe peaches at the stand" },
@@ -20,6 +21,8 @@ const REVIEWS = [
 ] as const;
 
 export default function HomePage() {
+  const status = getStandStatus(new Date());
+
   return (
     <>
       {/* Hero */}
@@ -33,11 +36,11 @@ export default function HomePage() {
           className="object-cover"
         />
         <div
-          className="absolute inset-0 bg-gradient-to-t from-espresso via-espresso/55 to-espresso/10"
+          className="absolute inset-0 bg-gradient-to-t from-espresso via-espresso/70 to-espresso/25"
           aria-hidden="true"
         />
         <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-12 pt-32 sm:px-6 sm:pb-16">
-          <OpenNowBadge className="mb-5 bg-paper/95" />
+          <OpenNowBadge status={status} className="mb-5 bg-paper/95" />
           <h1 className="max-w-2xl font-display text-4xl font-semibold italic leading-[1.05] text-paper sm:text-6xl">
             Still family-run.
             <br />

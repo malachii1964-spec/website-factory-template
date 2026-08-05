@@ -56,7 +56,7 @@ export function ContactForm() {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 h-12 w-full rounded-md border border-cream-line bg-paper px-4 text-sm text-espresso outline-none placeholder:text-espresso-soft/50 focus-visible:border-barn"
+          className="mt-1 h-12 w-full rounded-md border border-cream-line bg-paper px-4 text-sm text-espresso placeholder:text-espresso-soft/50"
         />
       </div>
       <div>
@@ -70,7 +70,7 @@ export function ContactForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@email.com"
-          className="mt-1 h-12 w-full rounded-md border border-cream-line bg-paper px-4 text-sm text-espresso outline-none placeholder:text-espresso-soft/50 focus-visible:border-barn"
+          className="mt-1 h-12 w-full rounded-md border border-cream-line bg-paper px-4 text-sm text-espresso placeholder:text-espresso-soft/50"
         />
       </div>
       <div>
@@ -83,7 +83,7 @@ export function ContactForm() {
           rows={5}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="mt-1 w-full rounded-md border border-cream-line bg-paper px-4 py-3 text-sm text-espresso outline-none placeholder:text-espresso-soft/50 focus-visible:border-barn"
+          className="mt-1 w-full rounded-md border border-cream-line bg-paper px-4 py-3 text-sm text-espresso placeholder:text-espresso-soft/50"
         />
       </div>
       <button

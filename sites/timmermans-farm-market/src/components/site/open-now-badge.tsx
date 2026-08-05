@@ -1,54 +1,12 @@
-"use client";
-
-import { useSyncExternalStore } from "react";
-import { getStandStatus, type StandStatus } from "@/lib/hours";
+import type { StandStatus } from "@/lib/hours";
 import { cn } from "@/lib/utils";
 
-function subscribe(callback: () => void) {
-  const id = setInterval(callback, 60_000);
-  return () => clearInterval(id);
-}
-
-// useSyncExternalStore requires getSnapshot to return a stable (===) value
-// when nothing has actually changed, or React re-renders forever. Cache by
-// minute so repeated calls within the same minute return the same object.
-let cachedMinuteKey = "";
-let cachedSnapshot: StandStatus | null = null;
-
-function getSnapshot(): StandStatus {
-  const now = new Date();
-  const minuteKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}`;
-  if (minuteKey !== cachedMinuteKey || !cachedSnapshot) {
-    cachedMinuteKey = minuteKey;
-    cachedSnapshot = getStandStatus(now);
-  }
-  return cachedSnapshot;
-}
-
-function getServerSnapshot(): StandStatus | null {
-  // Server has no notion of the visitor's local clock — resolved on mount.
-  return null;
-}
-
-export function OpenNowBadge({ className }: { className?: string }) {
-  const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-
-  if (!state) {
-    return (
-      <span
-        className={cn(
-          "inline-flex items-center gap-2 rounded-full border border-cream-line bg-paper px-3 py-1 text-sm font-medium text-espresso-soft",
-          className,
-        )}
-        aria-hidden="true"
-      >
-        <span className="h-2 w-2 rounded-full bg-cream-line" />
-        Checking hours…
-      </span>
-    );
-  }
-
-  if (state.status === "open") {
+// Purely presentational — status is computed server-side (see lib/hours.ts)
+// and passed in as a prop, so this component ships zero client JS. The page
+// it's rendered on sets `export const revalidate = 60` so the status stays
+// within a minute of accurate without any client-side polling.
+export function OpenNowBadge({ status, className }: { status: StandStatus; className?: string }) {
+  if (status.status === "open") {
     return (
       <span
         className={cn(
@@ -57,12 +15,12 @@ export function OpenNowBadge({ className }: { className?: string }) {
         )}
       >
         <span className="h-2 w-2 rounded-full bg-crate" />
-        Open now &middot; closes {state.closesAt}
+        Open now &middot; closes {status.closesAt}
       </span>
     );
   }
 
-  if (state.status === "closed-today") {
+  if (status.status === "closed-today") {
     return (
       <span
         className={cn(
@@ -71,12 +29,12 @@ export function OpenNowBadge({ className }: { className?: string }) {
         )}
       >
         <span className="h-2 w-2 rounded-full bg-barn" />
-        Closed now &middot; opens {state.opensAt}
+        Closed now &middot; opens {status.opensAt}
       </span>
     );
   }
 
-  if (state.status === "closed-all-day") {
+  if (status.status === "closed-all-day") {
     return (
       <span
         className={cn(
@@ -85,7 +43,7 @@ export function OpenNowBadge({ className }: { className?: string }) {
         )}
       >
         <span className="h-2 w-2 rounded-full bg-barn" />
-        Closed today &middot; opens {state.opensAt}
+        Closed today &middot; opens {status.opensAt}
       </span>
     );
   }
@@ -98,7 +56,7 @@ export function OpenNowBadge({ className }: { className?: string }) {
       )}
     >
       <span className="h-2 w-2 rounded-full bg-espresso-soft" />
-      Closed for the season &middot; back in {state.opensInMonth}
+      Closed for the season &middot; back in {status.opensInMonth}
     </span>
   );
 }

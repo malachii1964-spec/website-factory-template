@@ -14,9 +14,9 @@ type Item = { src: string; alt: string; name: string };
 
 const FRUIT: Item[] = [
   { src: "/images/product-peaches-1.jpg", name: "Peaches", alt: "Baskets of ripe peaches" },
-  { src: "/images/product-peaches-2.jpg", name: "Plums & Nectarines", alt: "Baskets of plums and nectarines" },
+  { src: "/images/product-plums.jpg", name: "Plums & Nectarines", alt: "Baskets of dark plums and red nectarines" },
   { src: "/images/product-strawberries-1.jpg", name: "Strawberries", alt: "Quart baskets of strawberries" },
-  { src: "/images/product-strawberries-2.jpg", name: "Blueberries", alt: "Boxes of fresh blueberries" },
+  { src: "/images/product-blueberries.jpg", name: "Blueberries", alt: "Boxes of fresh blueberries" },
   { src: "/images/product-apples-1.jpg", name: "Apples", alt: "Boxes of apples" },
   { src: "/images/product-apples-varieties.jpg", name: "Apple Varieties", alt: "Several labeled New York apple varieties" },
   { src: "/images/product-apples-fall.jpg", name: "Fall Apples", alt: "Bagged apples at the stand in autumn" },
@@ -27,7 +27,7 @@ const FRUIT: Item[] = [
 const VEGETABLES: Item[] = [
   { src: "/images/product-sweetcorn.jpg", name: "Sweet Corn", alt: "Bushels of sweet corn, husks on" },
   { src: "/images/product-tomatoes-1.jpg", name: "Tomatoes", alt: "Boxes of ripe tomatoes" },
-  { src: "/images/product-tomatoes-2.jpg", name: "Peppers & Onions", alt: "Baskets of peppers and red onions" },
+  { src: "/images/product-peppers.jpg", name: "Peppers", alt: "Baskets of orange, red, and green peppers" },
   { src: "/images/product-onions.jpg", name: "Onions & Garlic", alt: "Baskets of onions and garlic" },
   { src: "/images/product-asparagus.jpg", name: "Asparagus", alt: "Bundles of fresh asparagus" },
   { src: "/images/product-rhubarb.jpg", name: "Rhubarb", alt: "Bundles of rhubarb" },

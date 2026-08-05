@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { fraunces, workSans, caveat } from "@/lib/fonts";
+import { fraunces, workSans } from "@/lib/fonts";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { LocalBusinessJsonLd } from "@/components/site/local-business-jsonld";
 import { business, hoursDisplay, seasonDisplay } from "@/lib/business";
+import { getStandStatus } from "@/lib/hours";
 import "./globals.css";
+
+// The "open now" badge is computed server-side (see lib/hours.ts) rather
+// than polled client-side, so every page regenerates at most once a minute
+// to keep it from drifting stale while still serving from cache the rest
+// of the time.
+export const revalidate = 60;
 
 const shortDescription = `Family-run fruit stand on Route 20 in Westfield, NY. Open ${hoursDisplay}, ${seasonDisplay}.`;
 
@@ -24,8 +31,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const status = getStandStatus(new Date());
+
   return (
-    <html lang="en" className={`${fraunces.variable} ${workSans.variable} ${caveat.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${workSans.variable}`}>
       <body className="flex min-h-screen flex-col">
         <LocalBusinessJsonLd />
         <a
@@ -34,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <Header />
+        <Header status={status} />
         <main id="main" className="flex-1">
           {children}
         </main>

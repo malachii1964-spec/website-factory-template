@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { MapPin, Phone } from "lucide-react";
 import { business, hours, hoursDisplay, seasonDisplay } from "@/lib/business";
 import { OpenNowBadge } from "@/components/site/open-now-badge";
+import { getStandStatus } from "@/lib/hours";
 
 export const metadata: Metadata = {
   title: "Visit Us",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 const DAY_LABELS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function VisitPage() {
+  const status = getStandStatus(new Date());
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(business.mapsQuery)}&output=embed`;
   const directionsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.mapsQuery)}`;
 
@@ -20,7 +22,7 @@ export default function VisitPage() {
       <h1 className="mt-1 font-display text-4xl font-semibold italic text-espresso sm:text-5xl">
         Right on Route 20
       </h1>
-      <OpenNowBadge className="mt-5" />
+      <OpenNowBadge status={status} className="mt-5" />
 
       <div className="mt-10 grid gap-10 md:grid-cols-5">
         <div className="md:col-span-2">
@@ -85,6 +87,14 @@ export default function VisitPage() {
               referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
+          <a
+            href={directionsHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-barn-deep hover:underline"
+          >
+            Open in Google Maps
+          </a>
         </div>
       </div>
 

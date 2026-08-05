@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Menu, Phone, X } from "lucide-react";
 import { business } from "@/lib/business";
 import { OpenNowBadge } from "@/components/site/open-now-badge";
+import type { StandStatus } from "@/lib/hours";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -14,7 +15,7 @@ const NAV = [
   { href: "/contact", label: "Contact" },
 ] as const;
 
-export function Header() {
+export function Header({ status }: { status: StandStatus }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -44,7 +45,7 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <OpenNowBadge />
+          <OpenNowBadge status={status} />
           <a
             href={business.phoneHref}
             className="inline-flex items-center gap-2 rounded-md bg-barn px-4 py-2 text-sm font-semibold text-paper transition-colors hover:bg-barn-deep"
@@ -82,7 +83,7 @@ export function Header() {
             ))}
           </ul>
           <div className="flex items-center justify-between gap-3 border-t border-cream-line px-4 py-3">
-            <OpenNowBadge />
+            <OpenNowBadge status={status} />
             <a
               href={business.phoneHref}
               className="inline-flex items-center gap-2 rounded-md bg-barn px-4 py-2 text-sm font-semibold text-paper"
