@@ -99,6 +99,26 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- CANUCKS DEEP DIVE (2026-08-10): First "Greats" hub built as a real
+  tool instead of a summary. Researched Mr. Canucks Grow properly
+  (real name Matt Taylor, Canada; Gaia Green dry-amendment method;
+  1 tbsp/gal top-dress every 3 weeks; ratio ramp 100/70/50/30/0 pct
+  All Purpose 4-4-4 vs Power Bloom 2-8-4; pH 6.2-6.8; ~20-25% of pot
+  volume per watering; the Meta Soil Project). NEW canucks-method.ts —
+  the method as pure tested data (16 tests). NEW bespoke page at
+  /grow-like-the-greats/mr-canucks-grow with THE RAMP (signature:
+  7 split gold/magenta columns showing the real ratio shift, dashed
+  markers for non-feeding milestones) + an interactive top-dress
+  calculator (pot size + plants + date -> exact tbsp and real dates,
+  mobile renders cards not a table). Includes an honest "what growers
+  argue about" section. NO affiliate/gear links in the Greats section.
+  Fixed a real pre-existing bug: guide cards are grid items with
+  default min-width:auto so truncate never engaged — long titles blew
+  the document 200-300px wide at 375px on ALL six grower pages.
+  Grower pages added to sitemap.xml (were missing). 93 tests, build
+  green. Verified: 375px zero overflow, LCP 840ms / CLS 0.017 on
+  throttled mobile, focus rings visible, calculator failure cases
+  (empty/negative/9999/absurd date) all handled, zero page errors.
 - CONTENT DEPTH + CROSS-LINKING (2026-07-19): Quality-focused pass.
   Added "Related reading" section to guide pages — auto-derived from
   inline cross-links in MDX content, zero manual curation. Eliminated
@@ -328,6 +348,20 @@ At the end of every working session:
   edge cache in real deployment covers the 0.1s; revisit if field data says
   otherwise.
 ### Known issues / TODO
+- PERF BUDGET BREACH (site-wide, pre-existing): first-load JS is ~192KB
+  gz against a 150KB budget. Measured 2026-08-10 from the script tags in
+  the served HTML: ed-rosenthal 191.7KB, /tools 194.1KB, the new Canucks
+  page 194.6KB (so the calculator island costs only +2.9KB). This is not
+  from any one page — the shared bundle has grown past budget. Needs its
+  own session: audit shared chunks, check what the header pulls in.
+  Core Web Vitals are still well inside budget (LCP 840ms, CLS 0.017 on
+  4x-throttled mobile), which is why it has not bitten yet.
+- Greats section open questions still unanswered by the owner: (a) the
+  Spider Farmer sponsor conflict — Matt is partnered with them while the
+  gear roadmap names competitors; current call is NO gear affiliate
+  links anywhere in Greats; (b) whether to contact Matt before building
+  the other five hubs; (c) whether "start a grow the Canucks way" should
+  seed a member grow journal (needs the journal feature first).
 - Reviews done 2026-07-10: reviewer verdict SHIP (fixed: safeNext backslash
   open-redirect bypass + test; sidecar port-claim-before-data-dir race;
   bookmark insert onConflictDoNothing). design-critic: all pages 4-5 after
