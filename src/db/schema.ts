@@ -1,5 +1,6 @@
 import {
   boolean,
+  integer,
   pgTable,
   primaryKey,
   text,
@@ -68,4 +69,42 @@ export const bookmark = pgTable(
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.guideSlug] })],
+);
+
+/**
+ * A grow journal started from one of the "Grow Like the Greats" methods.
+ *
+ * The schedule itself is NOT stored — it is derived from the method module
+ * (e.g. canucks-method.ts) plus potGallons/plants/startedOn, so improving a
+ * method's data improves every existing journal instead of leaving old rows
+ * frozen at whatever the schedule said the day they were created. Only the
+ * inputs and the completions are persisted.
+ */
+export const grow = pgTable("grow", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  /** Which method this journal follows, e.g. "mr-canucks-grow". */
+  methodSlug: text("method_slug").notNull(),
+  name: text("name").notNull(),
+  potGallons: integer("pot_gallons").notNull(),
+  plants: integer("plants").notNull(),
+  /** Date the grower potted up — day the schedule counts from. */
+  startedOn: timestamp("started_on").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+/** One row per completed schedule event. Absence means "not done yet". */
+export const growEventDone = pgTable(
+  "grow_event_done",
+  {
+    growId: text("grow_id")
+      .notNull()
+      .references(() => grow.id, { onDelete: "cascade" }),
+    /** MethodEvent.id from the method module. */
+    eventId: text("event_id").notNull(),
+    completedAt: timestamp("completed_at").notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.growId, t.eventId] })],
 );

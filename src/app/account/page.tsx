@@ -107,6 +107,18 @@ export default async function AccountPage() {
         {/* quick links */}
         <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Link
+            href="/grows"
+            className="glass group rounded-2xl p-5 transition hover:brightness-110"
+          >
+            <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-gold">
+              My grow journals
+            </h3>
+            <p className="mt-2 text-sm text-frost-dim">
+              Your grows, with every top-dress on a date and the amounts worked
+              out.
+            </p>
+          </Link>
+          <Link
             href="/start"
             className="glass group rounded-2xl p-5 transition hover:brightness-110"
           >

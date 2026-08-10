@@ -14,6 +14,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Knowledge OS", href: "/guides" },
       { label: "Grow Like the Greats", href: "/grow-like-the-greats" },
       { label: "Build My Grow", href: "/build-my-grow" },
+      { label: "My Grows", href: "/grows" },
     ],
   },
   {

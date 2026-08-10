@@ -4,6 +4,7 @@ import { OsHeader } from "@/components/os-header";
 import { OsFooter } from "@/components/os-footer";
 import { CanucksRamp } from "@/components/canucks-ramp";
 import { CanucksCalculator } from "@/components/canucks-calculator";
+import { StartGrowForm } from "@/components/start-grow-form";
 import { DEBATES, INGREDIENTS, PH_RANGE } from "@/lib/canucks-method";
 import { getAllGuides } from "@/lib/guides";
 
@@ -175,6 +176,15 @@ export default function MrCanucksGrowPage() {
         {/* ------------------------------------------------- calculator -- */}
         <div className="mt-14">
           <CanucksCalculator />
+        </div>
+
+        {/* ------------------------------------------------ start a grow -- */}
+        <div id="start" className="mt-14 scroll-mt-24">
+          <StartGrowForm
+            methodSlug="mr-canucks-grow"
+            methodName="Mr. Canucks Grow"
+            returnTo={PATH}
+          />
         </div>
 
         {/* ------------------------------------------------ the watering -- */}
