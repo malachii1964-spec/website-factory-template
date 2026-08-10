@@ -11,8 +11,17 @@ const SITE =
   process.env.BETTER_AUTH_URL ??
   "https://lakeeriecannabis.com";
 
+/**
+ * Growers that have a hand-built page of their own. The static route wins at
+ * request time, but we must not ALSO prerender it here or two builds fight
+ * over the same output path.
+ */
+const BESPOKE = new Set(["mr-canucks-grow"]);
+
 export function generateStaticParams() {
-  return GROWERS.map((g) => ({ slug: g.slug }));
+  return GROWERS.filter((g) => !BESPOKE.has(g.slug)).map((g) => ({
+    slug: g.slug,
+  }));
 }
 
 export async function generateMetadata({
@@ -128,7 +137,7 @@ export default async function GrowerPage({
                 <Link
                   key={guide.slug}
                   href={`/guides/${guide.slug}`}
-                  className="glass group flex items-center justify-between gap-3 rounded-2xl p-4 transition hover:brightness-125"
+                  className="glass group flex min-w-0 items-center justify-between gap-3 rounded-2xl p-4 transition hover:brightness-125"
                 >
                   <div className="min-w-0">
                     <h3 className="truncate font-display text-base font-semibold">
