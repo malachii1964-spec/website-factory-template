@@ -99,6 +99,18 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- GROW JOURNALS (2026-08-10): "Start a grow the Mr. Canucks Grow way"
+  now seeds a real journal. NEW tables `grow` + `grow_event_done`, NEW
+  /grows and /grows/[id], NEW grow-journal.ts (pure, 18 tests) and
+  grow-journals.ts (persistence). KEY DESIGN: the schedule is NOT
+  stored — only inputs (method, pot size, plants, pot-up date) and
+  completions; tasks are derived from the method module on every read,
+  so improving a method improves every existing journal. Methods live
+  in a registry (METHODS) so adding the next grower is data, not a new
+  page. Canucks page stays static (form resolves session client-side
+  per the existing header decision). 111 tests, all gates green.
+  ** OWNER ACTION REQUIRED: run `npm run db:push` against production
+  before/after deploying, or /grows will 500 on missing tables. **
 - CANUCKS DEEP DIVE (2026-08-10): First "Greats" hub built as a real
   tool instead of a summary. Researched Mr. Canucks Grow properly
   (real name Matt Taylor, Canada; Gaia Green dry-amendment method;
