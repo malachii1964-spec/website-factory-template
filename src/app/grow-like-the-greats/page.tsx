@@ -4,6 +4,9 @@ import { OsHeader } from "@/components/os-header";
 import { OsFooter } from "@/components/os-footer";
 import { GROWERS } from "@/lib/growers";
 
+/** Growers with a hand-built page carrying tools, not just a summary. */
+const DEEP_DIVES = new Set(["mr-canucks-grow"]);
+
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.BETTER_AUTH_URL ??
@@ -63,9 +66,16 @@ export default function GrowLikeTheGreatsPage() {
                   href={`/grow-like-the-greats/${g.slug}`}
                   className="group glass iris-border rounded-2xl p-6 transition hover:-translate-y-1 hover:brightness-110"
                 >
-                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan">
-                    {g.role}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan">
+                      {g.role}
+                    </p>
+                    {DEEP_DIVES.has(g.slug) ? (
+                      <span className="rounded-full bg-gradient-to-r from-gold/20 to-magenta/20 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-frost">
+                        Deep dive · calculator
+                      </span>
+                    ) : null}
+                  </div>
                   <h2 className="mt-2 font-display text-2xl font-semibold transition group-hover:text-cyan">
                     {g.name}
                   </h2>

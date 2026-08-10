@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllGuides } from "@/lib/guides";
 import { STRAINS } from "@/lib/strains";
+import { GROWERS } from "@/lib/growers";
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -46,5 +47,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...guidePages, ...strainPages];
+  const growerPages: MetadataRoute.Sitemap = GROWERS.map((g) => ({
+    url: `${SITE}/grow-like-the-greats/${g.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...guidePages, ...strainPages, ...growerPages];
 }
