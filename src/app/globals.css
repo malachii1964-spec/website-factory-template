@@ -554,3 +554,23 @@ body {
   .hero-drift,
   .water-shimmer::before { animation: none; }
 }
+
+/* The Ramp — columns rise once on load. Transform + opacity only. */
+.ramp-col {
+  transform-origin: bottom;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ramp-col {
+    animation: ramp-rise 0.7s var(--ease-premium) both;
+  }
+  @keyframes ramp-rise {
+    from {
+      transform: scaleY(0.35);
+      opacity: 0;
+    }
+    to {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+}
