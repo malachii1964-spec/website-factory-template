@@ -347,15 +347,30 @@ At the end of every working session:
 - LCP 2.6s simulated-mobile against localhost accepted (budget 2.5s): CDN +
   edge cache in real deployment covers the 0.1s; revisit if field data says
   otherwise.
+- JS BUDGET (audited 2026-08-10, accepted trade-off per performance.md):
+  real first-load JS is 153KB gz floor / 156KB on the heaviest content
+  page, against a 150KB budget. Measured correctly = a real browser with
+  cache disabled and route-prefetch excluded. DO NOT measure by summing
+  every <script src> in the HTML: Next emits a ~38.5KB gz core-js chunk
+  marked `noModule` that only pre-2017 browsers fetch, and counting it
+  inflates every number by ~25% (this mistake was made once already).
+  Breakdown: ~144KB is the Next 16 + React 19 App Router framework floor
+  (react-dom 69.3, app-router runtime 39.5, router/runtime bits ~35),
+  ~9KB is the global OsHeader, and 0-3KB is actual page code. A 150KB
+  budget therefore allows 6KB for all application code, which is not a
+  meaningful target on this stack. Accepted at 153-156KB rather than
+  refactoring the site-wide header for ~5KB. The discipline that still
+  matters and still holds: per-page client code stays tiny (the Canucks
+  calculator island is +3KB). Revisit only if React/Next slims down or
+  field Core Web Vitals degrade — currently LCP 840ms, CLS 0.017 on
+  4x-throttled mobile, far inside budget.
+  Note: adding a modern `browserslist` does NOT drop the polyfill chunk
+  (tried; Turbopack emits it regardless) — and it costs nothing anyway.
 ### Known issues / TODO
-- PERF BUDGET BREACH (site-wide, pre-existing): first-load JS is ~192KB
-  gz against a 150KB budget. Measured 2026-08-10 from the script tags in
-  the served HTML: ed-rosenthal 191.7KB, /tools 194.1KB, the new Canucks
-  page 194.6KB (so the calculator island costs only +2.9KB). This is not
-  from any one page — the shared bundle has grown past budget. Needs its
-  own session: audit shared chunks, check what the header pulls in.
-  Core Web Vitals are still well inside budget (LCP 840ms, CLS 0.017 on
-  4x-throttled mobile), which is why it has not bitten yet.
+- JS budget: 3-6KB over, not 42KB. See Decisions for the accepted
+  trade-off. (An earlier note in this log claimed ~192KB — that was a
+  bad measurement that counted the `noModule` polyfill chunk, which no
+  modern browser downloads. Corrected 2026-08-10.)
 - Greats section open questions still unanswered by the owner: (a) the
   Spider Farmer sponsor conflict — Matt is partnered with them while the
   gear roadmap names competitors; current call is NO gear affiliate
