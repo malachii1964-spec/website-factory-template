@@ -39,3 +39,6 @@ next-env.d.ts
 # Paid product files (never commit)
 private/downloads/*.pdf
 private/downloads/*.zip
+
+# Sovereign Website Factory harvest output (regenerate with pnpm sovereign:harvest)
+.sovereign/

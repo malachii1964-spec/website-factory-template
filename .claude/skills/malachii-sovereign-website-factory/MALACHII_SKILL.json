@@ -1,0 +1,17 @@
+{
+  "schema": "malachii.skill.v1",
+  "id": "malachii-sovereign-website-factory",
+  "version": "1.0.0-rc1",
+  "family": "sovereign-execution",
+  "dependsOn": ["malachii-sovereign-research>=1.0.0-rc1"],
+  "validators": [
+    {
+      "script": "scripts/validate_website_packet.py",
+      "fixture": "assets/example-website-build-packet.json"
+    },
+    {
+      "script": "scripts/audit_static_site.py",
+      "fixture": "assets/reference-site"
+    }
+  ]
+}

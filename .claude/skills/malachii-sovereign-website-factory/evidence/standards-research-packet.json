@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0",
+  "skill": "malachii-sovereign-research",
+  "objective": {
+    "raw": "Ground MALACHII Sovereign Website Factory in current authoritative website standards.",
+    "normalized": "Establish current authoritative accessibility, performance, search, and application-security baselines for Skill 002.",
+    "freshness_required": true,
+    "success_criteria": [
+      "Accessibility baseline established from W3C",
+      "Core Web Vitals targets established from web.dev",
+      "Google Search baseline established from Search Central",
+      "Verification-oriented web security baseline established from OWASP"
+    ]
+  },
+  "research_mode": "live_research",
+  "generated_at": "2026-08-15T19:36:11Z",
+  "sources": [
+    {
+      "id": "src_w3c_wcag22",
+      "title": "Web Content Accessibility Guidelines (WCAG) 2.2",
+      "source_class": "primary",
+      "authority": "high",
+      "url": "https://www.w3.org/TR/WCAG22/",
+      "publisher": "W3C",
+      "accessed_at": "2026-08-15T19:36:11Z",
+      "lineage_id": "w3c-wcag22"
+    },
+    {
+      "id": "src_webdev_vitals",
+      "title": "Web Vitals",
+      "source_class": "primary",
+      "authority": "high",
+      "url": "https://web.dev/articles/vitals",
+      "publisher": "Google / web.dev",
+      "accessed_at": "2026-08-15T19:36:11Z",
+      "lineage_id": "google-web-vitals"
+    },
+    {
+      "id": "src_google_search_essentials",
+      "title": "Google Search Essentials",
+      "source_class": "primary",
+      "authority": "high",
+      "url": "https://developers.google.com/search/docs/essentials",
+      "publisher": "Google Search Central",
+      "accessed_at": "2026-08-15T19:36:11Z",
+      "lineage_id": "google-search-essentials"
+    },
+    {
+      "id": "src_owasp_asvs",
+      "title": "OWASP Application Security Verification Standard",
+      "source_class": "primary",
+      "authority": "high",
+      "url": "https://owasp.org/www-project-application-security-verification-standard/",
+      "publisher": "OWASP Foundation",
+      "accessed_at": "2026-08-15T19:36:11Z",
+      "lineage_id": "owasp-asvs"
+    },
+    {
+      "id": "src_owasp_top10_2025",
+      "title": "OWASP Top 10:2025",
+      "source_class": "primary",
+      "authority": "high",
+      "url": "https://owasp.org/Top10/",
+      "publisher": "OWASP Foundation",
+      "accessed_at": "2026-08-15T19:36:11Z",
+      "lineage_id": "owasp-top10-2025"
+    }
+  ],
+  "claims": [
+    {
+      "id": "clm_accessibility_baseline",
+      "claim": "WCAG 2.2 is a W3C Recommendation and is the appropriate default accessibility baseline for this Skill, with MALACHII targeting Level AA for ordinary public production websites unless stricter requirements apply.",
+      "importance": "critical",
+      "status": "verified",
+      "evidence": ["src_w3c_wcag22"],
+      "rationale": "The current W3C Recommendation defines WCAG 2.2; the AA target is MALACHII policy layered on that standard."
+    },
+    {
+      "id": "clm_cwv_targets",
+      "claim": "Current Core Web Vitals good-experience thresholds are LCP <= 2.5 seconds, INP <= 200 milliseconds, and CLS <= 0.1, evaluated at the 75th percentile for most users.",
+      "importance": "critical",
+      "status": "verified",
+      "evidence": ["src_webdev_vitals"],
+      "rationale": "The current web.dev Web Vitals documentation states these thresholds and the 75th-percentile evaluation guidance."
+    },
+    {
+      "id": "clm_search_baseline",
+      "claim": "Google Search Essentials currently organizes search eligibility guidance around technical requirements, spam policies, and key best practices, while explicitly not guaranteeing indexing or ranking.",
+      "importance": "material",
+      "status": "verified",
+      "evidence": ["src_google_search_essentials"],
+      "rationale": "The current official Google Search Essentials page defines these categories and caveat."
+    },
+    {
+      "id": "clm_security_baseline",
+      "claim": "OWASP ASVS 5.0.0 is the latest stable ASVS release and is designed as a verifiable application-security standard; OWASP Top 10:2025 is an awareness baseline rather than comprehensive verification coverage.",
+      "importance": "critical",
+      "status": "verified",
+      "evidence": ["src_owasp_asvs", "src_owasp_top10_2025"],
+      "rationale": "OWASP identifies ASVS 5.0.0 as the latest stable ASVS and recommends ASVS when a verification standard is needed, while the Top 10 project describes itself as an awareness document."
+    }
+  ],
+  "contradictions": [],
+  "limitations": [
+    "Standards and platform guidance may evolve; refresh evidence when a future build depends on current requirements.",
+    "These standards define baselines and targets; satisfying a structural validator does not establish complete compliance or production performance."
+  ],
+  "deliverable": {
+    "summary": "Skill 002 is grounded in current W3C accessibility, Google performance/search, and OWASP verification guidance.",
+    "recommendations": [
+      "Keep compliance/performance claims evidence-strength-aware.",
+      "Re-run live research when standards freshness materially affects a future website build."
+    ]
+  },
+  "quality": {
+    "accuracy": 9,
+    "verification": 9,
+    "completeness": 9,
+    "intent_alignment": 9,
+    "execution_readiness": 9,
+    "structure": 9,
+    "edge_cases": 9,
+    "floor": 9,
+    "ship_decision": "ship"
+  }
+}

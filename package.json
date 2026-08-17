@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "sovereign:harvest": "node scripts/sovereign-harvest.mjs",
+    "sovereign:audit": "python3 .claude/skills/malachii-sovereign-website-factory/scripts/audit_static_site.py .sovereign/site",
+    "sovereign:packet": "python3 .claude/skills/malachii-sovereign-website-factory/scripts/validate_website_packet.py website-build-packet.json",
+    "sovereign:gate": "pnpm build && pnpm sovereign:harvest && pnpm sovereign:audit && pnpm sovereign:packet"
   },
   "dependencies": {
     "clsx": "^2.1.1",

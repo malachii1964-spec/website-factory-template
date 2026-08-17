@@ -1,0 +1,114 @@
+{
+  "schema": "malachii.website-build-packet.v1",
+  "objective": "Ship FutureDeskAI as an owned Next.js storefront selling AI prompt packs, templates, automation kits and courses, with instant digital delivery and a stated 50%-of-every-sale pledge to St. Jude.",
+  "executionState": "preview_verified",
+  "releaseStage": "NOT_RELEASE_QUALIFIED",
+  "site": {
+    "class": "ecommerce",
+    "indexable": true,
+    "primaryAudience": [
+      "AI beginners seeking a starting point",
+      "working professionals automating their own workflow",
+      "local business owners buying industry kits"
+    ],
+    "primaryConversion": "one-time digital product purchase",
+    "routesPublished": 38,
+    "stack": "Next.js 16.2.10 App Router, TypeScript strict, Tailwind v4, Stripe, Resend"
+  },
+  "research": {
+    "freshEvidenceRequired": false,
+    "packetRefs": [],
+    "note": "No Research Packet is claimed for this pass. Public claims on the site were authored by the owner, not derived from a Skill 001 evidence run. Any future claim about market position, competitor pricing, or product efficacy must go through Skill 001 before publication."
+  },
+  "artifacts": [
+    "src/app/**",
+    "src/components/**",
+    "src/lib/**",
+    "src/app/sitemap.ts",
+    "src/app/robots.ts",
+    "scripts/sovereign-harvest.mjs",
+    "scripts/sovereign-browser-check.mjs",
+    ".sovereign/site/ (harvested server-rendered HTML + compiled CSS)",
+    ".sovereign/browser/browser-inspection.json"
+  ],
+  "verification": {
+    "build": {
+      "status": "PASS",
+      "evidenceLevel": "structurally_checked",
+      "claim": "tsc --noEmit clean, eslint 0 errors, vitest 19/19, next build succeeds with 49 pages generated"
+    },
+    "staticAudit": {
+      "status": "PASS",
+      "evidenceLevel": "structurally_checked",
+      "claim": "audit_static_site.py over 39 harvested pages: 0 errors, 0 warnings"
+    },
+    "accessibility": {
+      "status": "PASS",
+      "target": "WCAG_2.2_AA",
+      "evidenceLevel": "structurally_checked",
+      "claim": "Structural readiness plus real-Chromium keyboard checks (skip link reachable and visible on first Tab, target present) at 3 viewports. This is not a WCAG 2.2 AA conformance audit and no assistive technology was used."
+    },
+    "performance": {
+      "status": "PASS",
+      "evidenceLevel": "designed",
+      "fieldMeasured": false,
+      "targets": {
+        "lcpSeconds": 2.5,
+        "inpMilliseconds": 200,
+        "cls": 0.1
+      },
+      "claim": "Targets declared only. No lab or field measurement exists. Loopback timings were deliberately not collected, because timings taken with no network shaping are not evidence for these targets."
+    },
+    "seo": {
+      "status": "PASS",
+      "evidenceLevel": "structurally_checked",
+      "claim": "sitemap.xml and robots.txt are now served and unit-tested for agreement; every indexable route returns 200 with server-rendered content, titles and a single h1. No deployed crawl or Search Console evidence exists."
+    },
+    "security": {
+      "status": "PASS",
+      "baseline": "OWASP_ASVS_5.0",
+      "evidenceLevel": "structurally_checked",
+      "claim": "Structural only: no secrets in source, no http:// subresources, no inline event handlers, Zod validation on API input, HMAC-signed download links. No dependency audit, no penetration test, no deployed header verification. Not an ASVS assessment."
+    },
+    "browserInspection": {
+      "status": "PASS",
+      "evidenceLevel": "lab_measured",
+      "claim": "18/18 checks across 6 route archetypes x 3 viewports in Chromium: expected status, no horizontal overflow, keyboard-reachable visible skip link, no console or page errors."
+    }
+  },
+  "quality": {
+    "accuracy": 8,
+    "verification": 8,
+    "completeness": 7,
+    "intentAlignment": 9,
+    "executionReadiness": 8,
+    "structure": 9,
+    "edgeCases": 8,
+    "floor": 7
+  },
+  "qualityRationale": {
+    "accuracy": "Configuration and pricing are correct and single-sourced, but the shipped product files have not been checked against the feature lists each product page advertises.",
+    "verification": "Build, lint, type, unit, structural and browser evidence all exist and pass. No performance measurement, no dependency/security audit and no deployed evidence.",
+    "completeness": "Core browse-to-purchase journey is implemented, but sample previews cover roughly 3 of 30 products, there is no customer dashboard or order history, and delivery cannot run until keys are set.",
+    "intentAlignment": "The build serves the stated mission — an AI learning center for every level with the St. Jude pledge surfaced honestly.",
+    "executionReadiness": "Builds and serves from documented commands. Cannot transact end-to-end without Resend, Stripe and download-storage configuration.",
+    "structure": "Clean App Router layout, one pricing source of truth, semantic tokens, design system respected.",
+    "edgeCases": "404, responsive and keyboard paths verified in a real browser. Network-failure and payment-failure UI states have not been exercised."
+  },
+  "limitations": [
+    "NOT_RELEASE_QUALIFIED: the Quality Floor is 7 (completeness), below the 9 required for any promoted release stage. This is a deliberate honest hold, not a build failure.",
+    "No Core Web Vitals evidence of any kind — neither lab nor field. Performance targets are declared, not met.",
+    "No WCAG 2.2 AA conformance claim. Structural and keyboard evidence only; no screen-reader or assistive-technology testing.",
+    "No OWASP ASVS assessment. Structural security posture only.",
+    "The site has never been deployed. Nothing here supports a claim about live behaviour.",
+    "Digital delivery (signed download links, Stripe fulfilment webhook, Resend email) is implemented but inert until environment keys and a product bucket exist, so the purchase journey is unproven end-to-end.",
+    "No Research Packet backs the site's public marketing claims."
+  ],
+  "pathToLaunchCandidate": [
+    "Raise completeness: roll sample previews out across the full 30-product catalogue.",
+    "Verify shipped product files match each product page's advertised feature list.",
+    "Produce lab performance evidence against a realistic network profile, meeting LCP<=2.5s / INP<=200ms / CLS<=0.1.",
+    "Exercise the purchase journey end-to-end once Stripe, Resend and download storage are configured, including the failure cases.",
+    "Run a dependency and API-route security review before any public deployment."
+  ]
+}
