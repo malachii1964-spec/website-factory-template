@@ -1,3 +1,6 @@
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
+# sharp powers next/image optimization; unrs-resolver backs eslint's module
+# resolution. Both arrive as transitive deps of next / eslint-config-next and
+# need their native build steps to run, so they are approved explicitly.
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
