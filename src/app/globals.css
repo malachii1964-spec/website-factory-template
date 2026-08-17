@@ -124,6 +124,24 @@
 }
 
 @layer components {
+  /* WCAG 2.2 SC 2.4.1 Bypass Blocks: off-screen until focused, then pinned
+     over the announcement bar and nav so it is visible, not just present. */
+  .skip-link {
+    position: absolute;
+    left: 0.75rem;
+    top: -100%;
+    z-index: 100;
+    padding: 0.625rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--accent);
+    color: var(--accent-foreground);
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  .skip-link:focus-visible {
+    top: 0.75rem;
+  }
+
   .container-page {
     width: 100%;
     max-width: 76rem;
