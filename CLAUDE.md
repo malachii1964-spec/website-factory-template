@@ -97,6 +97,26 @@ At the end of every working session:
    by impact — but do NOT build them until approved
 3. Update the Project Log below
 
+## Rule 8 — Sovereign Website Factory gates (MALACHII Skill 002)
+`.claude/skills/malachii-sovereign-website-factory/` is installed and is the
+release authority for this site. Rule 3's gates remain; these sit on top and
+answer a different question — not "does it build" but "is the claim we are
+about to make backed by evidence we actually have."
+
+Run `pnpm sovereign:gate` (build -> harvest -> static audit -> packet validation)
+plus `node scripts/sovereign-browser-check.mjs` before claiming a page is done.
+- `sovereign:harvest` boots the real production server and captures what it
+  actually served into `.sovereign/site/`. It fails rather than emitting partial
+  evidence.
+- `sovereign-browser-check.mjs` drives real Chromium at 3 viewports for the
+  things static HTML cannot show: overflow, keyboard focus, console errors.
+- `website-build-packet.json` records release stage and the seven Quality Floor
+  dimensions. **Floor = minimum, never average.** Anything below 9 on any
+  dimension means NOT_RELEASE_QUALIFIED, and that is a legitimate outcome to
+  ship — never round a score up to clear the gate.
+Never claim WCAG conformance, ASVS compliance, or Core Web Vitals from these
+structural checks. They prove readiness, not conformance.
+
 ## Project Log (keep current — this is the project's memory)
 ### Current state
 - FutureDeskAI rebuilt on owned stack (off Manus). Next.js 16 App Router, TS
@@ -110,6 +130,18 @@ At the end of every working session:
   signature. Owner = Malachi.
 - Mission (per owner): positioning as an "AI learning center for every level";
   50% of every sale pledged to St. Jude — surface prominently & honestly.
+- MALACHII Sovereign Website Factory (Skill 002) + Sovereign Research (Skill 001,
+  its declared dependency) installed at `.claude/skills/`. Gates wired to the real
+  app, not to sample HTML. Current packet verdict: **NOT_RELEASE_QUALIFIED**,
+  floor 7 on completeness — an honest hold, not a build failure. Path to
+  LAUNCH_CANDIDATE is enumerated in `website-build-packet.json`.
+- Wiring the gates immediately caught four real defects, all fixed:
+  (1) `pnpm-workspace.yaml` held an unanswered build-approval prompt, so
+  `pnpm lint` and `pnpm test` failed before running anything;
+  (2) no sitemap.xml or robots.txt existed at all on a site meant to be indexed;
+  (3) no skip link on any of 39 pages (WCAG 2.2 SC 2.4.1);
+  (4) 28px horizontal overflow on every page at exactly 768px — the navbar's
+  desktop bar switched on at `md:` before it could fit; moved to `lg:`.
 ### Decisions made (do not relitigate)
 - Full Next.js rebuild (not de-Manus in place). Dark is the DEFAULT theme.
 - Single source of truth for pricing (src/lib/pricing.ts) derives Stripe
@@ -132,5 +164,9 @@ At the end of every working session:
 - Deploy to Vercel needs owner's account + env keys.
 - Product-content quality upgrade (the actual PDFs) still to do.
 - Sample previews only cover ~3 products; roll out to the rest.
+- Quality Floor blockers for LAUNCH_CANDIDATE: no performance measurement of any
+  kind (lab or field), product files unverified against advertised feature lists,
+  purchase journey unproven end-to-end pending keys, no dependency/API security
+  review.
 - Minor: Turbopack NFT over-trace warning from /api/download local-fs fallback
   (harmless; prod path is DOWNLOAD_STORAGE_URL bucket).
