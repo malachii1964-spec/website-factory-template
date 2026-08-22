@@ -39,3 +39,8 @@ next-env.d.ts
 # Paid product files (never commit)
 private/downloads/*.pdf
 private/downloads/*.zip
+
+# Local MCP servers — copy .mcp.json.example and keep yours out of git
+.mcp.json
+.claude/settings.local.json
+malachii-cma002r/.keys/

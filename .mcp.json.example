@@ -1,0 +1,21 @@
+{
+  "_comment": [
+    "Copy to .mcp.json to activate. Project-scoped MCP servers are the main thing a",
+    "local session has that a cloud container does not: they reach outside this repo.",
+    "",
+    "Do NOT trust the package names below without checking. Prefer `claude mcp add`,",
+    "which resolves the current package and writes a correct entry for you:",
+    "",
+    "  claude mcp add --scope project filesystem -- npx -y @modelcontextprotocol/server-filesystem ~/code",
+    "  claude mcp list",
+    "",
+    "Worth having for MALACHII specifically:",
+    "  filesystem  — read reference material outside this repo without copying it in",
+    "  git         — history and blame across your other repos",
+    "  playwright  — drive a real browser (the FutureDeskAI side of this repo)",
+    "",
+    "Servers here are prompted for approval on first use. Anything you add can read",
+    "what you point it at, so scope the paths deliberately."
+  ],
+  "mcpServers": {}
+}

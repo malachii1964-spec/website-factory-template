@@ -122,17 +122,17 @@ Three tests asserted behaviour that §2.1/§2.3 make unreachable. Intent was pre
 ## 7. Artifact binding
 
 - Predecessor package SHA-256: `5a079396ff2a2a4a016fa11c46dcac97e552bff8ddefd363593ec6f7b3b8bedb` (verified)
-- This challenger's per-file hashes: `PACKAGE_HASHES.txt` (63 files)
-- Challenger tree SHA-256 (hash of that manifest): `8393c0646f062910e0fc2a58872b6ee850ff32b4a729d148fc5e5e75af43a9f6`
+- This challenger's per-file hashes: `PACKAGE_HASHES.txt` (62 files)
+- Challenger tree SHA-256 (hash of that manifest): `16040aa01d8211352eacbb80ead341765e2b1404c2a0501c2d7544fc043f1b01`
 
 Recompute with:
 
 ```bash
-find src tests scripts package.json tsconfig.json CMA-002R_v1.1_BUILD_REPORT.md -type f \
+find src tests scripts package.json tsconfig.json -type f \
   | sort | xargs sha256sum | sha256sum
 ```
 
-Note the manifest includes this report, so the tree hash changes if the report changes — bind reviews to the hash printed above and re-derive after any edit.
+The manifest deliberately covers source, tests and scripts only — not this report. A hash that included the document citing it could never be stable, and reviewers need to bind to the code, not the prose.
 
 ## 8. v1.2 — merge to one tree
 

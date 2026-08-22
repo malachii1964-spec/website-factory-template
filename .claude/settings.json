@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run test)",
+      "Bash(npm run mutate)",
+      "Bash(npm run gate)",
+      "Bash(npm run rehash)",
+      "Bash(node --test *)",
+      "Bash(node scripts/mutate.mjs)",
+      "Bash(./scripts/gate.sh)",
+      "Bash(./scripts/rehash.sh)",
+      "Bash(../node_modules/.bin/tsc *)",
+      "Bash(./node_modules/.bin/tsc *)",
+      "Bash(./node_modules/.bin/vitest *)",
+      "Bash(./node_modules/.bin/eslint*)",
+      "Bash(./node_modules/.bin/next build)",
+      "Bash(pnpm install*)",
+      "Bash(sha256sum *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(ykman *)"
+    ],
+    "deny": [
+      "Read(./malachii-cma002r/.keys/**)",
+      "Read(**/*.pem)",
+      "Read(**/id_ed25519*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh\"",
+            "timeout": 20,
+            "statusMessage": "Checking MALACHII tree…"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/malachii-typecheck.sh\"",
+            "timeout": 90,
+            "statusMessage": "Typechecking trust kernel…"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/malachii-gate.sh\"",
+            "timeout": 180,
+            "statusMessage": "Running MALACHII gate…"
+          }
+        ]
+      }
+    ]
+  }
+}

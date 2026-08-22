@@ -4,13 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test dist/tests/*.test.js",
-    "demo": "npm run build && node dist/src/demo.js",
-    "control-demo": "npm run build && node dist/src/controlPlaneDemo.js",
-    "live-demo": "npm run build && node dist/src/liveFabricDemo.js",
-    "integration-probe": "npm run build && node dist/src/integrationProbe.js",
-    "distributed-demo": "npm run build && node dist/src/distributedFabricDemo.js",
-    "memory-demo": "npm run build && node dist/src/memoryDemo.js"
+    "build": "../node_modules/.bin/tsc -p tsconfig.json",
+    "typecheck": "../node_modules/.bin/tsc --noEmit -p tsconfig.json",
+    "test": "npm run build && node --test $(ls dist/tests/*.test.js)",
+    "mutate": "npm run build && node scripts/mutate.mjs",
+    "gate": "./scripts/gate.sh",
+    "rehash": "./scripts/rehash.sh"
   }
 }
