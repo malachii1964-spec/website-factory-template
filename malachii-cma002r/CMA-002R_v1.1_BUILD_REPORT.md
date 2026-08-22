@@ -1,4 +1,4 @@
-# MALACHII CMA-002R v1.1 — SUAF repair challenger
+# MALACHII CMA-002R v1.2 — SUAF repair + single-tree merge
 
 **Disposition:** `REPAIR_THEN_REAUDIT` — repaired, not promoted.
 **Derived from:** `MALACHII_CMA002R_TRUE_CHALLENGER_v0.1_CLAUDE_CODE_OPUS5.zip`
@@ -122,18 +122,45 @@ Three tests asserted behaviour that §2.1/§2.3 make unreachable. Intent was pre
 ## 7. Artifact binding
 
 - Predecessor package SHA-256: `5a079396ff2a2a4a016fa11c46dcac97e552bff8ddefd363593ec6f7b3b8bedb` (verified)
-- This challenger's per-file hashes: `PACKAGE_HASHES.txt` (58 files)
-- Challenger tree SHA-256 (hash of that manifest): `dbc8e53301c66b145fbe9bc1aee0138a1b3667783ccba834abb24c736b89acc0`
+- This challenger's per-file hashes: `PACKAGE_HASHES.txt` (63 files)
+- Challenger tree SHA-256 (hash of that manifest): `8393c0646f062910e0fc2a58872b6ee850ff32b4a729d148fc5e5e75af43a9f6`
 
 Recompute with:
 
 ```bash
-find src tests package.json tsconfig.json CMA-002R_v1.1_BUILD_REPORT.md -type f \
+find src tests scripts package.json tsconfig.json CMA-002R_v1.1_BUILD_REPORT.md -type f \
   | sort | xargs sha256sum | sha256sum
 ```
 
 Note the manifest includes this report, so the tree hash changes if the report changes — bind reviews to the hash printed above and re-derive after any edit.
 
-## 8. Required next gate
+## 8. v1.2 — merge to one tree
 
-Run the 21-attack adversarial campaign and the constitutional mutation campaign against this exact tree, bind the results to the hash above, then submit the identical tree to blind independent reviewers. Do not add YubiKey/TPM until that gate is green.
+The standalone `malachii/` kernel that lived alongside this one has been merged in and deleted. One tree, one hash. Four mechanisms were ported:
+
+**Lineage roots over declared groups** (`src/sourceLineage.ts`). Both prior reports named declared `sourceGroup` as the top weakness, correctly: counting distinct declared groups measures how many labels someone typed, not how many origins a claim has. Independence is now counted over lineage *roots* derived from a deploy-time registry, with cycle detection. A `strict` mode makes unregistered provenance contribute nothing at all — the actual fix. Default stays permissive so enabling it is a deliberate, visible change.
+
+**Journal replay and reconciliation** (`src/memoryReplay.ts`, `fabric.reconcile()`). `memory.created` now carries the whole record, which makes the state store a true cache: it can be deleted or edited and rebuilt from the journal. Reconciliation compares only authority-bearing fields — fitness and retrieval counters legitimately move without a creation event, and comparing them would produce permanent false divergence that trains everyone to ignore the report. Anything repaired is quarantined, because a divergence means something wrote state outside the fabric and that fact should outlive the repair. Replay also forces created records to M0 regardless of what the journal claims, which holds even against an attacker who can rewrite and re-hash the whole file.
+
+**Crash recovery** (`src/persistentLedger.ts`). A torn final record previously made the journal permanently unopenable — `JSON.parse` threw in the constructor. It is now dropped, reported via `recoveredTornTail`, and physically truncated so the next append cannot land behind the partial bytes. An unparseable line *earlier* in the file is still fatal: that is corruption, not a crash, and skipping it would surface later as a confusing chain error instead of the truth.
+
+**Trust boundary** (`src/trustBoundary.ts`). Caller-supplied trust fields are now refused rather than ignored, at any nesting depth. Forcing was already spec-compliant (SUAF §7.3 permits "refuse or force"); refusing is the stronger reading, because a silently dropped field makes a probe and a well-formed request look identical in the logs.
+
+Deliberately **not** ported: the branded `VerifiedEvidenceRef` resolver (CAS-backed evidence remains on the later list), and the principal/scope authority plane — SUAF §5 places authorization outside MEMF, and importing it would blur that boundary.
+
+### v1.2 verification
+
+| Gate | Result |
+|---|---|
+| Full suite | **130/130 PASS** |
+| Constitutional mutation campaign | **25/25 killed, 100%** |
+| Cross-restart continuity + tamper detection | PASS (MERGE-15) |
+| Host repo gates | typecheck, lint, vitest, `next build` — all PASS |
+
+The mutation campaign earned its place immediately: on first run **three controls survived** — level-skipping, the M5 confidence threshold, and, most seriously, **Super-User signature verification**. Disabling signature checking entirely still passed all 124 tests, because every existing forgery test was caught by the payload-hash check before the signature was ever examined. Four tests were added (SUAF-E6…E9), including a forged signature under a genuine `keyId`. A fifth mutation then survived for a different reason — the new trust boundary shadows the M0 clamp — so the clamp is now tested where nothing shadows it, in replay, plus a composite mutation that removes the boundary to prove the clamp holds alone.
+
+That sequence is the argument for mutation testing in one paragraph: 124 green tests, and the single most important control in the system was untested.
+
+## 9. Required next gate
+
+Run the full 21-attack adversarial campaign against this exact tree, bind the results to the hash below, then submit the identical tree to blind independent reviewers. Do not add YubiKey/TPM until that gate is green.

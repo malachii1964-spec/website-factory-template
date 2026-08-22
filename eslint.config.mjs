@@ -13,7 +13,6 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     // Self-contained package with its own toolchain; linted from malachii/.
-    "malachii/**",
     "malachii-cma002r/**",
   ]),
 ]);

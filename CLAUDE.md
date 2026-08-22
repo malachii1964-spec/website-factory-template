@@ -110,11 +110,14 @@ At the end of every working session:
   signature. Owner = Malachi.
 - Mission (per owner): positioning as an "AI learning center for every level";
   50% of every sale pledged to St. Jude — surface prominently & honestly.
-- SEPARATE PROJECT in this repo: `malachii/` is the MALACHII trust kernel
-  (CMA-002 Stage A) — a zero-dependency TypeScript package, unrelated to the
-  FutureDeskAI site. It has its own tsconfig/vitest and is excluded from the
-  root tsconfig and eslint. See malachii/REVIEW.md and
-  malachii/CMA-002_BUILD_REPORT.md. Extractable to its own repo as-is.
+- SEPARATE PROJECT in this repo: `malachii-cma002r/` is the MALACHII memory
+  trust foundation (CMA-002R v1.2) — unrelated to the FutureDeskAI site. It has
+  its own tsconfig and test runner (`node --test`) and is excluded from the root
+  tsconfig and eslint. Build: `../node_modules/.bin/tsc -p tsconfig.json`;
+  test: `node --test $(ls dist/tests/*.test.js)`; mutation: `node scripts/mutate.mjs`.
+  See malachii-cma002r/CMA-002R_v1.1_BUILD_REPORT.md. Extractable as-is.
+  The earlier standalone `malachii/` kernel was merged into this tree and
+  deleted — one system, one hash.
 ### Decisions made (do not relitigate)
 - Full Next.js rebuild (not de-Manus in place). Dark is the DEFAULT theme.
 - Single source of truth for pricing (src/lib/pricing.ts) derives Stripe

@@ -1,3 +1,7 @@
+declare module "node:fs" {
+  export function truncateSync(path: string, len?: number): void;
+}
+
 declare module "node:crypto" {
   // Ed25519 surface used by the v1.1 Super-User approval gate. Declared here to
   // match the package's existing hand-rolled shim style rather than introducing

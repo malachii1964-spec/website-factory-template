@@ -1,0 +1,160 @@
+{
+  "generatedAt": "2026-08-22T21:30:18.171Z",
+  "total": 25,
+  "killed": 25,
+  "killRate": 100,
+  "requiredKillRate": 100,
+  "pass": true,
+  "results": [
+    {
+      "id": "MUT-01",
+      "control": "promotion advances exactly one level",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-02",
+      "control": "unresolved contradictions block promotion",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-03",
+      "control": "journal replay forces created records to M0",
+      "file": "src/memoryReplay.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-25",
+      "control": "the M0 clamp holds even with the trust boundary removed",
+      "file": "src/trustBoundary.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-04",
+      "control": "independent corroboration threshold",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-05",
+      "control": "M3 requires independent outcome attestation",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-06",
+      "control": "only procedural memory may be proceduralized",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-07",
+      "control": "M3 confidence threshold",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-08",
+      "control": "M5 confidence threshold",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-09",
+      "control": "Super-User signature verification",
+      "file": "src/superUserApproval.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-10",
+      "control": "approval binds to exact content",
+      "file": "src/superUserApproval.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-11",
+      "control": "approval expiry",
+      "file": "src/superUserApproval.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-12",
+      "control": "approval nonce replay protection",
+      "file": "src/superUserApproval.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-13",
+      "control": "signing key must be registered",
+      "file": "src/superUserApproval.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-14",
+      "control": "approval must name a regression test",
+      "file": "src/superUserApproval.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-15",
+      "control": "fitness counts only independently attested outcomes",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-16",
+      "control": "blank query cannot dump the corpus",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-17",
+      "control": "strict lineage refuses unregistered provenance",
+      "file": "src/sourceLineage.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-18",
+      "control": "independence counts lineage roots, not declared groups",
+      "file": "src/sourceLineage.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-19",
+      "control": "startup reconciliation detects divergence",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-20",
+      "control": "torn journal tail is truncated on disk",
+      "file": "src/persistentLedger.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-21",
+      "control": "journal hash-chain integrity",
+      "file": "src/eventLedger.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-22",
+      "control": "free-text polarity conflicts are visible",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-24",
+      "control": "caller-supplied trust fields are refused, not ignored",
+      "file": "src/trustBoundary.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-23",
+      "control": "the forgeable approval recorders stay retired",
+      "file": "src/memoryFabric.ts",
+      "status": "KILLED"
+    }
+  ]
+}

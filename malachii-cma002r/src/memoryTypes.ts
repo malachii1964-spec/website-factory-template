@@ -3,6 +3,7 @@ import type {
   SuperUserApproval,
   SuperUserKeyRegistry,
 } from "./superUserApproval.js";
+import type { SourceLineageRegistry } from "./sourceLineage.js";
 
 export type MemoryLayer =
   | "evidence"
@@ -176,6 +177,8 @@ export interface PromotionInput {
   superUserApproval?: SuperUserApproval;
   keyRegistry: SuperUserKeyRegistry;
   nonces: ApprovalNonceLedger;
+  /** Deployment-configured source lineage. Defaults to permissive. */
+  lineage?: SourceLineageRegistry;
   /** Live structured conflicts found by the fabric at promotion time. */
   liveConflictCount?: number;
   now?: Date;

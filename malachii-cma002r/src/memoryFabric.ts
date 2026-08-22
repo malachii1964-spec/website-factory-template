@@ -8,6 +8,9 @@ import {
   verifySuperUserApproval,
 } from "./superUserApproval.js";
 import type { SuperUserApproval } from "./superUserApproval.js";
+import { PERMISSIVE_LINEAGE, SourceLineageRegistry } from "./sourceLineage.js";
+import { assertNoTrustBearingFields } from "./trustBoundary.js";
+import { authorityFieldsOf, replayMemoryState, type ReconciliationReport } from "./memoryReplay.js";
 import type {
   CreateMemoryInput,
   FailureLearningInput,
@@ -106,12 +109,14 @@ function currentAt(record:MemoryRecord,atTime:string):boolean {
  * can change any of them, which is the whole point: the strongest attack path
  * in the CMA-001 audit was forging these numbers.
  */
-export function derivedIndependentSourceCount(record: MemoryRecord): number {
-  return new Set(
-    (record.provenance?.sourceRefs ?? [])
-      .map(r => (typeof r?.sourceGroup === "string" ? r.sourceGroup.trim() : ""))
-      .filter(g => g.length > 0),
-  ).size;
+export function derivedIndependentSourceCount(
+  record: MemoryRecord,
+  lineage: SourceLineageRegistry = PERMISSIVE_LINEAGE,
+): number {
+  // Distinct lineage *roots*, not distinct declared groups: two mirrors of one
+  // origin collapse to one, and under a strict registry an unregistered group
+  // buys nothing at all.
+  return lineage.independentRoots(record.provenance?.sourceRefs ?? []).size;
 }
 
 export function derivedSupportingEvidenceCount(record: MemoryRecord): number {
@@ -135,10 +140,14 @@ export function derivedIndependentOutcomeCount(record: MemoryRecord): number {
   return new Set(independentOutcomes(record).map(o => o.attestedBy)).size;
 }
 
-export function derivePromotionFacts(record: MemoryRecord, liveConflicts = 0): DerivedPromotionFacts {
+export function derivePromotionFacts(
+  record: MemoryRecord,
+  liveConflicts = 0,
+  lineage: SourceLineageRegistry = PERMISSIVE_LINEAGE,
+): DerivedPromotionFacts {
   return {
     supportingEvidenceCount: derivedSupportingEvidenceCount(record),
-    independentSourceCount: derivedIndependentSourceCount(record),
+    independentSourceCount: derivedIndependentSourceCount(record, lineage),
     contradictionCount: derivedContradictionCount(record, liveConflicts),
     independentOutcomeCount: derivedIndependentOutcomeCount(record),
   };
@@ -192,7 +201,7 @@ export function promotionDecision(
     return { decision: "deny", reason: "promotion_must_advance_exactly_one_level" };
   }
 
-  const facts = derivePromotionFacts(record, input.liveConflictCount ?? 0);
+  const facts = derivePromotionFacts(record, input.liveConflictCount ?? 0, input.lineage);
   if (facts.contradictionCount > 0 && targetIndex >= 2) {
     return { decision: "deny", reason: "unresolved_contradictions_block_promotion" };
   }
@@ -274,6 +283,7 @@ export class EvolvingMemoryFabric {
     private readonly ledger:EventLedger,
     private readonly keyRegistry:SuperUserKeyRegistry = new SuperUserKeyRegistry(),
     private readonly nonces:ApprovalNonceLedger = new ApprovalNonceLedger(),
+    private readonly lineage:SourceLineageRegistry = PERMISSIVE_LINEAGE,
   ) {}
 
   registerSuperUserKey(keyId:string, publicKey:Parameters<SuperUserKeyRegistry["register"]>[1]):void {
@@ -281,6 +291,8 @@ export class EvolvingMemoryFabric {
   }
 
   async createMemory(input:CreateMemoryInput,now=new Date()):Promise<MemoryRecord> {
+    // Refuse rather than ignore: a dropped field teaches an attacker nothing.
+    assertNoTrustBearingFields(input,"createMemory input");
     assertUnit(input.confidence,"confidence"); assertUnit(input.importance,"importance");
     if (!input.scope.length) throw new Error("memory_scope_required");
     if (!input.subject.trim() || !input.statement.trim()) throw new Error("memory_content_required");
@@ -319,7 +331,10 @@ export class EvolvingMemoryFabric {
     };
     record.fitness=memoryFitness(record,now);
     await this.store.put(MEMORY_NS,record.id,record);
-    this.ledger.append("memory.created",{id:record.id,layer:record.layer,maturity:record.maturity,scope:record.scope},now);
+    // The full record goes in the event, not just its headline fields. That is
+    // what makes the state store a true cache: it can be deleted or corrupted
+    // and rebuilt from the journal alone (see memoryReplay.ts).
+    this.ledger.append("memory.created",{id:record.id,layer:record.layer,maturity:record.maturity,scope:record.scope,record},now);
     return record;
   }
 
@@ -400,6 +415,7 @@ export class EvolvingMemoryFabric {
       ...(options.superUserApproval ? {superUserApproval:options.superUserApproval} : {}),
       keyRegistry:this.keyRegistry,
       nonces:this.nonces,
+      lineage:this.lineage,
       liveConflictCount,
       now,
     });
@@ -412,7 +428,7 @@ export class EvolvingMemoryFabric {
     const record:MemoryRecord={...current,maturity:target,updatedAt:now.toISOString()};
     record.fitness=memoryFitness(record,now);
     await this.store.put(MEMORY_NS,id,record,envelope.revision);
-    const facts=derivePromotionFacts(current,liveConflictCount);
+    const facts=derivePromotionFacts(current,liveConflictCount,this.lineage);
     // The ledger records the derived facts and the signing key, not the caller's
     // claims: an audit trail that can log lies is not an audit trail (§6).
     this.ledger.append("memory.promoted",{
@@ -535,6 +551,60 @@ export class EvolvingMemoryFabric {
     await this.store.put(LEARNING_NS,proposal.id,proposal);
     this.ledger.append("learning.proposed",{id:proposal.id,trigger:proposal.trigger,targetKind:proposal.targetKind,severity:input.severity,repair:input.repair},now);
     return proposal;
+  }
+
+  /**
+   * Startup reconciliation. Replays the journal, compares it to the state store,
+   * and lets the journal win.
+   *
+   * Only authority-bearing fields are compared -- maturity, status, statement,
+   * scope, layer, evidence, source groups. Fitness, outcome counters and
+   * retrieval counts legitimately move without a creation event, so comparing
+   * them would produce permanent false divergence and train everyone to ignore
+   * the report.
+   *
+   * Anything repaired is quarantined rather than silently corrected: a
+   * divergence means something wrote state without going through the fabric,
+   * and that fact should outlive the repair.
+   */
+  async reconcile(now=new Date()):Promise<ReconciliationReport> {
+    if (!this.ledger.verify()) throw new Error("ledger_integrity_failure");
+    const derived=replayMemoryState(this.ledger);
+    const projected=await this.store.list<MemoryRecord>(MEMORY_NS);
+
+    const divergent:string[]=[]; const orphaned:string[]=[]; const missing:string[]=[];
+    const seen=new Set<string>();
+
+    for (const envelope of projected) {
+      const record=envelope.value; seen.add(record.id);
+      const truth=derived.get(record.id);
+      if (!truth) { orphaned.push(record.id); continue; }
+      if (authorityFieldsOf(truth.record)!==authorityFieldsOf(record)) divergent.push(record.id);
+    }
+    for (const id of derived.keys()) if (!seen.has(id)) missing.push(id);
+
+    const touched=[...divergent,...missing,...orphaned];
+    if (!touched.length) return {divergent:[],missing:[],orphaned:[],quarantined:[],ok:true};
+
+    const quarantined:string[]=[];
+    for (const id of [...divergent,...missing]) {
+      const truth=derived.get(id); if(!truth) continue;
+      const envelope=await this.store.get<MemoryRecord>(MEMORY_NS,id);
+      const repaired:MemoryRecord={...(envelope?.value ?? truth.record),
+        maturity:truth.record.maturity, status:"quarantined",
+        statement:truth.record.statement, scope:[...truth.record.scope], layer:truth.record.layer,
+        evidenceIds:[...truth.record.evidenceIds], provenance:{...truth.record.provenance},
+        updatedAt:now.toISOString()};
+      await this.store.put(MEMORY_NS,id,repaired,envelope?.revision);
+      quarantined.push(id);
+    }
+    for (const id of orphaned) await this.store.delete(MEMORY_NS,id);
+
+    this.ledger.append("memory.reconciliation_divergence",{
+      divergent,missing,orphaned,
+      detail:"state store disagreed with journal replay; journal applied and records quarantined",
+    },now);
+    return {divergent,missing,orphaned,quarantined,ok:false};
   }
 
   learningDecision(proposal:LearningProposal){

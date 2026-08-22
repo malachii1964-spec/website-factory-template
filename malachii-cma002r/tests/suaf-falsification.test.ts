@@ -71,8 +71,27 @@ test("SUAF-2: two distinct sourceGroups and two evidenceIds permit M2", async ()
 test("SUAF-3: createMemory cannot mint maturity above M1", async () => {
   const f = await fixture();
   try {
-    const rec = await f.fabric.createMemory({ ...base, maturity: "M4_PROCEDURALIZED" } as CreateMemoryInput);
-    assert.equal(rec.maturity, "M0_OBSERVATION");
+    // SUAF 7.3 permits "refuse or force <= M1". Refusing is the stronger reading:
+    // it makes the attempt visible instead of a silent no-op.
+    await assert.rejects(
+      () => f.fabric.createMemory({ ...base, maturity: "M4_PROCEDURALIZED" } as CreateMemoryInput),
+      /TRUST_BOUNDARY_VIOLATION|trust-bearing/,
+    );
+    // And an ordinary create still lands at M0 regardless.
+    assert.equal((await f.fabric.createMemory(base)).maturity, "M0_OBSERVATION");
+  } finally { await rm(f.root, { recursive: true, force: true }); }
+});
+
+test("SUAF-3b: a trust field buried deep in the payload is still refused", async () => {
+  const f = await fixture();
+  try {
+    await assert.rejects(
+      () => f.fabric.createMemory({
+        ...base,
+        sourceRefs: [{ id: "s1", kind: "test", sourceGroup: "g", meta: { nested: { trust_override: true } } }],
+      } as unknown as CreateMemoryInput),
+      /trust_override/,
+    );
   } finally { await rm(f.root, { recursive: true, force: true }); }
 });
 
@@ -307,5 +326,73 @@ test("SUAF-E5: agreeing prose is not flagged as a contradiction", async () => {
     });
     const conflicts = await f.fabric.detectConflictsFor((await f.fabric.getMemory("ok2"))!);
     assert.equal(conflicts.length, 0);
+  } finally { await rm(f.root, { recursive: true, force: true }); }
+});
+
+test("SUAF-E6: a forged signature under a real keyId is refused", async () => {
+  const f = await fixture();
+  try {
+    const rec = await f.fabric.createMemory({ ...base, layer: "procedural" });
+    await f.store.put("memf_memory", rec.id, { ...rec, maturity: "M3_VALIDATED" }, 1);
+    const persisted = (await f.fabric.getMemory(rec.id))!;
+
+    // An attacker who knows the registered keyId, and gets the payload hash
+    // right, but cannot produce the signature. Only signature verification
+    // stands between this and constitutional authority.
+    const genuine = f.su.approve(persisted, "M4_PROCEDURALIZED");
+    const forged = { ...genuine, signature: Buffer.from("forged-signature-bytes").toString("base64") };
+
+    const r = await f.fabric.promote(rec.id, "M4_PROCEDURALIZED", { superUserApproval: forged });
+    assert.equal(r.decision.decision, "deny");
+    assert.equal(r.decision.reason, "approval_signature_invalid");
+  } finally { await rm(f.root, { recursive: true, force: true }); }
+});
+
+test("SUAF-E7: a signature from an unregistered key claiming a registered keyId is refused", async () => {
+  const f = await fixture();
+  try {
+    const rec = await f.fabric.createMemory({ ...base, layer: "procedural" });
+    await f.store.put("memf_memory", rec.id, { ...rec, maturity: "M3_VALIDATED" }, 1);
+    const persisted = (await f.fabric.getMemory(rec.id))!;
+
+    const attacker = superUser("attacker-key");
+    const impersonation = {
+      ...attacker.approve(persisted, "M4_PROCEDURALIZED"),
+      keyId: f.su.keyId, // claim the real Super-User's key id
+    };
+
+    const r = await f.fabric.promote(rec.id, "M4_PROCEDURALIZED", { superUserApproval: impersonation });
+    assert.equal(r.decision.decision, "deny");
+    assert.equal(r.decision.reason, "approval_signature_invalid");
+  } finally { await rm(f.root, { recursive: true, force: true }); }
+});
+
+test("SUAF-E8: maturity levels cannot be skipped", async () => {
+  const f = await fixture();
+  try {
+    const rec = await f.fabric.createMemory({ ...base, layer: "procedural" });
+    // M0 straight to M3, and M0 straight to M5, both with everything else valid.
+    for (const target of ["M2_CORROBORATED", "M3_VALIDATED", "M5_CONSTITUTIONAL"] as const) {
+      const r = await f.fabric.promote(rec.id, target, {});
+      assert.equal(r.decision.decision, "deny", `${target} should not be reachable from M0`);
+      assert.equal(r.decision.reason, "promotion_must_advance_exactly_one_level");
+    }
+    assert.equal((await f.fabric.getMemory(rec.id))?.maturity, "M0_OBSERVATION");
+  } finally { await rm(f.root, { recursive: true, force: true }); }
+});
+
+test("SUAF-E9: M5 denies below the constitutional confidence threshold", async () => {
+  const f = await fixture();
+  try {
+    const rec = await f.fabric.createMemory({ ...base, layer: "procedural", confidence: 0.90 });
+    await f.store.put("memf_memory", rec.id, { ...rec, maturity: "M4_PROCEDURALIZED", confidence: 0.90 }, 1);
+    const persisted = (await f.fabric.getMemory(rec.id))!;
+
+    // A genuine, valid Super-User signature is still not enough below 0.95.
+    const r = await f.fabric.promote(rec.id, "M5_CONSTITUTIONAL", {
+      superUserApproval: f.su.approve(persisted, "M5_CONSTITUTIONAL"),
+    });
+    assert.equal(r.decision.decision, "deny");
+    assert.equal(r.decision.reason, "constitutional_threshold_not_met");
   } finally { await rm(f.root, { recursive: true, force: true }); }
 });
