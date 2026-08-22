@@ -1,20 +1,23 @@
-import { sha256Object } from "../crypto/hash";
-import { EventLedger } from "../ledger/ledger";
-import { replayMemoryState } from "../ledger/replay";
-import { requireScope, type SecurityContext } from "../trust/authority";
-import { InvalidRequestError } from "../trust/errors";
-import { assertNoTrustBearingFields } from "../trust/forbiddenFields";
-import type { RetrievalInputs } from "../retrieval/retrieval";
-import type { PromotionDecision, PromotionEngine, PromotionRequest } from "./promotionEngine";
+import { canonicalize } from "../crypto/canonical.ts";
+import { sha256Object } from "../crypto/hash.ts";
+import type { FileProjectionStore } from "../ledger/persistence.ts";
+import { EventLedger } from "../ledger/ledger.ts";
+import { replayMemoryState } from "../ledger/replay.ts";
+import { requireScope, type SecurityContext } from "../trust/authority.ts";
+import { InvalidRequestError } from "../trust/errors.ts";
+import { assertNoTrustBearingFields } from "../trust/forbiddenFields.ts";
+import type { RetrievalInputs } from "../retrieval/retrieval.ts";
+import type { PromotionDecision, PromotionEngine, PromotionRequest } from "./promotionEngine.ts";
 import {
   MATURITY_ORDER,
   maturityRank,
   type CreateMemoryInput,
   type Maturity,
+  type MemoryCreationPayload,
   type MemoryRecord,
   type MemoryStatus,
   type MemoryTelemetry,
-} from "./types";
+} from "./types.ts";
 
 export const SCOPE_CREATE = "memory.create";
 export const SCOPE_PROMOTE = "memory.promote";
@@ -35,7 +38,13 @@ const ROOT_ONLY_TARGETS: ReadonlySet<MemoryStatus> = new Set<MemoryStatus>(["rev
 const ROOT_ONLY_SOURCES: ReadonlySet<MemoryStatus> = new Set<MemoryStatus>(["revoked"]);
 
 export interface ReconciliationReport {
+  /** In both the log and the cache, but the cache disagreed. Rebuilt from the log. */
   readonly divergent: readonly string[];
+  /** In the log but absent from the cache. Restored from the log. */
+  readonly missing: readonly string[];
+  /** In the cache but unknown to the log. Discarded — it was never created. */
+  readonly orphaned: readonly string[];
+  /** Everything the repair touched, all of it quarantined pending review. */
   readonly quarantined: readonly string[];
   readonly ok: boolean;
 }
@@ -45,11 +54,22 @@ export class MemoryFabric {
   readonly #telemetry = new Map<string, MemoryTelemetry>();
   #counter = 0;
 
+  readonly #ledger: EventLedger;
+  readonly #promotion: PromotionEngine;
+  readonly #now: () => number;
+  readonly #store: FileProjectionStore | null;
+
   constructor(
-    private readonly ledger: EventLedger,
-    private readonly promotion: PromotionEngine,
-    private readonly now: () => number = Date.now,
-  ) {}
+    ledger: EventLedger,
+    promotion: PromotionEngine,
+    now: () => number = Date.now,
+    store: FileProjectionStore | null = null,
+  ) {
+    this.#ledger = ledger;
+    this.#promotion = promotion;
+    this.#now = now;
+    this.#store = store;
+  }
 
   createMemory(context: SecurityContext, input: CreateMemoryInput): MemoryRecord {
     requireScope(context, SCOPE_CREATE);
@@ -67,13 +87,13 @@ export class MemoryFabric {
     const memoryId = `mem_${++this.#counter}_${sha256Object(input).slice(0, 12)}`;
     const contentHash = sha256Object({ statement: input.statement, scope: input.scope });
 
-    const record: MemoryRecord = {
+    const payload: MemoryCreationPayload = {
       memoryId,
       layer: input.layer,
       statement: input.statement,
       scope: input.scope,
       contentHash,
-      createdAt: this.now(),
+      createdAt: this.#now(),
       evidenceIds: Object.freeze([...(input.evidenceIds ?? [])]),
       sourceRefs: Object.freeze([...(input.sourceRefs ?? [])]),
       relations: Object.freeze([...(input.relations ?? [])]),
@@ -81,20 +101,20 @@ export class MemoryFabric {
       importance: input.importance ?? null,
       validFrom: input.validFrom ?? null,
       validUntil: input.validUntil ?? null,
+    };
+
+    const record: MemoryRecord = {
+      ...payload,
       // Section 33: unconditional. There is no argument that changes this.
       storedMaturity: "M0_OBSERVATION",
       status: "active",
     };
 
+    // Ledger first: the log may lead the projection, never trail it.
+    this.#ledger.append({ type: "memory.created", memoryId, record: payload });
     this.#records.set(memoryId, record);
     this.#telemetry.set(memoryId, { retrievalCount: 0, lastRetrievedAt: null });
-    this.ledger.append({
-      type: "memory.created",
-      memoryId,
-      contentHash,
-      scope: record.scope,
-      layer: record.layer,
-    });
+    this.#save();
     return record;
   }
 
@@ -120,15 +140,17 @@ export class MemoryFabric {
       legacyTrustState: "LEGACY_UNVERIFIED",
       historicalStoredMaturity,
     };
-    this.#records.set(record.memoryId, record);
-    this.ledger.append({
+    const { storedMaturity: _m, status: _s, ...payload } = created;
+    void _m;
+    void _s;
+    this.#ledger.append({
       type: "memory.imported",
       memoryId: record.memoryId,
-      contentHash: record.contentHash,
-      scope: record.scope,
-      layer: record.layer,
+      record: payload,
       historicalStoredMaturity,
     });
+    this.#records.set(record.memoryId, record);
+    this.#save();
     return record;
   }
 
@@ -137,11 +159,11 @@ export class MemoryFabric {
     const record = this.#require(request.memoryId);
     const current = this.effectiveMaturity(record.memoryId);
 
-    const decision = this.promotion.evaluate(record, current, request);
+    const decision = this.#promotion.evaluate(record, current, request);
     if (decision.disposition !== "PROMOTED") return decision;
 
     this.#records.set(record.memoryId, { ...record, storedMaturity: request.targetMaturity });
-    this.ledger.append({
+    this.#ledger.append({
       type: "memory.promoted",
       memoryId: record.memoryId,
       from: current,
@@ -152,7 +174,7 @@ export class MemoryFabric {
     if (request.targetMaturity === "M5_CONSTITUTIONAL") {
       const approval = request.approvalReceipts?.[0];
       if (approval) {
-        this.ledger.append({
+        this.#ledger.append({
           type: "memory.constitutional_approval",
           memoryId: record.memoryId,
           approvalId: approval.approvalId,
@@ -160,6 +182,7 @@ export class MemoryFabric {
         });
       }
     }
+    this.#save();
     return decision;
   }
 
@@ -172,7 +195,8 @@ export class MemoryFabric {
     }
     const next: MemoryRecord = { ...record, storedMaturity: to };
     this.#records.set(memoryId, next);
-    this.ledger.append({ type: "memory.demoted", memoryId, from, to, reason });
+    this.#ledger.append({ type: "memory.demoted", memoryId, from, to, reason });
+    this.#save();
     return next;
   }
 
@@ -195,7 +219,8 @@ export class MemoryFabric {
 
     const next: MemoryRecord = { ...record, status: to };
     this.#records.set(memoryId, next);
-    this.ledger.append({ type: "memory.status_changed", memoryId, from, to, reason });
+    this.#ledger.append({ type: "memory.status_changed", memoryId, from, to, reason });
+    this.#save();
     return next;
   }
 
@@ -208,9 +233,10 @@ export class MemoryFabric {
     const current = this.#telemetry.get(memoryId) ?? { retrievalCount: 0, lastRetrievedAt: null };
     const next: MemoryTelemetry = {
       retrievalCount: current.retrievalCount + 1,
-      lastRetrievedAt: this.now(),
+      lastRetrievedAt: this.#now(),
     };
     this.#telemetry.set(memoryId, next);
+    this.#save();
     return next;
   }
 
@@ -220,7 +246,7 @@ export class MemoryFabric {
 
   /** Canonical maturity: derived from the ledger, never read off the record. */
   effectiveMaturity(memoryId: string): Maturity {
-    return replayMemoryState(this.ledger).get(memoryId)?.effectiveMaturity ?? "M0_OBSERVATION";
+    return replayMemoryState(this.#ledger).get(memoryId)?.effectiveMaturity ?? "M0_OBSERVATION";
   }
 
   /** Pre-wired inputs for retrieval, so callers cannot supply a stale snapshot. */
@@ -228,7 +254,7 @@ export class MemoryFabric {
     return {
       records: () => this.records(),
       effectiveMaturity: (memoryId) => this.effectiveMaturity(memoryId),
-      now: this.now,
+      now: this.#now,
     };
   }
 
@@ -247,50 +273,93 @@ export class MemoryFabric {
 
   /**
    * Section 53: at startup the ledger is replayed and compared to the projection.
-   * The ledger wins; anything that disagreed is quarantined and reported rather
-   * than silently corrected, because a divergence means something wrote state
-   * without going through the kernel.
+   * The ledger wins.
+   *
+   * Because creation events carry the full record, a divergent entry is rebuilt
+   * from the log rather than patched in place — and a record the log knows about
+   * but the cache has lost is restored rather than forgotten. Everything touched
+   * is quarantined and reported: a divergence means something wrote state without
+   * going through the kernel, and that fact outlives the repair.
    */
   reconcile(): ReconciliationReport {
-    this.ledger.verifyIntegrity();
-    const derived = replayMemoryState(this.ledger);
+    this.#ledger.verifyIntegrity();
+    const derived = replayMemoryState(this.#ledger);
+
     const divergent: string[] = [];
+    const missing: string[] = [];
+    const orphaned: string[] = [];
 
     for (const [memoryId, record] of this.#records) {
       const truth = derived.get(memoryId);
       if (!truth) {
-        divergent.push(memoryId);
+        // In the cache, unknown to the log: it was never legitimately created.
+        orphaned.push(memoryId);
         continue;
       }
-      if (
-        truth.effectiveMaturity !== record.storedMaturity ||
-        truth.status !== record.status
-      ) {
-        divergent.push(memoryId);
-      }
+      if (canonicalize(truth.record) !== canonicalize(record)) divergent.push(memoryId);
+    }
+    for (const memoryId of derived.keys()) {
+      if (!this.#records.has(memoryId)) missing.push(memoryId);
     }
 
-    if (divergent.length === 0) return { divergent: [], quarantined: [], ok: true };
+    const touched = [...divergent, ...missing, ...orphaned];
+    if (touched.length === 0) return { divergent: [], missing: [], orphaned: [], quarantined: [], ok: true };
 
     const quarantined: string[] = [];
-    for (const memoryId of divergent) {
-      const record = this.#records.get(memoryId);
-      if (!record) continue;
+    for (const memoryId of [...divergent, ...missing]) {
       const truth = derived.get(memoryId);
-      this.#records.set(memoryId, {
-        ...record,
-        storedMaturity: truth?.effectiveMaturity ?? "M0_OBSERVATION",
-        status: "quarantined",
-      });
+      if (!truth) continue;
+      this.#records.set(memoryId, { ...truth.record, status: "quarantined" });
       quarantined.push(memoryId);
     }
+    for (const memoryId of orphaned) {
+      this.#records.delete(memoryId);
+      this.#telemetry.delete(memoryId);
+    }
 
-    this.ledger.append({
+    this.#ledger.append({
       type: "reconciliation.divergence",
-      memoryIds: divergent,
-      detail: "projection disagreed with ledger replay; ledger state applied and record quarantined",
+      memoryIds: touched,
+      detail:
+        `projection disagreed with ledger replay; ${divergent.length} rebuilt, ` +
+        `${missing.length} restored, ${orphaned.length} discarded as unledgered`,
     });
-    return { divergent, quarantined, ok: false };
+    this.#save();
+    return { divergent, missing, orphaned, quarantined, ok: false };
+  }
+
+  /** Writes the projection cache, if this fabric was opened with a store. */
+  #save(): void {
+    this.#store?.write({
+      version: 1,
+      savedAt: this.#now(),
+      counter: this.#counter,
+      records: [...this.#records.values()],
+      telemetry: [...this.#telemetry.entries()],
+    });
+  }
+
+  /**
+   * Loads a previously saved projection cache. Deliberately does not validate it
+   * — `reconcile()` is what decides whether the cache may be believed, and it
+   * must be called before the fabric is used.
+   */
+  loadProjection(): boolean {
+    const snapshot = this.#store?.read();
+    if (!snapshot) return false;
+    this.#records.clear();
+    this.#telemetry.clear();
+    for (const record of snapshot.records as readonly MemoryRecord[]) {
+      this.#records.set(record.memoryId, record);
+    }
+    for (const [memoryId, telemetry] of snapshot.telemetry as readonly (readonly [
+      string,
+      MemoryTelemetry,
+    ])[]) {
+      this.#telemetry.set(memoryId, telemetry);
+    }
+    this.#counter = snapshot.counter;
+    return true;
   }
 
   /** Test/forensics hook: simulate an out-of-band write to the projection. */

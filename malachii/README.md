@@ -50,7 +50,7 @@ node scripts/mutate.mjs                               # constitutional mutation 
 | §56 | Property invariants P-001…P-010 over generated input | `tests/properties/` |
 | §57 | Constitutional mutation testing | `scripts/mutate.mjs` |
 
-## Two design decisions worth knowing
+## Three design decisions worth knowing
 
 **Promotion advances exactly one level.** Not "no direct M5" — no skipping at
 all. Each step is earned and ledgered separately, which keeps the audit trail
@@ -62,6 +62,12 @@ An earlier version handed callers a materialised array; the ATK-020 test caught
 that a caller holding that array across a revocation could still see the revoked
 memory. Reading live on every call makes the cache escape unrepresentable rather
 than merely tested against.
+
+**Creation events carry the whole record, so the projection is a true cache.**
+The ledger is not just an audit trail of *what changed* — it holds every
+immutable field, which is what lets reconciliation rebuild a corrupted or
+deleted projection from the log rather than only detecting that it is wrong.
+Delete `projection.json` and the next start reconstructs all of it.
 
 ## Deliberately not built
 
@@ -83,3 +89,10 @@ than merely tested against.
 - Principal credentials are compared as plain strings in an in-memory registry.
   Fine for a kernel under test; a real deployment needs hashed credentials and a
   real store.
+- The evidence store and source registry are still in-memory, so evidence does
+  not survive a restart even though memory does. Promotion after a restart needs
+  its evidence re-supplied. Persisting the evidence plane is the natural next
+  step and the ledger format is already content-addressed for it.
+- The projection is rewritten in full on every mutation. Fine at this scale,
+  quadratic at large ones; it wants an incremental write before it holds real
+  volume.

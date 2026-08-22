@@ -1,5 +1,5 @@
 import type { KeyObject } from "node:crypto";
-import { fingerprintOf } from "../crypto/signing";
+import { fingerprintOf } from "../crypto/signing.ts";
 
 /**
  * The constitution is the small set of facts the kernel refuses to learn at

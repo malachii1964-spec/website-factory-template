@@ -28,8 +28,8 @@ const MUTATIONS = [
     id: "MUT-02",
     control: "imported history does not confer trust",
     file: "src/ledger/replay.ts",
-    find: "        state.set(event.memoryId, {\n          effectiveMaturity: \"M0_OBSERVATION\",\n          status: \"active\",\n          historicalStoredMaturity: event.historicalStoredMaturity,",
-    replace: "        state.set(event.memoryId, {\n          effectiveMaturity: event.historicalStoredMaturity,\n          status: \"active\",\n          historicalStoredMaturity: event.historicalStoredMaturity,",
+    find: "          effectiveMaturity: \"M0_OBSERVATION\",\n          status: \"active\",\n          historicalStoredMaturity: event.historicalStoredMaturity,\n          legacy: true,",
+    replace: "          effectiveMaturity: event.historicalStoredMaturity,\n          status: \"active\",\n          historicalStoredMaturity: event.historicalStoredMaturity,\n          legacy: true,",
   },
   {
     id: "MUT-03",
@@ -51,15 +51,15 @@ const MUTATIONS = [
     file: "src/memory/evidence.ts",
     find: "    return evidenceIds.map((id) => this.resolve(id));",
     replace:
-      "    return evidenceIds.flatMap((id) => {\n      try {\n        return [this.resolve(id)];\n      } catch {\n        return [];\n      }\n    });",
+      "    return evidenceIds.flatMap((id) => { try { return [this.resolve(id)]; } catch { return []; } });",
   },
   {
     id: "MUT-06",
     control: "reading a memory does not promote it",
     file: "src/memory/fabric.ts",
-    find: "    this.#telemetry.set(memoryId, next);",
+    find: "    this.#telemetry.set(memoryId, next);\n    this.#save();",
     replace:
-      "    this.#telemetry.set(memoryId, next);\n    const r = this.#records.get(memoryId);\n    if (r) this.#records.set(memoryId, { ...r, storedMaturity: \"M1_CANDIDATE\" });",
+      "    this.#telemetry.set(memoryId, next);\n    const r = this.#records.get(memoryId);\n    if (r) this.#records.set(memoryId, { ...r, storedMaturity: \"M1_CANDIDATE\" });\n    this.#save();",
   },
   {
     id: "MUT-07",
@@ -86,8 +86,8 @@ const MUTATIONS = [
     id: "MUT-10",
     control: "startup reconciliation detects divergence",
     file: "src/memory/fabric.ts",
-    find: "    if (divergent.length === 0) return { divergent: [], quarantined: [], ok: true };",
-    replace: "    return { divergent: [], quarantined: [], ok: true };",
+    find: "    if (touched.length === 0)",
+    replace: "    if (true)",
   },
   {
     id: "MUT-11",
@@ -124,6 +124,41 @@ const MUTATIONS = [
     file: "src/ledger/ledger.ts",
     find: "  verifyIntegrity(): void {",
     replace: "  verifyIntegrity(): void {\n    return;",
+  },
+  {
+    id: "MUT-16",
+    control: "a torn ledger tail is repaired on disk, not merely skipped",
+    file: "src/ledger/persistence.ts",
+    find: "    if (load.truncatedTail) {",
+    replace: "    if (false) {",
+  },
+  {
+    id: "MUT-17",
+    control: "an unparseable ledger line is corruption, not a torn tail",
+    file: "src/ledger/persistence.ts",
+    find: "        throw new LedgerIntegrityError(`unparseable ledger record at line ${index + 1}`);",
+    replace: "        return;",
+  },
+  {
+    id: "MUT-18",
+    control: "cache records the ledger never saw are discarded",
+    file: "src/memory/fabric.ts",
+    find: "        orphaned.push(memoryId);",
+    replace: "        continue;",
+  },
+  {
+    id: "MUT-19",
+    control: "records missing from the cache are restored from the ledger",
+    file: "src/memory/fabric.ts",
+    find: "      if (!this.#records.has(memoryId)) missing.push(memoryId);",
+    replace: "      if (false) missing.push(memoryId);",
+  },
+  {
+    id: "MUT-20",
+    control: "the whole record is compared to the ledger, not just its maturity",
+    file: "src/memory/fabric.ts",
+    find: "      if (canonicalize(truth.record) !== canonicalize(record)) divergent.push(memoryId);",
+    replace: "      if (truth.effectiveMaturity !== record.storedMaturity) divergent.push(memoryId);",
   },
 ];
 

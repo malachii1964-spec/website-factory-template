@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-22T03:43:32.770Z",
-  "total": 15,
-  "killed": 15,
+  "generatedAt": "2026-08-22T20:40:44.844Z",
+  "total": 20,
+  "killed": 20,
   "killRate": 100,
   "requiredKillRate": 100,
   "pass": true,
@@ -94,6 +94,36 @@
       "id": "MUT-15",
       "control": "ledger hash-chain integrity",
       "file": "src/ledger/ledger.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-16",
+      "control": "a torn ledger tail is repaired on disk, not merely skipped",
+      "file": "src/ledger/persistence.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-17",
+      "control": "an unparseable ledger line is corruption, not a torn tail",
+      "file": "src/ledger/persistence.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-18",
+      "control": "cache records the ledger never saw are discarded",
+      "file": "src/memory/fabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-19",
+      "control": "records missing from the cache are restored from the ledger",
+      "file": "src/memory/fabric.ts",
+      "status": "KILLED"
+    },
+    {
+      "id": "MUT-20",
+      "control": "the whole record is compared to the ledger, not just its maturity",
+      "file": "src/memory/fabric.ts",
       "status": "KILLED"
     }
   ]

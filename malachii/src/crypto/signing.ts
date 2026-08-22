@@ -6,7 +6,7 @@ import {
   verify as nodeVerify,
   type KeyObject,
 } from "node:crypto";
-import { sha256Text } from "./hash";
+import { sha256Text } from "./hash.ts";
 
 /**
  * Ed25519 signing over canonical bytes.

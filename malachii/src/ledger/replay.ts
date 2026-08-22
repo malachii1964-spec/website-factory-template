@@ -1,13 +1,17 @@
-import type { Maturity, MemoryStatus } from "../memory/types";
-import type { EventLedger } from "./ledger";
+import type { Maturity, MemoryRecord, MemoryStatus } from "../memory/types.ts";
+import type { EventLedger } from "./ledger.ts";
 
 /**
  * Section 35: stored maturity is a cache. This replay is the canonical answer.
- * If the two disagree at startup, the ledger wins and the projection is
- * quarantined (section 53).
+ *
+ * Because creation events carry the full immutable record, replay rebuilds
+ * complete `MemoryRecord`s rather than only their maturity — so the projection
+ * is a genuine cache that can be deleted and reconstructed, and a divergence
+ * can be repaired from the log instead of merely reported.
  */
 
 export interface DerivedMemoryState {
+  readonly record: MemoryRecord;
   readonly effectiveMaturity: Maturity;
   readonly status: MemoryStatus;
   readonly historicalStoredMaturity: Maturity | null;
@@ -19,10 +23,20 @@ export type DerivedState = ReadonlyMap<string, DerivedMemoryState>;
 export function replayMemoryState(ledger: EventLedger): DerivedState {
   const state = new Map<string, DerivedMemoryState>();
 
-  const patch = (id: string, next: Partial<DerivedMemoryState>): void => {
+  const patch = (
+    id: string,
+    next: { effectiveMaturity?: Maturity; status?: MemoryStatus },
+  ): void => {
     const current = state.get(id);
     if (!current) return;
-    state.set(id, { ...current, ...next });
+    const effectiveMaturity = next.effectiveMaturity ?? current.effectiveMaturity;
+    const status = next.status ?? current.status;
+    state.set(id, {
+      ...current,
+      effectiveMaturity,
+      status,
+      record: { ...current.record, storedMaturity: effectiveMaturity, status },
+    });
   };
 
   for (const { event } of ledger.entries()) {
@@ -30,6 +44,7 @@ export function replayMemoryState(ledger: EventLedger): DerivedState {
       case "memory.created":
         // Section 33: every normal creation path lands on M0, without exception.
         state.set(event.memoryId, {
+          record: { ...event.record, storedMaturity: "M0_OBSERVATION", status: "active" },
           effectiveMaturity: "M0_OBSERVATION",
           status: "active",
           historicalStoredMaturity: null,
@@ -40,6 +55,13 @@ export function replayMemoryState(ledger: EventLedger): DerivedState {
       case "memory.imported":
         // History is preserved; trust is withheld until re-earned (section 54).
         state.set(event.memoryId, {
+          record: {
+            ...event.record,
+            storedMaturity: "M0_OBSERVATION",
+            status: "active",
+            legacyTrustState: "LEGACY_UNVERIFIED",
+            historicalStoredMaturity: event.historicalStoredMaturity,
+          },
           effectiveMaturity: "M0_OBSERVATION",
           status: "active",
           historicalStoredMaturity: event.historicalStoredMaturity,

@@ -1,4 +1,4 @@
-import { TrustBoundaryViolation } from "./errors";
+import { TrustBoundaryViolation } from "./errors.ts";
 
 /**
  * Section 32 of the spec: fields that carry trust. An untrusted caller (T0) may

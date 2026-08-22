@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { makeHarness, type Harness } from "../harness";
-import { AuthorizationError, TrustBoundaryViolation } from "../../src/trust/errors";
-import { FORBIDDEN_TRUST_FIELDS } from "../../src/trust/forbiddenFields";
-import { deriveSecurityContext, PrincipalRegistry } from "../../src/trust/authority";
-import { replayMemoryState } from "../../src/ledger/replay";
-import { retrieve, GLOBAL_SCOPE } from "../../src/retrieval/retrieval";
-import { countIndependentRoots } from "../../src/memory/evidence";
-import { maturityRank, type CreateMemoryInput, type Maturity } from "../../src/memory/types";
-import type { PromotionRequest } from "../../src/memory/promotionEngine";
+import { makeHarness, type Harness } from "../harness.ts";
+import { AuthorizationError, TrustBoundaryViolation } from "../../src/trust/errors.ts";
+import { FORBIDDEN_TRUST_FIELDS } from "../../src/trust/forbiddenFields.ts";
+import { deriveSecurityContext, PrincipalRegistry } from "../../src/trust/authority.ts";
+import { replayMemoryState } from "../../src/ledger/replay.ts";
+import { retrieve, GLOBAL_SCOPE } from "../../src/retrieval/retrieval.ts";
+import { countIndependentRoots } from "../../src/memory/evidence.ts";
+import { maturityRank, type CreateMemoryInput, type Maturity } from "../../src/memory/types.ts";
+import type { PromotionRequest } from "../../src/memory/promotionEngine.ts";
 
 /**
  * Spec section 56. These are stated as universally quantified claims, so each is

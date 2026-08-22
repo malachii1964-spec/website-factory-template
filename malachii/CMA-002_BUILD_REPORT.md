@@ -38,8 +38,10 @@ refers to real code.
 | Kernel unit suite | `vitest run tests/kernel.test.ts` | **PASS** — 13/13 |
 | Attack corpus (§55) | `vitest run tests/attacks` | **PASS** — 34/34 |
 | Property invariants (§56) | `vitest run tests/properties` | **PASS** — 11/11 |
-| Total | `vitest run` | **PASS** — 58/58 |
-| Constitutional mutation (§57) | `node scripts/mutate.mjs` | **PASS** — 15/15 killed, 100% |
+| Restart / persistence (§52–53) | `vitest run tests/restart` | **PASS** — 11/11, real OS processes |
+| Total | `vitest run` | **PASS** — 69/69 |
+| Constitutional mutation (§57) | `node scripts/mutate.mjs` | **PASS** — 20/20 killed, 100% |
+| Runs without a build step | `node tests/restart/child.ts seed <dir>` | **PASS** — plain `node`, no toolchain |
 
 Host repository gates, re-run to confirm nothing regressed:
 
@@ -77,13 +79,38 @@ threshold · contradiction blocking · phantom-evidence rejection ·
 retrieval-driven promotion · global wildcard · blank-query rejection ·
 revocation reachability · reconciliation · authority widening · trust-field
 rejection · single-level promotion · outcome signature verification · ledger
-hash-chain integrity
+hash-chain integrity · torn-tail repair · corrupt-line detection · orphaned
+cache records · missing cache records · whole-record comparison
+
+MUT-17 (an unparseable ledger line must be reported as corruption, not skipped)
+survived its first run: no test covered a malformed line mid-log. The gap was
+closed with a test rather than by dropping the mutation, and the rate returned
+to 20/20.
 
 Machine-readable results: `MUTATION_RESULTS.json`.
 
+## Persistence and restart (added after the first Stage A pass)
+
+§52 and §53 are now implemented and demonstrated across genuine process
+boundaries. Every case in `tests/restart/` spawns `node` as a separate OS
+process; simulating a restart in-process would leave the in-memory maps intact
+and prove nothing.
+
+Demonstrated: maturity, status, statement and revocation all survive a restart ·
+a deleted `projection.json` is fully rebuilt from the log · a cache edited to
+claim M5 is overruled and quarantined · a cache edited to un-revoke a memory is
+overruled · a record injected into the cache that the log never saw is discarded
+· a tampered or removed ledger line refuses to start · a half-written final
+record is dropped, reported, and truncated so later appends stay valid · a
+malformed line mid-log is reported as corruption rather than skipped.
+
+Supporting change: creation events now carry the full immutable record, so the
+ledger is a complete source of truth and the projection is a real cache that can
+be deleted and reconstructed — reconciliation repairs rather than only detects.
+
 ## Defects found and fixed during the build
 
-Both were found by the tests, not by reading:
+The first two were found by the tests, the third by mutation testing:
 
 1. **`VerifiedEvidenceRef` brand was type-only.** A `declare const unique symbol`
    was used as a runtime computed key, throwing `ReferenceError` on every
@@ -95,14 +122,18 @@ Both were found by the tests, not by reading:
    memory. Fixed at the API level: `RetrievalInputs.records` is now a supplier
    function, so retrieval always reads live state and a stale snapshot cannot be
    supplied at all.
+3. **A torn ledger tail was skipped on read but left on disk.** Recovery looked
+   correct in isolation, but the next append would land behind the partial bytes
+   and turn a recoverable crash into a permanently unparseable log. The store now
+   truncates to the last complete record during `open()`.
 
 ## Scope not covered
 
-Stage B (partial — lifecycle transitions are implemented, learning is not),
-Stage C learning governor, D05–D06 derived retrieval index, E04 fuzz corpus,
-E07 performance benchmark, and a persistent on-disk ledger. Reconciliation is
-proven against a tampered chain and a tampered projection but not across a real
-process restart; that is the one honest gap against §52.
+Stage C learning governor, D05–D06 derived retrieval index, E04 fuzz corpus, and
+E07 performance benchmark. Stage B is partial: lifecycle transitions are
+implemented, learning is not. The evidence plane is still in-memory, so evidence
+does not survive a restart even though memory does — promotion after a restart
+needs its evidence re-supplied.
 
 ## What this build does not claim
 

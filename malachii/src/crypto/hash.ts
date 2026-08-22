@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { canonicalize } from "./canonical";
+import { canonicalize } from "./canonical.ts";
 
 /** Hash of arbitrary text. Used for raw artefact content. */
 export function sha256Text(text: string): string {

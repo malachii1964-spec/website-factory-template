@@ -1,7 +1,7 @@
-import { canonicalize } from "../crypto/canonical";
-import { sha256Text } from "../crypto/hash";
-import { LedgerIntegrityError } from "../trust/errors";
-import type { MemoryEvent } from "./events";
+import { canonicalize } from "../crypto/canonical.ts";
+import { sha256Text } from "../crypto/hash.ts";
+import { LedgerIntegrityError } from "../trust/errors.ts";
+import type { MemoryEvent } from "./events.ts";
 
 /**
  * Append-only hash-chained event log. This is the one component the audit was
@@ -19,6 +19,13 @@ export interface LedgerEntry {
 
 export const GENESIS_HASH = "0".repeat(64);
 
+/**
+ * Durable write hook. The ledger stays pure — it knows how to chain and verify,
+ * not where bytes live — so a persistent store plugs in without the hashing
+ * logic ever learning about files.
+ */
+export type LedgerSink = (entry: LedgerEntry) => void;
+
 export function computeEntryHash(
   seq: number,
   timestamp: number,
@@ -31,12 +38,18 @@ export function computeEntryHash(
 export class EventLedger {
   readonly #entries: LedgerEntry[] = [];
 
-  constructor(private readonly now: () => number = Date.now) {}
+  readonly #now: () => number;
+  readonly #sink: LedgerSink | null;
+
+  constructor(now: () => number = Date.now, sink: LedgerSink | null = null) {
+    this.#now = now;
+    this.#sink = sink;
+  }
 
   append(event: MemoryEvent): LedgerEntry {
     const seq = this.#entries.length;
     const prevHash = this.#entries[seq - 1]?.hash ?? GENESIS_HASH;
-    const timestamp = this.now();
+    const timestamp = this.#now();
     const entry: LedgerEntry = {
       seq,
       timestamp,
@@ -44,6 +57,9 @@ export class EventLedger {
       prevHash,
       hash: computeEntryHash(seq, timestamp, event, prevHash),
     };
+    // Persist before the entry is visible in memory: a crash between the two
+    // must leave the log ahead of the projection, never behind it.
+    this.#sink?.(entry);
     this.#entries.push(entry);
     return entry;
   }
@@ -75,8 +91,12 @@ export class EventLedger {
     return this.#entries.map((entry) => ({ ...entry }));
   }
 
-  static restore(entries: readonly LedgerEntry[], now: () => number = Date.now): EventLedger {
-    const ledger = new EventLedger(now);
+  static restore(
+    entries: readonly LedgerEntry[],
+    now: () => number = Date.now,
+    sink: LedgerSink | null = null,
+  ): EventLedger {
+    const ledger = new EventLedger(now, sink);
     for (const entry of entries) ledger.#entries.push(entry);
     ledger.verifyIntegrity();
     return ledger;

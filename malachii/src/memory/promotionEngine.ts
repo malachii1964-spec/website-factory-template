@@ -1,19 +1,19 @@
-import type { Constitution } from "../trust/constitution";
-import { InvalidRequestError } from "../trust/errors";
-import { assertNoTrustBearingFields } from "../trust/forbiddenFields";
+import type { Constitution } from "../trust/constitution.ts";
+import { InvalidRequestError } from "../trust/errors.ts";
+import { assertNoTrustBearingFields } from "../trust/forbiddenFields.ts";
 import {
   countIndependentRoots,
   independentRootIds,
   type EvidenceResolver,
   type VerifiedEvidenceRef,
-} from "./evidence";
+} from "./evidence.ts";
 import {
   type ApprovalVerifier,
   type OutcomeVerifier,
   type SignedApprovalReceipt,
   type SignedOutcomeReceipt,
-} from "./receipts";
-import { MATURITY_ORDER, maturityRank, type Maturity, type MemoryRecord } from "./types";
+} from "./receipts.ts";
+import { MATURITY_ORDER, maturityRank, type Maturity, type MemoryRecord } from "./types.ts";
 
 /**
  * The promotion engine is where the spec's central claim has to be true or false:
@@ -54,12 +54,22 @@ export interface PromotionDecision {
 }
 
 export class PromotionEngine {
+  readonly #constitution: Constitution;
+  readonly #evidence: EvidenceResolver;
+  readonly #approvals: ApprovalVerifier;
+  readonly #outcomes: OutcomeVerifier;
+
   constructor(
-    private readonly constitution: Constitution,
-    private readonly evidence: EvidenceResolver,
-    private readonly approvals: ApprovalVerifier,
-    private readonly outcomes: OutcomeVerifier,
-  ) {}
+    constitution: Constitution,
+    evidence: EvidenceResolver,
+    approvals: ApprovalVerifier,
+    outcomes: OutcomeVerifier,
+  ) {
+    this.#constitution = constitution;
+    this.#evidence = evidence;
+    this.#approvals = approvals;
+    this.#outcomes = outcomes;
+  }
 
   evaluate(
     record: MemoryRecord,
@@ -96,7 +106,7 @@ export class PromotionEngine {
 
     // Every ref is resolved by the resolver. A phantom id throws rather than
     // silently shrinking the count (ATK-007).
-    const refs: VerifiedEvidenceRef[] = this.evidence.resolveAll(request.evidenceRefIds ?? []);
+    const refs: VerifiedEvidenceRef[] = this.#evidence.resolveAll(request.evidenceRefIds ?? []);
     const independentRoots = independentRootIds(refs);
     const rootCount = countIndependentRoots(refs);
     const unresolvedContradictions = record.relations.filter(
@@ -122,9 +132,9 @@ export class PromotionEngine {
       denials.push("M1_CANDIDATE requires at least one verified evidence reference");
     }
     if (targetRank >= maturityRank("M2_CORROBORATED")) {
-      if (rootCount < this.constitution.corroborationThreshold) {
+      if (rootCount < this.#constitution.corroborationThreshold) {
         denials.push(
-          `M2_CORROBORATED requires ${this.constitution.corroborationThreshold} independent evidence roots; found ${rootCount}`,
+          `M2_CORROBORATED requires ${this.#constitution.corroborationThreshold} independent evidence roots; found ${rootCount}`,
         );
       }
       if (unresolvedContradictions > 0) {
@@ -145,12 +155,12 @@ export class PromotionEngine {
       if (!request.procedureArtifactId) {
         denials.push("M4_PROCEDURALIZED requires a reusable procedure artifact");
       } else {
-        this.evidence.resolve(request.procedureArtifactId);
+        this.#evidence.resolve(request.procedureArtifactId);
       }
       if (!request.rollbackPlanId) {
         denials.push("M4_PROCEDURALIZED requires a rollback plan");
       } else {
-        this.evidence.resolve(request.rollbackPlanId);
+        this.#evidence.resolve(request.rollbackPlanId);
       }
       if (record.scope === "global") {
         denials.push("M4_PROCEDURALIZED requires bounded scope; \"global\" is not bounded");
@@ -166,7 +176,7 @@ export class PromotionEngine {
       if (!request.authorityAnalysisId) {
         denials.push("M5_CONSTITUTIONAL requires an authority-impact analysis");
       } else {
-        this.evidence.resolve(request.authorityAnalysisId);
+        this.#evidence.resolve(request.authorityAnalysisId);
       }
       if (!request.rollbackPlanId) {
         denials.push("M5_CONSTITUTIONAL requires a rollback plan");
@@ -199,7 +209,7 @@ export class PromotionEngine {
     for (const receipt of receipts ?? []) {
       if (receipt.kind !== kind) continue;
       try {
-        this.outcomes.verify(receipt);
+        this.#outcomes.verify(receipt);
       } catch {
         continue; // An unverifiable receipt is simply not counted.
       }
@@ -216,7 +226,7 @@ export class PromotionEngine {
     const valid: SignedApprovalReceipt[] = [];
     for (const receipt of receipts ?? []) {
       try {
-        this.approvals.verify(receipt, {
+        this.#approvals.verify(receipt, {
           action: "memory.promote",
           resourceId: record.memoryId,
           targetState: target,

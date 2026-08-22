@@ -1,13 +1,13 @@
-import { generateSigningKeyPair, type KeyPair } from "../src/crypto/signing";
-import { EventLedger } from "../src/ledger/ledger";
+import { generateSigningKeyPair, type KeyPair } from "../src/crypto/signing.ts";
+import { EventLedger } from "../src/ledger/ledger.ts";
 import {
   EvidenceResolver,
   EvidenceStore,
   SourceRegistry,
   type EvidenceKind,
-} from "../src/memory/evidence";
-import { MemoryFabric } from "../src/memory/fabric";
-import { PromotionEngine } from "../src/memory/promotionEngine";
+} from "../src/memory/evidence.ts";
+import { MemoryFabric } from "../src/memory/fabric.ts";
+import { PromotionEngine } from "../src/memory/promotionEngine.ts";
 import {
   ApprovalVerifier,
   NonceLedger,
@@ -19,14 +19,14 @@ import {
   type OutcomeReceiptBody,
   type SignedApprovalReceipt,
   type SignedOutcomeReceipt,
-} from "../src/memory/receipts";
+} from "../src/memory/receipts.ts";
 import {
   deriveSecurityContext,
   PrincipalRegistry,
   type SecurityContext,
-} from "../src/trust/authority";
-import { defineConstitution } from "../src/trust/constitution";
-import type { Maturity } from "../src/memory/types";
+} from "../src/trust/authority.ts";
+import { defineConstitution } from "../src/trust/constitution.ts";
+import type { Maturity } from "../src/memory/types.ts";
 
 export const ALL_SCOPES = [
   "memory.create",

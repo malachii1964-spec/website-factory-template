@@ -114,6 +114,16 @@ export interface MemoryRecord {
   readonly historicalStoredMaturity?: Maturity;
 }
 
+/**
+ * The immutable half of a record — everything fixed at creation. The ledger
+ * carries this in full, which is what makes the projection a true cache: it can
+ * be deleted and rebuilt from the log alone.
+ */
+export type MemoryCreationPayload = Omit<
+  MemoryRecord,
+  "storedMaturity" | "status" | "legacyTrustState" | "historicalStoredMaturity"
+>;
+
 /** Telemetry lives in its own record so it has no path to maturity (section 46). */
 export interface MemoryTelemetry {
   readonly retrievalCount: number;

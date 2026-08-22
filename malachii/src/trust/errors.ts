@@ -3,11 +3,11 @@
 export class TrustBoundaryViolation extends Error {
   override readonly name = "TrustBoundaryViolation";
   readonly code = "TRUST_BOUNDARY_VIOLATION";
-  constructor(
-    message: string,
-    readonly offendingFields: readonly string[] = [],
-  ) {
+  readonly offendingFields: readonly string[];
+
+  constructor(message: string, offendingFields: readonly string[] = []) {
     super(message);
+    this.offendingFields = offendingFields;
   }
 }
 
@@ -29,10 +29,10 @@ export class LedgerIntegrityError extends Error {
 export class ReconciliationError extends Error {
   override readonly name = "ReconciliationError";
   readonly code = "RECONCILIATION_DIVERGENCE";
-  constructor(
-    message: string,
-    readonly divergentMemoryIds: readonly string[] = [],
-  ) {
+  readonly divergentMemoryIds: readonly string[];
+
+  constructor(message: string, divergentMemoryIds: readonly string[] = []) {
     super(message);
+    this.divergentMemoryIds = divergentMemoryIds;
   }
 }

@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { canonicalize, CanonicalizationError } from "../src/crypto/canonical";
-import { sha256Object } from "../src/crypto/hash";
-import { generateSigningKeyPair, signBytes, verifyBytes } from "../src/crypto/signing";
-import { EventLedger, GENESIS_HASH } from "../src/ledger/ledger";
-import { SourceRegistry } from "../src/memory/evidence";
-import { InvalidRequestError } from "../src/trust/errors";
-import { makeHarness } from "./harness";
-import { listMemory, retrieve } from "../src/retrieval/retrieval";
+import { canonicalize, CanonicalizationError } from "../src/crypto/canonical.ts";
+import { sha256Object } from "../src/crypto/hash.ts";
+import { generateSigningKeyPair, signBytes, verifyBytes } from "../src/crypto/signing.ts";
+import { EventLedger, GENESIS_HASH } from "../src/ledger/ledger.ts";
+import { SourceRegistry } from "../src/memory/evidence.ts";
+import { InvalidRequestError } from "../src/trust/errors.ts";
+import { makeHarness } from "./harness.ts";
+import { listMemory, retrieve } from "../src/retrieval/retrieval.ts";
 
 describe("canonical serialisation", () => {
   it("is independent of key order", () => {
@@ -48,9 +48,21 @@ describe("ledger", () => {
     const first = ledger.append({
       type: "memory.created",
       memoryId: "m1",
-      contentHash: "h",
-      scope: "s",
-      layer: "l",
+      record: {
+        memoryId: "m1",
+        layer: "l",
+        statement: "s",
+        scope: "s",
+        contentHash: "h",
+        createdAt: 1000,
+        evidenceIds: [],
+        sourceRefs: [],
+        relations: [],
+        reportedConfidence: null,
+        importance: null,
+        validFrom: null,
+        validUntil: null,
+      },
     });
     expect(first.prevHash).toBe(GENESIS_HASH);
     ledger.append({ type: "memory.status_changed", memoryId: "m1", from: "active", to: "cooled", reason: "r" });

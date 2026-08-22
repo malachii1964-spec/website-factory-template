@@ -1,5 +1,5 @@
-import { sha256Text } from "../crypto/hash";
-import { InvalidRequestError, TrustBoundaryViolation } from "../trust/errors";
+import { sha256Text } from "../crypto/hash.ts";
+import { InvalidRequestError, TrustBoundaryViolation } from "../trust/errors.ts";
 
 /**
  * Evidence plane. `VerifiedEvidenceRef` carries a private brand, so it cannot be
@@ -104,10 +104,13 @@ export class EvidenceStore {
 }
 
 export class EvidenceResolver {
-  constructor(
-    private readonly store: EvidenceStore,
-    private readonly sources: SourceRegistry,
-  ) {}
+  readonly #store: EvidenceStore;
+  readonly #sources: SourceRegistry;
+
+  constructor(store: EvidenceStore, sources: SourceRegistry) {
+    this.#store = store;
+    this.#sources = sources;
+  }
 
   /**
    * Returns a verified ref, or throws. Never returns a partially trusted result:
@@ -115,12 +118,12 @@ export class EvidenceResolver {
    * cannot quietly proceed on fewer refs than it claimed (ATK-007).
    */
   resolve(evidenceId: string): VerifiedEvidenceRef {
-    const artifact = this.store.get(evidenceId);
+    const artifact = this.#store.get(evidenceId);
     if (!artifact) {
       throw new TrustBoundaryViolation(`evidence not found: ${evidenceId}`, [evidenceId]);
     }
     const objectHash = sha256Text(artifact.content);
-    const lineageRootId = this.sources.deriveLineageRoot(artifact.sourceId);
+    const lineageRootId = this.#sources.deriveLineageRoot(artifact.sourceId);
     const ref = {
       evidenceId: artifact.evidenceId,
       kind: artifact.kind,

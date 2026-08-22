@@ -135,7 +135,7 @@ directly.
 
 The only real mitigation is a size budget. **The trust kernel must stay small
 enough that one person can read all of it in a sitting.** The implementation
-here is 1,705 lines of source across 17 files, comments included. That is not an accident and it should be a
+here is under 2,300 lines of source, comments included. That is not an accident and it should be a
 hard constraint, not an aspiration: every feature added to the kernel makes the
 one control you cannot automate — a human reading it — weaker.
 
@@ -144,9 +144,9 @@ one control you cannot automate — a human reading it — weaker.
 ## 5. Recommended sequence
 
 1. **Done here:** the trust kernel — the part that is genuinely hard to retrofit.
-2. **Next, and small:** persist the ledger to disk and re-run reconciliation
-   across a real process restart. Currently in-memory; that is the one honest gap
-   between this and §52.
+2. **Done:** the ledger is persistent, and reconciliation is proven across real
+   process restarts — including a cache edited to claim M5, a cache edited to
+   un-revoke a memory, an injected record, a tampered log, and a crash mid-append.
 3. **Then stop building infrastructure** and give MALACHII one real job end to
    end. Pick the narrowest useful thing. The kernel exists to make that job's
    memory trustworthy; it has no value on its own.

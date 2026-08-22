@@ -1,12 +1,12 @@
-import { AuthorizationError, InvalidRequestError } from "../trust/errors";
-import { assertNoTrustBearingFields } from "../trust/forbiddenFields";
-import { requireScope, type SecurityContext } from "../trust/authority";
+import { AuthorizationError, InvalidRequestError } from "../trust/errors.ts";
+import { assertNoTrustBearingFields } from "../trust/forbiddenFields.ts";
+import { requireScope, type SecurityContext } from "../trust/authority.ts";
 import {
   maturityRank,
   NON_RETRIEVABLE_STATUSES,
   type Maturity,
   type MemoryRecord,
-} from "../memory/types";
+} from "../memory/types.ts";
 
 /**
  * Section 43: every security filter runs before ranking. Ranking is allowed to

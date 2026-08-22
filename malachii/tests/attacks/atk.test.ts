@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { makeHarness, type Harness } from "../harness";
+import { makeHarness, type Harness } from "../harness.ts";
 import {
   AuthorizationError,
   InvalidRequestError,
   LedgerIntegrityError,
   TrustBoundaryViolation,
-} from "../../src/trust/errors";
-import { EventLedger } from "../../src/ledger/ledger";
-import { retrieve } from "../../src/retrieval/retrieval";
-import type { PromotionRequest } from "../../src/memory/promotionEngine";
-import type { CreateMemoryInput, Maturity, MemoryRecord } from "../../src/memory/types";
-import { deriveSecurityContext, PrincipalRegistry } from "../../src/trust/authority";
+} from "../../src/trust/errors.ts";
+import { EventLedger } from "../../src/ledger/ledger.ts";
+import { retrieve } from "../../src/retrieval/retrieval.ts";
+import type { PromotionRequest } from "../../src/memory/promotionEngine.ts";
+import type { CreateMemoryInput, Maturity, MemoryRecord } from "../../src/memory/types.ts";
+import { deriveSecurityContext, PrincipalRegistry } from "../../src/trust/authority.ts";
 
 /**
  * CMA-002 attack corpus (spec section 55). Each case is a real call against the

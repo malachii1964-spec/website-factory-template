@@ -1,8 +1,8 @@
 import type { KeyObject } from "node:crypto";
-import { canonicalize } from "../crypto/canonical";
-import { fingerprintOf, signBytes, verifyBytes } from "../crypto/signing";
-import type { Constitution } from "../trust/constitution";
-import { InvalidRequestError, TrustBoundaryViolation } from "../trust/errors";
+import { canonicalize } from "../crypto/canonical.ts";
+import { fingerprintOf, signBytes, verifyBytes } from "../crypto/signing.ts";
+import type { Constitution } from "../trust/constitution.ts";
+import { InvalidRequestError, TrustBoundaryViolation } from "../trust/errors.ts";
 
 /**
  * Receipts replace booleans. Section 38 forbids `approvedBySuperUser = true` and
@@ -58,11 +58,19 @@ export interface ApprovalBinding {
 }
 
 export class ApprovalVerifier {
+  readonly #constitution: Constitution;
+  readonly #nonces: NonceLedger;
+  readonly #now: () => number;
+
   constructor(
-    private readonly constitution: Constitution,
-    private readonly nonces: NonceLedger,
-    private readonly now: () => number = Date.now,
-  ) {}
+    constitution: Constitution,
+    nonces: NonceLedger,
+    now: () => number = Date.now,
+  ) {
+    this.#constitution = constitution;
+    this.#nonces = nonces;
+    this.#now = now;
+  }
 
   /**
    * Verifies a receipt AND that it is the receipt for *this* action on *this*
@@ -73,7 +81,7 @@ export class ApprovalVerifier {
       throw new TrustBoundaryViolation(`unsupported approval version: ${receipt.version}`);
     }
 
-    const publicKey = this.constitution.rootPublicKeys.get(receipt.signerFingerprint);
+    const publicKey = this.#constitution.rootPublicKeys.get(receipt.signerFingerprint);
     if (!publicKey) {
       throw new TrustBoundaryViolation(
         `approval signed by non-root key: ${receipt.signerFingerprint}`,
@@ -91,15 +99,15 @@ export class ApprovalVerifier {
       throw new TrustBoundaryViolation("approval signature invalid", ["signatureBase64"]);
     }
 
-    const now = this.now();
-    const skew = this.constitution.clockSkewToleranceMs;
+    const now = this.#now();
+    const skew = this.#constitution.clockSkewToleranceMs;
     if (receipt.issuedAt - skew > now) {
       throw new TrustBoundaryViolation("approval issued in the future");
     }
     if (receipt.expiresAt <= receipt.issuedAt) {
       throw new TrustBoundaryViolation("approval expires before it is issued");
     }
-    if (receipt.expiresAt - receipt.issuedAt > this.constitution.maxApprovalLifetimeMs) {
+    if (receipt.expiresAt - receipt.issuedAt > this.#constitution.maxApprovalLifetimeMs) {
       throw new TrustBoundaryViolation("approval lifetime exceeds constitutional maximum");
     }
     if (now > receipt.expiresAt) {
@@ -115,7 +123,7 @@ export class ApprovalVerifier {
       throw new TrustBoundaryViolation("approval does not bind to the requested action");
     }
 
-    this.nonces.consume(receipt.nonce);
+    this.#nonces.consume(receipt.nonce);
   }
 }
 
@@ -162,10 +170,14 @@ export class WorkerKeyRegistry {
 }
 
 export class OutcomeVerifier {
-  constructor(private readonly workers: WorkerKeyRegistry) {}
+  readonly #workers: WorkerKeyRegistry;
+
+  constructor(workers: WorkerKeyRegistry) {
+    this.#workers = workers;
+  }
 
   verify(receipt: SignedOutcomeReceipt): void {
-    const publicKey = this.workers.get(receipt.signerFingerprint);
+    const publicKey = this.#workers.get(receipt.signerFingerprint);
     if (!publicKey) {
       throw new TrustBoundaryViolation(
         `outcome receipt signed by unregistered worker: ${receipt.signerFingerprint}`,

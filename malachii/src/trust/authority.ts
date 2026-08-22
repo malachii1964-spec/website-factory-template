@@ -1,5 +1,5 @@
-import { AuthorizationError, TrustBoundaryViolation } from "./errors";
-import { assertNoTrustBearingFields } from "./forbiddenFields";
+import { AuthorizationError, TrustBoundaryViolation } from "./errors.ts";
+import { assertNoTrustBearingFields } from "./forbiddenFields.ts";
 
 /**
  * Authority plane. The only way to obtain a SecurityContext is to authenticate a
