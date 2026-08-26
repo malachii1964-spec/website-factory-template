@@ -1,0 +1,26 @@
+{
+  "name": "@fda/agentic-swarm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "demo": "tsx src/demo.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.120.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "eslint": "^9",
+    "playwright": "^1.61.1",
+    "tsx": "^4.23.12",
+    "typescript": "^5",
+    "typescript-eslint": "^8.68.0",
+    "vitest": "^4.1.10"
+  }
+}

@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Broken checkout fixture</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  main { position: relative; height: 600px; }
+  footer { position: absolute; top: 0; left: 0; right: 0; height: 80px; background: #222; color: white; display: flex; align-items: center; padding: 0 16px; }
+  /* The defect: top: -20px pulls the button up into the footer it should sit below. */
+  #checkout-btn { position: absolute; top: -20px; left: 20px; width: 200px; height: 48px; background: #d62828; color: white; border: none; font-size: 16px; }
+</style>
+</head>
+<body>
+<main>
+  <footer>Shipping &amp; returns · Contact</footer>
+  <button id="checkout-btn" role="button">Buy Now</button>
+</main>
+</body>
+</html>
