@@ -1,0 +1,15 @@
+{
+  "name": "@malachii/sovereign-runtime-rc1",
+  "version": "3.3.0-rc.1.6",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "demo": "npm run build && node dist/src/demo.js",
+    "control-demo": "npm run build && node dist/src/controlPlaneDemo.js",
+    "live-demo": "npm run build && node dist/src/liveFabricDemo.js",
+    "integration-probe": "npm run build && node dist/src/integrationProbe.js",
+    "distributed-demo": "npm run build && node dist/src/distributedFabricDemo.js"
+  }
+}

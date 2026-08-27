@@ -1,0 +1,72 @@
+{
+  "status": "PASS",
+  "root": "/tmp/vs001-site",
+  "errors": [],
+  "pages": [
+    {
+      "page": "/tmp/vs001-site/about.html",
+      "status": "PASS",
+      "errors": [],
+      "warnings": [
+        "no in-page skip link to main landmark detected"
+      ]
+    },
+    {
+      "page": "/tmp/vs001-site/free-toolkit.html",
+      "status": "PASS",
+      "errors": [],
+      "warnings": [
+        "no in-page skip link to main landmark detected"
+      ]
+    },
+    {
+      "page": "/tmp/vs001-site/index.html",
+      "status": "PASS",
+      "errors": [],
+      "warnings": [
+        "no in-page skip link to main landmark detected"
+      ]
+    },
+    {
+      "page": "/tmp/vs001-site/legal/terms.html",
+      "status": "PASS",
+      "errors": [],
+      "warnings": [
+        "no in-page skip link to main landmark detected"
+      ]
+    },
+    {
+      "page": "/tmp/vs001-site/local-business.html",
+      "status": "PASS",
+      "errors": [],
+      "warnings": [
+        "no in-page skip link to main landmark detected"
+      ]
+    },
+    {
+      "page": "/tmp/vs001-site/membership.html",
+      "status": "PASS",
+      "errors": [],
+      "warnings": [
+        "no in-page skip link to main landmark detected"
+      ]
+    },
+    {
+      "page": "/tmp/vs001-site/products/ai-workspace-notion-template.html",
+      "status": "PASS",
+      "errors": [],
+      "warnings": [
+        "no in-page skip link to main landmark detected"
+      ]
+    },
+    {
+      "page": "/tmp/vs001-site/products.html",
+      "status": "PASS",
+      "errors": [],
+      "warnings": [
+        "no in-page skip link to main landmark detected"
+      ]
+    }
+  ],
+  "scopeNote": "Structural static audit only; does not certify WCAG, Core Web Vitals, ASVS, legal compliance, or deployed behavior."
+}

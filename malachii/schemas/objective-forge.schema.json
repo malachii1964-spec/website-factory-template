@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MALACHII Objective Forge",
+  "type": "object",
+  "required": [
+    "objective",
+    "assessment",
+    "execution"
+  ],
+  "properties": {
+    "assessment": {
+      "type": "object",
+      "required": [
+        "cognitiveComplexity",
+        "coordinationComplexity",
+        "governanceRisk",
+        "objectiveUncertainty",
+        "confidence"
+      ],
+      "properties": {
+        "cognitiveComplexity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "coordinationComplexity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "governanceRisk": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "objectiveUncertainty": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "confidence": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "schema": "malachii.vs001.runtime-manifest.v1",
+  "host": {
+    "id": "claude-code-remote-sandbox",
+    "hint": null
+  },
+  "probedAt": "2026-08-27T19:27:39.832Z",
+  "capabilities": [
+    {
+      "name": "node.execute",
+      "kind": "observation",
+      "assurance": "A3_OBSERVED",
+      "observedSuccess": true,
+      "source": "node -e",
+      "detail": "v22.22.2",
+      "verifiedAt": "2026-08-27T19:27:39.832Z"
+    },
+    {
+      "name": "filesystem.write",
+      "kind": "observation",
+      "assurance": "A3_OBSERVED",
+      "observedSuccess": true,
+      "source": "mkdtemp+write+rm",
+      "detail": "scoped tmp",
+      "verifiedAt": "2026-08-27T19:27:39.832Z"
+    },
+    {
+      "name": "browser.render",
+      "kind": "observation",
+      "assurance": "A3_OBSERVED",
+      "observedSuccess": true,
+      "source": "chromium.launch+setContent+boundingBox",
+      "detail": "chromium 141.0.7390.37; h1 box w=374",
+      "verifiedAt": "2026-08-27T19:27:39.832Z"
+    },
+    {
+      "name": "python.execute",
+      "kind": "observation",
+      "assurance": "A3_OBSERVED",
+      "observedSuccess": true,
+      "source": "python3 -c",
+      "detail": "3.x",
+      "verifiedAt": "2026-08-27T19:27:39.832Z"
+    },
+    {
+      "name": "model.anthropic",
+      "kind": "observation",
+      "assurance": "A0_UNKNOWN",
+      "observedSuccess": false,
+      "source": "env:ANTHROPIC_API_KEY",
+      "detail": "unset",
+      "verifiedAt": "2026-08-27T19:27:39.832Z"
+    },
+    {
+      "name": "deploy.publish",
+      "kind": "observation",
+      "assurance": "A0_UNKNOWN",
+      "observedSuccess": false,
+      "source": "not attempted",
+      "detail": "no target, no authority granted",
+      "verifiedAt": "2026-08-27T19:27:39.832Z"
+    }
+  ],
+  "executionState": "preview_verified",
+  "truthBoundary": "Assurance reflects what was invoked successfully on this host at probe time. model.anthropic is DECLARED at most, never observed — no credentialed call was made. deploy.publish was never attempted and is not authorized. executionState is capped at preview_verified; deployed_verified is not claimed."
+}

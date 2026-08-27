@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malachii.local/schemas/worker-descriptor.schema.json",
+  "title": "MALACHII Distributed Worker Descriptor v1",
+  "type": "object",
+  "required": ["schema","workerId","endpoint","capabilities","scopes","allowedDataScopes","tags","startedAt","protocolVersion"],
+  "properties": {
+    "schema": {"const":"malachii.worker.descriptor.v1"},
+    "workerId": {"type":"string","minLength":1},
+    "endpoint": {"type":"string","format":"uri"},
+    "capabilities": {"type":"array","items":{"type":"string"},"uniqueItems":true},
+    "scopes": {"type":"array","items":{"type":"string"}},
+    "allowedDataScopes": {"type":"array","items":{"type":"string"}},
+    "tags": {"type":"array","items":{"type":"string"}},
+    "startedAt": {"type":"string","format":"date-time"},
+    "protocolVersion": {"const":"1.0"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malachii.local/schemas/control-plane-report.schema.json",
+  "title": "MALACHII Control Plane Report",
+  "type": "object",
+  "required": ["objectiveId","status","desired","rounds","finalObserved","finalReconciliation","ledgerRoot"],
+  "properties": {
+    "objectiveId":{"type":"string","minLength":1},
+    "status":{"enum":["completed","held","needs_reconciliation"]},
+    "desired":{"type":"object"},
+    "rounds":{"type":"array"},
+    "finalObserved":{"type":"object"},
+    "finalReconciliation":{"type":"object","required":["converged","gaps"],"properties":{"converged":{"type":"boolean"},"gaps":{"type":"array"}}},
+    "ledgerRoot":{"type":"string","minLength":1}
+  }
+}

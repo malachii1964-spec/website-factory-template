@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malachii.local/schemas/control-objective.schema.json",
+  "title": "MALACHII Control Objective Spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "requestedOutcome",
+    "successCriteria",
+    "constraints",
+    "riskTier",
+    "qualityFloor",
+    "requiredCapabilities",
+    "allowedDataScopes",
+    "budget",
+    "releasePolicy",
+    "verification",
+    "createdAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requestedOutcome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "successCriteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "riskTier": {
+      "enum": [
+        "T0",
+        "T1",
+        "T2",
+        "T3"
+      ]
+    },
+    "qualityFloor": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "requiredCapabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "allowedDataScopes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxCostIndexPerTask": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maxLatencyMsPerTask": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "releasePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "externalPublish",
+        "requiredHardGates"
+      ],
+      "properties": {
+        "externalPublish": {
+          "type": "boolean"
+        },
+        "publishGrantId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requiredHardGates": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minEvidenceReceipts",
+        "requireIndependentVerification"
+      ],
+      "properties": {
+        "minEvidenceReceipts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requireIndependentVerification": {
+          "type": "boolean"
+        },
+        "minIndependentEvidenceSources": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

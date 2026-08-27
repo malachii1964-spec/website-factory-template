@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malachii.local/schemas/network-policy.schema.json",
+  "title": "MALACHII Governed Network Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["allowedProtocols", "allowedHosts", "denyPrivateNetworks", "maxRedirects", "maxResponseBytes", "timeoutMs"],
+  "properties": {
+    "allowedProtocols": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*:$"}},
+    "allowedHosts": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "denyPrivateNetworks": {"type": "boolean"},
+    "maxRedirects": {"type": "integer", "minimum": 0, "maximum": 20},
+    "maxResponseBytes": {"type": "integer", "minimum": 1},
+    "timeoutMs": {"type": "integer", "minimum": 1}
+  }
+}

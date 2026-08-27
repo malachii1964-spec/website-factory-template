@@ -1,0 +1,22 @@
+{
+  "schema": "malachii.skill-registry.v1",
+  "skills": [
+    {
+      "id": "malachii-sovereign-research",
+      "version": "1.0.0-rc1",
+      "path": "skills/malachii-sovereign-research",
+      "class": "sovereign-core",
+      "activation": ["research", "verification", "current facts", "due diligence", "evidence-heavy recommendations"],
+      "capabilityAuthority": "none; Reality & Trust remains authoritative"
+    },
+    {
+      "id": "malachii-sovereign-website-factory",
+      "version": "1.0.0-rc1",
+      "path": "skills/malachii-sovereign-website-factory",
+      "class": "sovereign-execution",
+      "dependsOn": ["malachii-sovereign-research>=1.0.0-rc1"],
+      "activation": ["website", "landing page", "web app", "website audit", "website redesign", "SEO", "web accessibility", "web performance"],
+      "capabilityAuthority": "none; Runtime Manifest and Reality & Trust remain authoritative"
+    }
+  ]
+}

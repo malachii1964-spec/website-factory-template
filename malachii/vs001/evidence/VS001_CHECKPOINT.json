@@ -1,0 +1,9 @@
+{
+  "sequence": 8,
+  "rootHash": "5199521b3f640079c550a4abf7ea5d92750bcd0eda1ca332fb1b2dc5c5d7e63d",
+  "signature": "c28421875677a5dfb2985e3eb4fb1fe8bd9e7dcf8fba907e545443642bd63ebf",
+  "algorithm": "HMAC-SHA256",
+  "chainValid": true,
+  "checkpointValid": true,
+  "events": 10
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MALACHII Ledger Event",
+  "type": "object",
+  "required": [
+    "id",
+    "sequence",
+    "type",
+    "timestamp",
+    "payload",
+    "prevHash",
+    "hash"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "type": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "payload": {},
+    "prevHash": {
+      "type": "string"
+    },
+    "hash": {
+      "type": "string"
+    }
+  }
+}

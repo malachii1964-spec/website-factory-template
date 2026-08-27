@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malachii.local/schemas/control-resource.schema.json",
+  "title": "MALACHII Control Resource Descriptor",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id","kind","provider","capabilities","scopes","allowedDataScopes","tags","available","assurance","trustDomain","measurements"],
+  "properties": {
+    "id":{"type":"string","minLength":1},
+    "kind":{"enum":["model","agent","tool","execution_plane","skill","data_source"]},
+    "provider":{"type":"string","minLength":1},
+    "capabilities":{"type":"array","items":{"type":"string","minLength":1}},
+    "scopes":{"type":"array","items":{"type":"string","minLength":1}},
+    "allowedDataScopes":{"type":"array","items":{"type":"string","minLength":1}},
+    "tags":{"type":"array","items":{"type":"string"}},
+    "available":{"type":"boolean"},
+    "assurance":{"enum":["A0_UNKNOWN","A1_HINTED","A2_AUTHENTICATED_DECLARATION","A3_OBSERVED","A4_ATTESTED"]},
+    "trustDomain":{"enum":["HOST_POLICY","MALACHII_POLICY","SUPER_USER_INSTRUCTION","PROJECT_INSTRUCTION","AGENT_MESSAGE","TOOL_OUTPUT","RETRIEVED_CONTENT","UNTRUSTED_EXTERNAL_CONTENT"]},
+    "executionAdapterId":{"type":"string","minLength":1},
+    "measurements":{"type":"object","additionalProperties":false,"required":["sampleSize"],"properties":{"quality":{"type":"number","minimum":0,"maximum":10},"latencyMs":{"type":"number","minimum":0},"costIndex":{"type":"number","minimum":0},"successRate":{"type":"number","minimum":0,"maximum":1},"sampleSize":{"type":"integer","minimum":0}}},
+    "identity":{"type":"object","additionalProperties":false,"required":["subject","issuer","proof","issuedAt"],"properties":{"subject":{"type":"string","minLength":1},"issuer":{"type":"string","minLength":1},"proof":{"enum":["declared","observed","attested"]},"issuedAt":{"type":"string","format":"date-time"},"expiresAt":{"type":"string","format":"date-time"}}}
+  }
+}

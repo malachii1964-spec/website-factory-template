@@ -40,3 +40,6 @@ next-env.d.ts
 # Paid product files (never commit)
 private/downloads/*.pdf
 private/downloads/*.zip
+
+# MALACHII runtime build output
+malachii/runtime/dist/

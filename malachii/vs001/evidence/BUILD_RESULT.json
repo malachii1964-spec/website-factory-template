@@ -1,0 +1,10 @@
+{
+  "schema": "malachii.vs001.build-result.v1",
+  "command": "pnpm build (next build)",
+  "buildSucceeded": true,
+  "nextVersion": "16.2.10",
+  "prerenderedPages": 40,
+  "servedBy": "next start --port 3200",
+  "observedAt": "2026-08-27T19:32:21Z",
+  "note": "Build exit status observed in this session; prerendered page count measured from .next/server/app."
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malachii.local/schemas/live-resource-state.schema.json",
+  "title": "MALACHII Live Resource State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["resourceId", "lastHeartbeatAt", "circuit", "consecutiveFailures"],
+  "properties": {
+    "resourceId": {"type": "string", "minLength": 1},
+    "lastHeartbeatAt": {"type": "string", "format": "date-time"},
+    "lastSuccessAt": {"type": "string", "format": "date-time"},
+    "lastFailureAt": {"type": "string", "format": "date-time"},
+    "lastFailureReason": {"type": "string"},
+    "consecutiveFailures": {"type": "integer", "minimum": 0},
+    "circuit": {"enum": ["closed", "open", "half_open"]},
+    "circuitOpenedAt": {"type": "string", "format": "date-time"},
+    "lease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "expiresAt"],
+      "properties": {
+        "owner": {"type": "string", "minLength": 1},
+        "expiresAt": {"type": "string", "format": "date-time"}
+      }
+    }
+  }
+}

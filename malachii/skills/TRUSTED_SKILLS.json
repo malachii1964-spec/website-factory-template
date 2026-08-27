@@ -1,0 +1,8 @@
+{
+  "schema": "malachii.trusted-skills.v1",
+  "policy": "Exact tree digests only. Unknown skill code is quarantined and not executed.",
+  "skills": {
+    "malachii-sovereign-research": "6ad0e815b689e241ebd991c9ae20ee0f7cebd8e445edda21fe0a3fadffb7ee21",
+    "malachii-sovereign-website-factory": "cf50bd6b7f16dbddbfda5b2581980b179446f67144f01cffc706d8d954494935"
+  }
+}

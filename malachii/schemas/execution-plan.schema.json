@@ -1,0 +1,27 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://malachii.local/schemas/execution-plan.schema.json",
+  "title":"MALACHII Execution Plan",
+  "type":"object",
+  "required":["id","objectiveId","sourceOfTruth","steps","createdAt"],
+  "properties":{
+    "id":{"type":"string","minLength":1},
+    "objectiveId":{"type":"string","minLength":1},
+    "sourceOfTruth":{"enum":["objective_forge","approved_plan"]},
+    "createdAt":{"type":"string","format":"date-time"},
+    "steps":{"type":"array","items":{
+      "type":"object",
+      "required":["id","actionId","title","capability","scope","impact","dependsOn","required"],
+      "properties":{
+        "id":{"type":"string","minLength":1},
+        "actionId":{"type":"string","minLength":1},
+        "title":{"type":"string","minLength":1},
+        "capability":{"type":"string","minLength":1},
+        "scope":{"type":"string","minLength":1},
+        "impact":{"enum":["read_only","reversible_local","external_side_effect","irreversible_high_impact"]},
+        "dependsOn":{"type":"array","items":{"type":"string"}},
+        "required":{"type":"boolean"}
+      }
+    }}
+  }
+}

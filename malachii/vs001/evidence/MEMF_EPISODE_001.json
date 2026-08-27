@@ -1,0 +1,127 @@
+{
+  "schema": "malachii.memf.memory-record.v1",
+  "id": "mem_vs001_futuredeskai_baseline",
+  "layer": "episodic",
+  "maturity": "M0_OBSERVATION",
+  "maturityNote": "Clamped at creation. Per CMA-002R + SUAF-001, createMemory may write at most M0/M1; any higher level must go through promote() with derived evidence.",
+  "status": "active",
+  "statement": "On 2026-08-27 MALACHII ran VS001, its first governed execution against real work: it probed host capability by observation, built and served the live FutureDeskAI site, measured it with real Chromium across 8 routes x 2 viewports, ran the website-factory skill deterministic auditor (PASS, 0 errors), derived a seven-dimension Quality Floor of 6, and the release gate correctly HELD with stage NOT_RELEASE_QUALIFIED.",
+  "scope": [
+    "project:futuredeskai",
+    "system:malachii"
+  ],
+  "occurredAt": "2026-08-27T19:34:36.509Z",
+  "provenance": {
+    "sourceRefs": [
+      {
+        "sourceGroup": "host-runtime-probe",
+        "kind": "observation",
+        "detail": "capability manifest produced by invocation, not declaration"
+      },
+      {
+        "sourceGroup": "chromium-measurement",
+        "kind": "observation",
+        "detail": "real browser geometry/contrast/keyboard measurement"
+      },
+      {
+        "sourceGroup": "skill-static-auditor",
+        "kind": "observation",
+        "detail": "deterministic Python validator shipped with the skill"
+      },
+      {
+        "sourceGroup": "production-build",
+        "kind": "observation",
+        "detail": "next build exit status and prerender count"
+      }
+    ],
+    "derivedIndependentSourceCount": 4,
+    "derivationMethod": "Set(provenance.sourceRefs[].sourceGroup).size - never a caller-supplied integer"
+  },
+  "evidenceIds": [
+    {
+      "evidenceId": "evidence/RUNTIME_MANIFEST.json",
+      "sha256": "4f6212e07cd18f45be2ac628077d9017bc0eaf0981d1ebeae824547a386c6f85"
+    },
+    {
+      "evidenceId": "evidence/CHROMIUM_EVIDENCE.json",
+      "sha256": "e4dd6ca9c56eacf92da81090059c9b6f6363dc375cd5172dcd0f686d17d11ae9"
+    },
+    {
+      "evidenceId": "evidence/STATIC_AUDIT.json",
+      "sha256": "4ce29571d038f72f8a15862d33b3b8a0dccc66fca5e5c2e27873faa57e5376d3"
+    },
+    {
+      "evidenceId": "evidence/BUILD_RESULT.json",
+      "sha256": "0c325a6cee161445caf3f823393de794074c54a981943e543c55a6808304a74a"
+    },
+    {
+      "evidenceId": "evidence/VS001_LEDGER.jsonl",
+      "sha256": "d5c3dfaa1a44ffc57a4fdb88648ac7618e633568606adfadcc334749b376d998"
+    }
+  ],
+  "outcomes": {
+    "findings": [
+      {
+        "id": "VS001-F1",
+        "severity": "medium",
+        "standard": "WCAG 2.2 AA 2.5.8 Target Size (Minimum)",
+        "instances": 18
+      },
+      {
+        "id": "VS001-F2",
+        "severity": "low",
+        "standard": "WCAG 2.2 A 2.4.1 Bypass Blocks",
+        "instances": 8
+      },
+      {
+        "id": "VS001-F3",
+        "severity": "low",
+        "standard": "WCAG 2.2 A 1.3.1 Info and Relationships",
+        "instances": 2
+      }
+    ],
+    "passes": 6,
+    "qualityFloor": 6,
+    "releaseDecision": "hold",
+    "releaseStage": "NOT_RELEASE_QUALIFIED",
+    "executionState": "preview_verified"
+  },
+  "ledgerAnchor": {
+    "rootHash": "5199521b3f640079c550a4abf7ea5d92750bcd0eda1ca332fb1b2dc5c5d7e63d",
+    "sequence": 8,
+    "algorithm": "HMAC-SHA256",
+    "chainValid": true,
+    "checkpointValid": true
+  },
+  "lessons": [
+    {
+      "id": "VS001-L1",
+      "claim": "A skill validator that encodes the release contract catches an overclaim a narrative would have carried through. VS001 initially asserted BUILD_ARTIFACT; validate_website_packet.py rejected it because any promoted stage requires all seven dimensions >= 9, and the measured floor was 6.",
+      "scope": "system:malachii",
+      "proposedProceduralChange": "Derive release stage from the validator contract; never assign it by narrative judgement.",
+      "regressionCheck": "packet with floor<9 and stage!=NOT_RELEASE_QUALIFIED must fail validation",
+      "raisesAuthority": false,
+      "reversible": true
+    },
+    {
+      "id": "VS001-L2",
+      "claim": "browser.render reached A3_OBSERVED on this host, closing a boundary RC1.6.2 explicitly lists as unverified in its own build host.",
+      "scope": "system:malachii",
+      "proposedProceduralChange": "Record host-specific capability observations; capability truth is per-host and per-time, never inherited from a package claim.",
+      "regressionCheck": "capability probe must re-observe, never read a cached assurance",
+      "raisesAuthority": false,
+      "reversible": true
+    },
+    {
+      "id": "VS001-L3",
+      "claim": "Measured accessibility gaps exist on the live site: 14 distinct interactive elements below the WCAG 2.2 AA 24px minimum at 390px, no skip link on 8/8 pages, and an h1->h3 heading skip on /products.",
+      "scope": "project:futuredeskai",
+      "proposedProceduralChange": "Add these as tracked defects for the next website-factory build round.",
+      "regressionCheck": "re-run chromium_evidence.mjs and assert tapTargetsUnder24px == 0",
+      "raisesAuthority": false,
+      "reversible": true
+    }
+  ],
+  "authorityNote": "This record informs. It grants nothing. No capability, permission, release approval, or constitutional change follows from its existence (MEMF Memory Authority Matrix).",
+  "truthBoundary": "Single host, single point in time, lab measurement only. Not field data, not a conformance certification, not a deployed-endpoint result."
+}

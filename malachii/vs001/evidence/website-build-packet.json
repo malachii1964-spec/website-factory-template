@@ -1,0 +1,216 @@
+{
+  "schema": "malachii.website-build-packet.v1",
+  "objective": "Establish the verified quality baseline of the live FutureDeskAI site under MALACHII governance, using only capabilities observed on this host.",
+  "executionState": "preview_verified",
+  "releaseStage": "NOT_RELEASE_QUALIFIED",
+  "site": {
+    "class": "ecommerce_content_hybrid",
+    "indexable": true,
+    "primaryAudience": [
+      "people learning to use AI tools",
+      "local business owners buying automation kits"
+    ],
+    "primaryConversion": "purchase a digital product / claim the free toolkit",
+    "name": "FutureDeskAI",
+    "framework": "Next.js 16.2.10",
+    "servedFrom": "http://127.0.0.1:3200",
+    "routesProbed": 9,
+    "viewports": [
+      "mobile",
+      "desktop"
+    ],
+    "prerenderedPages": 40
+  },
+  "research": {
+    "freshEvidenceRequired": false,
+    "packetRefs": [],
+    "note": "VS001 measured an existing artifact and made no new external factual claims, so Skill 001 was not required. Any future run that writes public copy, prices, or comparative claims must attach a Research Packet."
+  },
+  "artifacts": [
+    "malachii/vs001/evidence/RUNTIME_MANIFEST.json",
+    "malachii/vs001/evidence/CHROMIUM_EVIDENCE.json",
+    "malachii/vs001/evidence/STATIC_AUDIT.json",
+    "malachii/vs001/evidence/BUILD_RESULT.json",
+    "malachii/vs001/evidence/VS001_LEDGER.jsonl",
+    "malachii/vs001/evidence/VS001_CHECKPOINT.json"
+  ],
+  "verification": {
+    "build": {
+      "status": "PASS",
+      "evidenceLevel": "lab_measured",
+      "detail": "next build succeeded; 40 pages prerendered",
+      "artifact": "evidence/BUILD_RESULT.json"
+    },
+    "staticAudit": {
+      "status": "PASS",
+      "evidenceLevel": "structurally_checked",
+      "detail": "8 pages, 0 errors, 8 warnings",
+      "artifact": "evidence/STATIC_AUDIT.json"
+    },
+    "accessibility": {
+      "status": "FAIL",
+      "target": "WCAG_2.2_AA",
+      "evidenceLevel": "lab_measured",
+      "detail": "Real-Chromium measurement of target sizes, contrast ratios, keyboard reachability, landmarks and heading order. Automated measurement is evidence, not conformance certification.",
+      "failing": [
+        "WCAG 2.2 AA 2.5.8 Target Size (Minimum)",
+        "WCAG 2.2 A 2.4.1 Bypass Blocks",
+        "WCAG 2.2 A 1.3.1 Info and Relationships"
+      ],
+      "artifact": "evidence/CHROMIUM_EVIDENCE.json"
+    },
+    "performance": {
+      "status": "NOT_MEASURED",
+      "evidenceLevel": "none",
+      "detail": "No LCP/INP/CLS measurement was performed. Page load timings in the evidence file are single-sample lab wall-clock only and are explicitly NOT Core Web Vitals. No targets are asserted because none were measured."
+    },
+    "security": {
+      "status": "NOT_MEASURED",
+      "evidenceLevel": "none",
+      "baseline": "OWASP_ASVS_5.0",
+      "detail": "No ASVS verification, dependency audit, header inspection, or penetration test was performed in this run."
+    },
+    "seo": {
+      "status": "NOT_MEASURED",
+      "evidenceLevel": "none",
+      "detail": "No crawler simulation, index-coverage, or structured-data validation was performed."
+    }
+  },
+  "quality": {
+    "accuracy": 9,
+    "verification": 7,
+    "completeness": 6,
+    "intentAlignment": 9,
+    "executionReadiness": 9,
+    "structure": 8,
+    "edgeCases": 6,
+    "floor": 6
+  },
+  "limitations": [
+    "Field Core Web Vitals (CrUX/RUM p75) were not measured; no field data source exists for this site in this environment.",
+    "Nothing was deployed and no deployment authority was granted; no live endpoint was inspected.",
+    "Complete WCAG 2.2 AA conformance is NOT claimed — automated measurement is evidence, not certification, and no assistive-technology or human testing occurred.",
+    "No security verification was performed (no OWASP ASVS check, dependency audit, or penetration test).",
+    "No SEO outcome evidence (no crawler, index coverage, or ranking data).",
+    "8 of ~16 routes probed; dynamic routes (/api/*, /checkout/*), authenticated states, and 22 of 30 product pages were not exercised.",
+    "ANTHROPIC_API_KEY is unset — no credentialed model call was made, so no Direct/Collaborative/Sovereign council comparison was run.",
+    "All measurements come from a single sandbox host at one point in time and are not a multi-environment result."
+  ],
+  "packetId": "VS001-FUTUREDESKAI-BASELINE",
+  "generatedAt": "2026-08-27T19:34:00.432Z",
+  "skill": "malachii-sovereign-website-factory@1.0.0-rc1",
+  "capabilities": {
+    "observed": [
+      "node.execute",
+      "filesystem.write",
+      "browser.render",
+      "python.execute"
+    ],
+    "unobserved": [
+      "model.anthropic",
+      "deploy.publish"
+    ]
+  },
+  "findings": [
+    {
+      "id": "VS001-F1",
+      "severity": "medium",
+      "standard": "WCAG 2.2 AA 2.5.8 Target Size (Minimum)",
+      "claim": "15 distinct interactive elements render below the 24x24 CSS px minimum at the 390px mobile viewport.",
+      "measuredBy": "getBoundingClientRect in real Chromium",
+      "instances": 18,
+      "examples": [
+        "a.shrink-0.text-sm|52x20",
+        "a.text-sm.text-muted-foreground|76x18",
+        "a.text-sm.text-muted-foreground|101x18",
+        "a.text-sm.text-muted-foreground|109x18",
+        "a.text-sm.text-muted-foreground|51x18",
+        "a.text-sm.text-muted-foreground|118x18",
+        "a.text-sm.text-muted-foreground|130x18",
+        "a.text-sm.text-muted-foreground|90x18"
+      ]
+    },
+    {
+      "id": "VS001-F2",
+      "severity": "low",
+      "standard": "WCAG 2.2 A 2.4.1 Bypass Blocks",
+      "claim": "8 of 8 audited pages expose no in-page skip link to the main landmark.",
+      "measuredBy": "skill audit_static_site.py",
+      "instances": 8
+    },
+    {
+      "id": "VS001-F3",
+      "severity": "low",
+      "standard": "WCAG 2.2 A 1.3.1 Info and Relationships",
+      "claim": "Heading level skip (h1 -> h3) on 2 page/viewport combinations.",
+      "measuredBy": "DOM heading-level sequence in real Chromium",
+      "instances": 2,
+      "pages": [
+        "undefinedmobile/products",
+        "undefineddesktop/products"
+      ]
+    }
+  ],
+  "passes": [
+    {
+      "id": "VS001-P1",
+      "claim": "No horizontal overflow at 390px or 1440px across all probed routes.",
+      "measuredBy": "documentElement.scrollWidth vs clientWidth"
+    },
+    {
+      "id": "VS001-P2",
+      "claim": "No overlapping interactive elements on any probed route/viewport.",
+      "measuredBy": "pairwise rect intersection, nesting excluded"
+    },
+    {
+      "id": "VS001-P3",
+      "claim": "No text below its required contrast ratio among sampled text nodes.",
+      "measuredBy": "WCAG relative-luminance formula over getComputedStyle colors"
+    },
+    {
+      "id": "VS001-P4",
+      "claim": "First Tab reaches a visible control with a focus style on every probed route.",
+      "measuredBy": "keyboard.press('Tab') + activeElement inspection"
+    },
+    {
+      "id": "VS001-P5",
+      "claim": "Exactly one main landmark, at least one h1, and no img missing alt, on every probed page.",
+      "measuredBy": "DOM query in real Chromium"
+    },
+    {
+      "id": "VS001-P6",
+      "claim": "Deterministic static audit: PASS, 0 errors across 8 pages.",
+      "measuredBy": "skill audit_static_site.py"
+    }
+  ],
+  "qualityRationale": {
+    "accuracy": "9 — zero navigation errors and zero unexpected non-2xx across 18 page loads (the single 404 was an intentional negative control and behaved correctly).",
+    "verification": "7 — CAPPED. Real browser + deterministic auditor both ran, but all timings are single-sample lab measurements on a sandbox host. No CrUX/field p75 data, no deployed endpoint, no assistive-technology testing, no penetration test.",
+    "completeness": "6 — 8 routes probed at 2 viewports. Dynamic routes (/api/*, /checkout/*), authenticated states, and 22 of 30 product pages were not exercised.",
+    "intentAlignment": "9 — the run answers the objective actually posed: establish a verified quality baseline of the live site under governance.",
+    "executionReadiness": "9 — production build succeeded; 40 pages prerendered and served from a real Next.js server.",
+    "structure": "8 — exactly one main landmark and >=1 h1 on every probed page; one heading-level skip found on /products.",
+    "edgeCases": "6 — no critical/high defects, but three real accessibility gaps were measured at the edges (tap-target minimums, missing skip links, heading skip)."
+  },
+  "polish": 7.71,
+  "hardGates": {
+    "static_audit_passed": true,
+    "build_succeeded": true,
+    "browser_capability_observed": true,
+    "no_navigation_errors": true,
+    "no_critical_or_high_findings": true,
+    "no_unexpected_error_status": true,
+    "no_console_errors_on_real_routes": true,
+    "field_performance_measured": false
+  },
+  "release": {
+    "decision": "hold",
+    "floor": 6,
+    "failedGates": [
+      "field_performance_measured",
+      "explicit_publish_grant"
+    ],
+    "reason": "release_gate_failed"
+  },
+  "truthBoundary": "This packet reports what was measured on one sandbox host at one point in time. Every Quality Floor dimension is derived from listed evidence; dimensions lacking evidence are capped rather than estimated. Release stage is NOT_RELEASE_QUALIFIED because the measured floor is below the skill's promotion threshold of 9 — the site is NOT claimed deployed, NOT claimed field-verified, and NOT claimed WCAG/OWASP conformant."
+}

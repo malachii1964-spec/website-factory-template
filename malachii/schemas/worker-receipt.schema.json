@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malachii.local/schemas/worker-receipt.schema.json",
+  "title": "MALACHII Distributed Worker Execution Receipt v1",
+  "type": "object",
+  "required": ["schema","workerId","requestId","stepId","actionId","capability","status","startedAt","completedAt","sequence","evidenceIds","receiptHash"],
+  "properties": {
+    "schema": {"const":"malachii.worker.receipt.v1"},
+    "workerId": {"type":"string"},
+    "requestId": {"type":"string"},
+    "stepId": {"type":"string"},
+    "actionId": {"type":"string"},
+    "capability": {"type":"string"},
+    "status": {"enum":["succeeded","failed"]},
+    "startedAt": {"type":"string","format":"date-time"},
+    "completedAt": {"type":"string","format":"date-time"},
+    "sequence": {"type":"integer","minimum":1},
+    "output": {},
+    "evidenceIds": {"type":"array","items":{"type":"string"}},
+    "error": {"type":"string"},
+    "receiptHash": {"type":"string","pattern":"^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": false
+}

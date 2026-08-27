@@ -1,0 +1,13 @@
+{
+  "schema": "malachii.skill.v1",
+  "id": "malachii-sovereign-research",
+  "version": "1.0.0-rc1",
+  "family": "sovereign-core",
+  "dependsOn": [],
+  "validators": [
+    {
+      "script": "scripts/validate_research_packet.py",
+      "fixture": "assets/example-research-packet.json"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malachii.local/schemas/durable-job.schema.json",
+  "title": "MALACHII Durable Work Queue Job",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "status", "payload", "createdAt", "updatedAt", "attempts"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["queued", "leased", "succeeded", "failed"]},
+    "payload": {},
+    "createdAt": {"type": "string", "format": "date-time"},
+    "updatedAt": {"type": "string", "format": "date-time"},
+    "attempts": {"type": "integer", "minimum": 0},
+    "leaseOwner": {"type": "string"},
+    "leaseExpiresAt": {"type": "string", "format": "date-time"},
+    "result": {},
+    "failure": {"type": "string"}
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "skill": "malachii-sovereign-research",
+  "objective": {
+    "raw": "Verify whether Product X supports feature Y today.",
+    "normalized": "Establish current Product X support for feature Y using authoritative evidence.",
+    "freshness_required": true,
+    "success_criteria": ["Current support status established", "Material limitations identified"]
+  },
+  "research_mode": "live_research",
+  "generated_at": "2026-08-15T12:00:00Z",
+  "sources": [
+    {
+      "id": "src_official_docs",
+      "title": "Product X official documentation",
+      "source_class": "primary",
+      "authority": "high",
+      "url": "https://example.invalid/docs",
+      "publisher": "Product X",
+      "accessed_at": "2026-08-15T12:00:00Z",
+      "lineage_id": "product-x-official"
+    }
+  ],
+  "claims": [
+    {
+      "id": "clm_feature_y",
+      "claim": "Product X supports feature Y in the documented configuration.",
+      "importance": "critical",
+      "status": "verified",
+      "evidence": ["src_official_docs"],
+      "rationale": "The current official documentation explicitly describes feature Y and its configuration."
+    }
+  ],
+  "contradictions": [],
+  "limitations": ["Example packet uses a placeholder URL and is for schema demonstration only."],
+  "deliverable": {
+    "summary": "Feature Y is documented as supported in the specified configuration.",
+    "recommendations": ["Confirm deployment-specific prerequisites before implementation."]
+  },
+  "quality": {
+    "accuracy": 9,
+    "verification": 9,
+    "completeness": 9,
+    "intent_alignment": 9,
+    "execution_readiness": 9,
+    "structure": 9,
+    "edge_cases": 9,
+    "floor": 9,
+    "ship_decision": "ship"
+  }
+}

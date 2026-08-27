@@ -1,0 +1,2994 @@
+{
+  "schema": "malachii.vs001.chromium-evidence.v1",
+  "capturedAt": "2026-08-27T19:29:52.516Z",
+  "base": "http://127.0.0.1:3200",
+  "engine": "chromium (playwright)",
+  "measurementNote": "Overlap, overflow, tap-target size and contrast ratio are COMPUTED from getBoundingClientRect/getComputedStyle, not judged by a model. Load timings are single-sample lab measurements on a sandbox host and are NOT field data or Core Web Vitals p75.",
+  "aggregate": {
+    "routesProbed": 9,
+    "viewports": [
+      "mobile",
+      "desktop"
+    ],
+    "pagesWithHorizontalOverflow": [],
+    "pagesWithConsoleErrors": [
+      {
+        "viewport": "mobile",
+        "route": "/nonexistent-page-404-probe",
+        "errors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ]
+      },
+      {
+        "viewport": "desktop",
+        "route": "/nonexistent-page-404-probe",
+        "errors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ]
+      }
+    ],
+    "pagesWithInteractiveOverlap": [],
+    "pagesWithSmallTapTargets": [
+      {
+        "viewport": "mobile",
+        "route": "/",
+        "targets": [
+          {
+            "selector": "a.shrink-0.text-sm",
+            "w": 52,
+            "h": 20,
+            "text": "All 30 →"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          }
+        ]
+      },
+      {
+        "viewport": "mobile",
+        "route": "/products",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "mobile",
+        "route": "/about",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "mobile",
+        "route": "/membership",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "mobile",
+        "route": "/free-toolkit",
+        "targets": [
+          {
+            "selector": "#lead-email",
+            "w": 300,
+            "h": 20,
+            "text": ""
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          }
+        ]
+      },
+      {
+        "viewport": "mobile",
+        "route": "/local-business",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "mobile",
+        "route": "/legal/terms",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "mobile",
+        "route": "/products/ai-workspace-notion-template",
+        "targets": [
+          {
+            "selector": "a.inline-flex.items-center",
+            "w": 98,
+            "h": 20,
+            "text": "All products"
+          },
+          {
+            "selector": "a.eyebrow.eyebrow-muted",
+            "w": 108,
+            "h": 17,
+            "text": "AI TEMPLATES"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          }
+        ]
+      },
+      {
+        "viewport": "mobile",
+        "route": "/nonexistent-page-404-probe",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "desktop",
+        "route": "/",
+        "targets": [
+          {
+            "selector": "a.hidden.shrink-0",
+            "w": 65,
+            "h": 20,
+            "text": "View all →"
+          },
+          {
+            "selector": "a.shrink-0.text-sm",
+            "w": 52,
+            "h": 20,
+            "text": "All 30 →"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          }
+        ]
+      },
+      {
+        "viewport": "desktop",
+        "route": "/products",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "desktop",
+        "route": "/about",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "desktop",
+        "route": "/membership",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "desktop",
+        "route": "/free-toolkit",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "desktop",
+        "route": "/local-business",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "desktop",
+        "route": "/legal/terms",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      },
+      {
+        "viewport": "desktop",
+        "route": "/products/ai-workspace-notion-template",
+        "targets": [
+          {
+            "selector": "a.inline-flex.items-center",
+            "w": 98,
+            "h": 20,
+            "text": "All products"
+          },
+          {
+            "selector": "a.eyebrow.eyebrow-muted",
+            "w": 108,
+            "h": 17,
+            "text": "AI TEMPLATES"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          }
+        ]
+      },
+      {
+        "viewport": "desktop",
+        "route": "/nonexistent-page-404-probe",
+        "targets": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ]
+      }
+    ],
+    "pagesWithLowContrast": [],
+    "pagesMissingH1": [],
+    "pagesWithMultipleMain": [],
+    "pagesMissingAlt": [],
+    "pagesWithHeadingSkips": [
+      {
+        "route": "mobile/products",
+        "skips": [
+          {
+            "from": 1,
+            "to": 3
+          }
+        ]
+      },
+      {
+        "route": "mobile/nonexistent-page-404-probe",
+        "skips": [
+          {
+            "from": 1,
+            "to": 3
+          }
+        ]
+      },
+      {
+        "route": "desktop/products",
+        "skips": [
+          {
+            "from": 1,
+            "to": 3
+          }
+        ]
+      },
+      {
+        "route": "desktop/nonexistent-page-404-probe",
+        "skips": [
+          {
+            "from": 1,
+            "to": 3
+          }
+        ]
+      }
+    ],
+    "keyboardFailures": [],
+    "navigationErrors": [],
+    "nonOkStatuses": [
+      {
+        "route": "mobile/nonexistent-page-404-probe",
+        "status": 404
+      },
+      {
+        "route": "desktop/nonexistent-page-404-probe",
+        "status": 404
+      }
+    ]
+  },
+  "perPage": [
+    {
+      "viewport": "mobile",
+      "route": "/",
+      "status": 200,
+      "loadMs": 1750,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 43,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.shrink-0.text-sm",
+            "w": 52,
+            "h": 20,
+            "text": "All 30 →"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Learn AI. Then make it do the work."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "FutureDeskAI — AI tools that do the work",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "mobile",
+      "route": "/products",
+      "status": 200,
+      "loadMs": 867,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 57,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Every tool in the arsenal"
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [
+          {
+            "from": 1,
+            "to": 3
+          }
+        ],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "All products · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "mobile",
+      "route": "/about",
+      "status": 200,
+      "loadMs": 663,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 22,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Tools that do the work — built by someone who needed them to."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "About · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "mobile",
+      "route": "/membership",
+      "status": 200,
+      "loadMs": 656,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 22,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Everything we make. Every month. One membership."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "Inner Circle membership · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "mobile",
+      "route": "/free-toolkit",
+      "status": 200,
+      "loadMs": 697,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 22,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "#lead-email",
+            "w": 300,
+            "h": 20,
+            "text": ""
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Save your first few hours this week — free."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "Free AI starter prompts · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "mobile",
+      "route": "/local-business",
+      "status": 200,
+      "loadMs": 686,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 33,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Your trade already works hard enough. Let AI handle the paperwork."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "Local business AI kits · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "mobile",
+      "route": "/legal/terms",
+      "status": 200,
+      "loadMs": 665,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 20,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Terms of Service"
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "Terms of Service · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "mobile",
+      "route": "/products/ai-workspace-notion-template",
+      "status": 200,
+      "loadMs": 685,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 26,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.inline-flex.items-center",
+            "w": 98,
+            "h": 20,
+            "text": "All products"
+          },
+          {
+            "selector": "a.eyebrow.eyebrow-muted",
+            "w": 108,
+            "h": 17,
+            "text": "AI TEMPLATES"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "AI Workspace - Notion Template"
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "AI Workspace - Notion Template · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "mobile",
+      "route": "/nonexistent-page-404-probe",
+      "status": 404,
+      "loadMs": 725,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 22,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "This page went off-grid."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [
+          {
+            "from": 1,
+            "to": 3
+          }
+        ],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "FutureDeskAI — AI tools that do the work",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "desktop",
+      "route": "/",
+      "status": 200,
+      "loadMs": 873,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 43,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.hidden.shrink-0",
+            "w": 65,
+            "h": 20,
+            "text": "View all →"
+          },
+          {
+            "selector": "a.shrink-0.text-sm",
+            "w": 52,
+            "h": 20,
+            "text": "All 30 →"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Learn AI. Then make it do the work."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "FutureDeskAI — AI tools that do the work",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "desktop",
+      "route": "/products",
+      "status": 200,
+      "loadMs": 939,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 57,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Every tool in the arsenal"
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [
+          {
+            "from": 1,
+            "to": 3
+          }
+        ],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "All products · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "desktop",
+      "route": "/about",
+      "status": 200,
+      "loadMs": 716,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 22,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Tools that do the work — built by someone who needed them to."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "About · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "desktop",
+      "route": "/membership",
+      "status": 200,
+      "loadMs": 736,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 22,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Everything we make. Every month. One membership."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "Inner Circle membership · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "desktop",
+      "route": "/free-toolkit",
+      "status": 200,
+      "loadMs": 787,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 22,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Save your first few hours this week — free."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "Free AI starter prompts · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "desktop",
+      "route": "/local-business",
+      "status": 200,
+      "loadMs": 806,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 33,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Your trade already works hard enough. Let AI handle the paperwork."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "Local business AI kits · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "desktop",
+      "route": "/legal/terms",
+      "status": 200,
+      "loadMs": 711,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 20,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "Terms of Service"
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "Terms of Service · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "desktop",
+      "route": "/products/ai-workspace-notion-template",
+      "status": 200,
+      "loadMs": 731,
+      "consoleErrors": [],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 26,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.inline-flex.items-center",
+            "w": 98,
+            "h": 20,
+            "text": "All products"
+          },
+          {
+            "selector": "a.eyebrow.eyebrow-muted",
+            "w": 108,
+            "h": 17,
+            "text": "AI TEMPLATES"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "AI Workspace - Notion Template"
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "AI Workspace - Notion Template · FutureDeskAI",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    },
+    {
+      "viewport": "desktop",
+      "route": "/nonexistent-page-404-probe",
+      "status": 404,
+      "loadMs": 778,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "keyboard": {
+        "reachedControl": true,
+        "tag": "a",
+        "visible": true,
+        "hasFocusStyle": true,
+        "text": "FutureDeskAI"
+      },
+      "probe": {
+        "horizontalOverflowPx": 0,
+        "overflowingEls": [],
+        "interactiveCount": 22,
+        "tapTargetsUnder24px": [
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 76,
+            "h": 18,
+            "text": "All products"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 101,
+            "h": 18,
+            "text": "Prompt libraries"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 109,
+            "h": 18,
+            "text": "E-books & guides"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 51,
+            "h": 18,
+            "text": "Courses"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 118,
+            "h": 18,
+            "text": "Local business kits"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 130,
+            "h": 18,
+            "text": "Free starter prompts"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 90,
+            "h": 18,
+            "text": "About Malachi"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 73,
+            "h": 18,
+            "text": "Inner Circle"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 39,
+            "h": 18,
+            "text": "Terms"
+          },
+          {
+            "selector": "a.text-sm.text-muted-foreground",
+            "w": 45,
+            "h": 18,
+            "text": "Privacy"
+          }
+        ],
+        "interactiveOverlaps": [],
+        "h1Count": 1,
+        "h1Texts": [
+          "This page went off-grid."
+        ],
+        "mainLandmarks": 1,
+        "headingSkips": [
+          {
+            "from": 1,
+            "to": 3
+          }
+        ],
+        "imagesMissingAlt": [],
+        "lowContrast": [],
+        "title": "FutureDeskAI — AI tools that do the work",
+        "lang": "en",
+        "metaDescription": true
+      },
+      "error": null
+    }
+  ]
+}
