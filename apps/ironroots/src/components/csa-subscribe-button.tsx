@@ -6,7 +6,15 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function CsaSubscribeButton({ planId, label }: { planId: string; label: string }) {
+export function CsaSubscribeButton({
+  planId,
+  label,
+  pledgeCents,
+}: {
+  planId: string;
+  label: string;
+  pledgeCents?: number;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +26,7 @@ export function CsaSubscribeButton({ planId, label }: { planId: string; label: s
       const res = await fetch("/api/csa/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
+        body: JSON.stringify({ planId, ...(pledgeCents !== undefined && { pledgeCents }) }),
       });
       const data = (await res.json()) as { url?: string; error?: string; code?: string };
       if (res.ok && data.url) {

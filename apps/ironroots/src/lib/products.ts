@@ -3,7 +3,8 @@ export type ProductCategory =
   | "roots-alliums"
   | "tomatoes-peppers"
   | "herbs"
-  | "seasonal-boxes";
+  | "seasonal-boxes"
+  | "seedlings-starts";
 
 export interface Product {
   id: string;
@@ -306,6 +307,68 @@ export const products: Product[] = [
     growMethod: "Field grown",
     icon: "package",
   },
+
+  // === SEEDLINGS & STARTS (grow your own) ===
+  {
+    id: "s1",
+    slug: "tomato-seedling-4pack",
+    title: "Tomato Seedlings (4-pack)",
+    description: "Started in our greenhouse, hardened off and ready to transplant into your own garden or a bucket.",
+    longDescription:
+      "The same heirloom varieties we grow ourselves, started from seed in our greenhouse and hardened off so they're ready to go straight into a garden bed, a raised bed, or a 5-gallon bucket on a porch. If you've never grown your own food before, a tomato is the most forgiving place to start.",
+    category: "seedlings-starts",
+    price: 6,
+    unit: "4-pack",
+    inSeasonMonths: [4, 5, 6],
+    tag: "Grow Your Own",
+    growMethod: "Hydroponic greenhouse",
+    icon: "sprout",
+  },
+  {
+    id: "s2",
+    slug: "pepper-seedling-4pack",
+    title: "Pepper Seedlings (4-pack)",
+    description: "Bell and jalapeño starts, greenhouse-hardened and ready for a sunny spot.",
+    longDescription:
+      "A mix of bell and jalapeño starts, grown from the same seed stock as our field crop. Peppers want heat and sun — give them both and a 4-pack can feed a family all summer.",
+    category: "seedlings-starts",
+    price: 6,
+    unit: "4-pack",
+    inSeasonMonths: [4, 5, 6],
+    tag: "Grow Your Own",
+    growMethod: "Hydroponic greenhouse",
+    icon: "sprout",
+  },
+  {
+    id: "s3",
+    slug: "herb-seedling-3pack",
+    title: "Herb Starts (3-pack)",
+    description: "Basil, parsley, and mint starts — enough for a windowsill with no yard required.",
+    longDescription:
+      "Basil, parsley, and mint starts sized for a single pot each. No yard, no raised bed, no problem — a sunny windowsill is enough to grow real, fresh herbs.",
+    category: "seedlings-starts",
+    price: 5,
+    unit: "3-pack",
+    inSeasonMonths: [4, 5, 6, 7, 8, 9],
+    tag: "Grow Your Own",
+    growMethod: "Hydroponic greenhouse",
+    icon: "sprout",
+  },
+  {
+    id: "s4",
+    slug: "beginner-garden-starter-kit",
+    title: "Beginner Garden Starter Kit",
+    description: "Everything for a first vegetable garden: seedlings, seed-starting soil, and a plain-English guide.",
+    longDescription:
+      "Built for someone who has never grown a vegetable before: 6 mixed seedlings (tomato, pepper, and leafy green), a bag of seed-starting soil, and a printed copy of our beginner growing guide. Nothing to figure out on your own.",
+    category: "seedlings-starts",
+    price: 18,
+    unit: "kit",
+    inSeasonMonths: [4, 5, 6],
+    tag: "Best for First-Timers",
+    growMethod: "Hydroponic greenhouse",
+    icon: "package",
+  },
 ];
 
 export const categories: {
@@ -318,6 +381,7 @@ export const categories: {
   { id: "tomatoes-peppers", label: "Tomatoes & Peppers", description: "Field-grown in summer, greenhouse-extended beyond it" },
   { id: "herbs", label: "Herbs", description: "Basil, parsley, mint — cut fresh, never refrigerated" },
   { id: "seasonal-boxes", label: "Harvest Boxes", description: "A hand-packed mix of what's in season this week" },
+  { id: "seedlings-starts", label: "Seedlings & Starts", description: "Grow your own — greenhouse-started plants ready to transplant" },
 ];
 
 export function getProductBySlug(slug: string): Product | undefined {

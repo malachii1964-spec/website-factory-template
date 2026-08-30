@@ -36,6 +36,7 @@ export async function sendOrderConfirmationEmail(opts: {
   to: string;
   items: { title: string; qty: number; unit: string }[];
   totalCents: number;
+  donationCents?: number;
 }): Promise<{ ok: boolean }> {
   const resend = client();
   if (!resend) return { ok: false };
@@ -46,10 +47,14 @@ export async function sendOrderConfirmationEmail(opts: {
     )
     .join("");
   const total = `$${(opts.totalCents / 100).toFixed(2)}`;
+  const donationLine = opts.donationCents
+    ? `<p style="margin:0 0 16px;color:#0e4f4a;font-size:14px;line-height:1.6">Plus your <strong>$${(opts.donationCents / 100).toFixed(2)} Community Harvest Fund</strong> donation — thank you. It goes straight toward another family's Community Share.</p>`
+    : "";
   const body = `
 <p style="margin:0 0 16px;color:#55604f;font-size:15px;line-height:1.6">Thanks for your order. Here's what we're picking for you:</p>
 <div style="margin:0 0 16px">${lines}</div>
 <p style="margin:0 0 16px;color:#14231c;font-size:15px;font-weight:600">Total: ${total}</p>
+${donationLine}
 <p style="margin:0;color:#55604f;font-size:13px;line-height:1.6">Questions about pickup or delivery? Just reply to this email.</p>`;
   try {
     await resend.emails.send({

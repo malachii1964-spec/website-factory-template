@@ -3,6 +3,8 @@ import {
   ArrowRight,
   CheckCircle2,
   Clock,
+  HandCoins,
+  HeartHandshake,
   MapPin,
   ShieldCheck,
   Snowflake,
@@ -42,6 +44,27 @@ const PILLARS = [
   },
 ];
 
+const MISSION = [
+  {
+    icon: Sprout,
+    title: "Grown organic, grown vigorously",
+    body: "No synthetic pesticides, ever — just soil, attention, and plants pushed to actually thrive, not just survive.",
+    cta: { href: "/growing-guides#why-organic", label: "Why organic matters" },
+  },
+  {
+    icon: HandCoins,
+    title: "Priced for a low-income family, not around one",
+    body: "A pay-what-you-can Community Share, funded by everyone else who shops here — top-of-the-line organic produce shouldn't be a luxury item.",
+    cta: { href: "/community", label: "See how it works" },
+  },
+  {
+    icon: HeartHandshake,
+    title: "Built to inspire you to grow your own",
+    body: "Free growing guides and greenhouse-hardened seedlings, because the most affordable vegetable is the one you grew yourself.",
+    cta: { href: "/growing-guides", label: "Learn to grow" },
+  },
+];
+
 export default function HomePage() {
   const featured = FEATURED_SLUGS.map((slug) => products.find((p) => p.slug === slug)).filter(
     (p): p is NonNullable<typeof p> => Boolean(p),
@@ -55,29 +78,29 @@ export default function HomePage() {
           <div className="fade-up">
             <p className="eyebrow flex items-center gap-2">
               <Sprout className="h-3.5 w-3.5" />
-              Lake Erie shoreline · grown for this county
+              Lake Erie shoreline · organic · grown for this county
             </p>
             <h1 className="mt-5 text-[2.5rem] font-medium leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.3rem]">
-              The best-tasting, healthiest vegetables —{" "}
-              <span className="italic text-lake">all year round.</span>
+              Top-of-the-line organic vegetables —{" "}
+              <span className="italic text-lake">priced so everyone can eat this well.</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Most farms around here go quiet in November. Ours doesn&rsquo;t.
-              Hydroponic greenhouses and careful storage keep real, fresh
-              produce on our shelf through every season — grown a few miles
-              from your table, not trucked in from across the country.
+              We grow organic, year-round, a few miles from your table — and
+              we built a pay-what-you-can share specifically so a tight
+              grocery budget isn&rsquo;t a reason to eat worse food. Good
+              vegetables shouldn&rsquo;t be a luxury item.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/shop" className={buttonVariants({ size: "lg" })}>
                 Shop this week&rsquo;s harvest
                 <ArrowRight className="h-5 w-5" />
               </Link>
-              <Link href="/csa" className={buttonVariants({ variant: "outline", size: "lg" })}>
-                See the Harvest Box CSA
+              <Link href="/community" className={buttonVariants({ variant: "outline", size: "lg" })}>
+                See the Community Share
               </Link>
             </div>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              {["Cut or pulled within a day", "Local pickup & delivery", "No brokers, no middlemen"].map(
+              {["100% organic, no synthetic pesticides", "Pay-what-you-can share available", "Free growing guides for everyone"].map(
                 (f) => (
                   <li key={f} className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-leaf" />
@@ -106,6 +129,44 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── MISSION ──────────────────────────────────────────────── */}
+      <section className="border-b border-border bg-surface py-16 lg:py-20">
+        <div className="container-page">
+          <p className="eyebrow">Why this farm exists</p>
+          <h2 className="mt-2 font-display text-2xl font-medium tracking-tight sm:text-3xl">
+            Growing good food, and the people who grow it
+          </h2>
+          <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+            Our mission isn&rsquo;t just to sell vegetables. It&rsquo;s to
+            grow the best, healthiest organic food we can, make it something
+            a low-income family can actually afford, and get more people in
+            this county growing their own.
+          </p>
+          <div className="mt-9 grid gap-4 sm:grid-cols-3">
+            {MISSION.map((m) => {
+              const Icon = m.icon;
+              return (
+                <Link
+                  key={m.title}
+                  href={m.cta.href}
+                  className="panel lift group flex flex-col p-6 hover:border-harvest"
+                >
+                  <span className="grid h-11 w-11 place-items-center rounded-lg border border-border bg-harvest-tint text-harvest">
+                    <Icon className="h-5 w-5" strokeWidth={1.6} />
+                  </span>
+                  <h3 className="mt-4 font-medium text-foreground">{m.title}</h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{m.body}</p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-lake">
+                    {m.cta.label}
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -223,7 +284,7 @@ export default function HomePage() {
                 { k: "Packed", v: "Every Thursday" },
                 { k: "Pickup or delivery", v: "Farm stand + county-wide" },
                 { k: "Commitment", v: "None — pause or cancel" },
-                { k: "Starting at", v: "$28 / week" },
+                { k: "Starting at", v: "$15 / week (Community Share)" },
               ].map((row) => (
                 <div key={row.k} className="flex items-center justify-between border-b border-border pb-3 last:border-0 last:pb-0">
                   <span className="eyebrow">{row.k}</span>

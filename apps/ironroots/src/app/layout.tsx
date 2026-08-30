@@ -11,32 +11,33 @@ const SITE_URL = "https://www.lakeerieironroots.com";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Lake Erie IronRoots — Fresh vegetables, grown local, year-round",
+    default: "Lake Erie IronRoots — Organic vegetables, priced for everyone",
     template: "%s · Lake Erie IronRoots",
   },
   description:
-    "A Lake Erie shoreline farm growing the best-tasting, healthiest vegetables year-round for our own county — hydroponic greens, field-grown roots, and a weekly Harvest Box CSA.",
+    "A Lake Erie shoreline farm growing organic vegetables year-round for our own county — a pay-what-you-can Community Share, free growing guides, and greenhouse-hardened seedlings so everyone can eat, and grow, well.",
   keywords: [
     "Lake Erie farm",
-    "local vegetables",
-    "CSA subscription",
-    "hydroponic greens",
-    "farm stand",
+    "organic vegetables",
+    "affordable CSA",
+    "sliding scale CSA",
+    "low income food access",
+    "grow your own vegetables",
     "IronRoots",
   ],
   openGraph: {
     type: "website",
     url: SITE_URL,
-    title: "Lake Erie IronRoots — Fresh vegetables, grown local, year-round",
+    title: "Lake Erie IronRoots — Organic vegetables, priced for everyone",
     description:
-      "Hydroponic greens, field-grown roots, and a weekly Harvest Box CSA — grown on the Lake Erie shoreline, for our own county.",
+      "Organic produce, a pay-what-you-can Community Share, and free growing guides — grown on the Lake Erie shoreline, for our own county.",
     siteName: "Lake Erie IronRoots",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lake Erie IronRoots — Fresh vegetables, grown local, year-round",
+    title: "Lake Erie IronRoots — Organic vegetables, priced for everyone",
     description:
-      "Hydroponic greens, field-grown roots, and a weekly Harvest Box CSA, grown on the Lake Erie shoreline.",
+      "Organic produce, a pay-what-you-can Community Share, and free growing guides, grown on the Lake Erie shoreline.",
   },
 };
 

@@ -144,26 +144,60 @@ never touches the FutureDeskAI app at the repo root (this repo doubles as
 FutureDeskAI's live codebase, not a blank template, so a second unrelated
 business gets its own app rather than overwriting it).
 
+### Mission (per owner)
+Grow organic vegetables vigorously (not just surviving), price them so a
+low-income family can actually afford top-of-the-line produce, inspire
+others in the county to grow their own food, and improve community health
+as a whole. This isn't a tagline — it's built into site structure and real
+features (below), researched against how real low-income-access CSAs and
+mission-driven urban farms (Soul Fire Farm, EarthDance, Zenger Farm, Just
+Roots Chicago, Raleigh City Farm) actually operationalize this.
+
 ### Current state
 - Built via the ecommerce template (+ accounts, since a CSA needs them):
   full storefront, cart (localStorage), Stripe Checkout, Better Auth
   accounts, Drizzle/Neon schema for orders + CSA subscriptions, Resend
   emails, weekly Harvest Box CSA (recurring Stripe subscription).
 - Pages: /, /shop (+ category filter), /shop/[slug], /cart,
-  /checkout/{success,cancel}, /csa, /account (sign in/up), /account/orders,
-  /account/subscription, /about, /contact, /legal/{terms,privacy}, 404.
-- Catalog: 19 items in code (src/lib/products.ts) — leafy greens, roots &
-  alliums, tomatoes & peppers, herbs, 2 Harvest Box sizes — each with real
-  in-season months (hydroponic/greenhouse crops run all 12; field/storage
-  crops don't) driving the Harvest Wheel signature component.
+  /checkout/{success,cancel}, /csa, /community, /growing-guides, /account
+  (sign in/up), /account/orders, /account/subscription, /about, /contact,
+  /legal/{terms,privacy}, 404.
+- Catalog: 23 items in code (src/lib/products.ts) — leafy greens, roots &
+  alliums, tomatoes & peppers, herbs, 2 Harvest Box sizes, and a new
+  Seedlings & Starts category (4 items incl. a Beginner Garden Starter Kit)
+  — each with real in-season months (hydroponic/greenhouse crops run all
+  12; field/storage crops don't) driving the Harvest Wheel signature.
+- Mission features, all real and functional, not just copy:
+  - **Community Share**: a third, pay-what-you-can CSA tier (src/lib/
+    pricing.ts CSA_PLANS, id csa-community-weekly) — honor-system slider
+    $15-$45/week, no income verification. Client sends a pledge amount;
+    /api/csa/checkout clamps it server-side via clampToPayWhatYouCan() so
+    a tampered client request can't escape the range.
+  - **Community Harvest Fund**: optional round-up donation at checkout
+    (/cart, preset $5/$10/$25 via DONATION_PRESETS_CENTS) added as an
+    extra Stripe line item; webhook passes it through to the order
+    confirmation email as a thank-you line.
+  - **Learn to Grow** (/growing-guides): free, genuinely useful beginner
+    organic-growing content (seed starting, container gardening for no-yard
+    households, composting, why organic, Lake Erie shoreline season notes)
+    — no purchase required, not gated.
+  - **Making It Affordable** (/community): explains the Community Share +
+    Harvest Fund, and is deliberately honest that SNAP/EBT can't run
+    through online Stripe checkout (it needs an in-person USDA/FNS
+    retailer authorization) — states that's a TODO, doesn't fake it.
+  - Home page has a dedicated "Why this farm exists" mission section;
+    About page has a "The mission" section — both link through to
+    /community and /growing-guides instead of just asserting values.
 - Design: "Harvest Wheel" system — Lake Erie teal + harvest amber + soil/leaf
   accents, Fraunces (display) + Public Sans (body), light "greenhouse
   morning" default with a dark toggle. Signature: a 12-month Harvest Wheel
   that encodes the year-round claim structurally (home, product pages,
   about, CSA page).
-- All gates green: tsc, eslint, vitest (14 tests), next build. Verified in a
+- All gates green: tsc, eslint, vitest (23 tests), next build. Verified in a
   real browser incl. failure cases (checkout with no Stripe key, sign-up
-  with no DB configured) — both degrade to a clear message, no crash.
+  with no DB configured, CSA pledge clamping) — all degrade to a clear
+  message or clamp silently, no crash. Pay-what-you-can slider verified to
+  actually drive React state (not just a static mockup) via Playwright.
 - Everything is database/service-optional by design (matches the root app's
   pattern): shop + cart + Stripe checkout work with zero services; accounts/
   orders/CSA activate once DATABASE_URL is set (`pnpm db:push` to create
@@ -172,17 +206,21 @@ business gets its own app rather than overwriting it).
 - No `.claude/agents/` reviewer or design-critic subagents exist in this
   repo checkout (README describes them but the files aren't present), so
   QA was a manual adversarial pass: full route smoke test, Playwright
-  screenshots at 1280px and 375px, and the two failure-case checks above.
+  screenshots at 1280px and 375px, and the failure-case checks above.
 
 ### Decisions made (do not relitigate)
 - Kept as a separate `apps/ironroots` workspace package rather than
   replacing the root app's content — the root app is FutureDeskAI's real,
   already-built storefront, not a blank template instance.
-- Skipped fabricated testimonials/founder bio — no real customer quotes or
-  a named farmer backstory exist yet, so the home/about pages stay in the
-  farm's voice without inventing attributed claims.
+- Skipped fabricated testimonials/founder bio and fabricated impact stats
+  (e.g. "X families fed") — no real numbers exist yet, so /community says
+  so explicitly rather than inventing them. Same standard as FutureDeskAI's
+  testimonials decision below.
+- SNAP/EBT is presented honestly as in-person-only / not yet authorized,
+  not as a working online payment option — Stripe cannot process EBT, and
+  it requires USDA FNS retailer authorization the owner hasn't done yet.
 - Cart is client-side (localStorage), not server/DB-backed — the catalog is
-  small (19 items) and checkout doesn't require an account; accounts exist
+  small (23 items) and checkout doesn't require an account; accounts exist
   for order history + CSA management, not for shopping.
 - No product photography exists — product cards use category icons +
   copy, not stock imagery or placeholder photos.
@@ -191,6 +229,9 @@ business gets its own app rather than overwriting it).
 - ACTIVATION NEEDED (all no-op until set): STRIPE_SECRET_KEY +
   STRIPE_WEBHOOK_SECRET, DATABASE_URL (Neon) + BETTER_AUTH_SECRET,
   RESEND_API_KEY + verified domain. See apps/ironroots/.env.example.
+- SNAP/EBT at the farm stand needs the owner to apply for USDA FNS retailer
+  authorization and get a physical EBT terminal — /community already
+  states this isn't live yet; nothing else to build until that's approved.
 - Real product photography needed — current cards use icons only.
 - No Lighthouse/production performance run yet (no deployed URL) — route
   JS bundles look reasonable in dev (no heavy client libs) but budgets

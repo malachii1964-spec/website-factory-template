@@ -93,10 +93,12 @@ export async function POST(req: Request) {
         });
       }
       if (email && resolved.length > 0) {
+        const donationCents = Number(session.metadata?.donation_cents ?? 0) || undefined;
         await sendOrderConfirmationEmail({
           to: email,
           items: resolved,
           totalCents: session.amount_total ?? 0,
+          donationCents,
         });
       }
     }

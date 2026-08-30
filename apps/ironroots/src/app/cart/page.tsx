@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Loader2, Minus, Plus, ShoppingBasket, Trash2 } from "lucide-react";
+import { ArrowRight, HeartHandshake, Loader2, Minus, Plus, ShoppingBasket, Trash2 } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 import { buttonVariants } from "@/components/ui/button";
+import { DONATION_PRESETS_CENTS } from "@/lib/pricing";
 import { formatPrice, cn } from "@/lib/utils";
 
 export default function CartPage() {
   const { items, lines, total, setQty, remove } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [donationCents, setDonationCents] = useState(0);
 
   async function checkout() {
     setLoading(true);
@@ -19,7 +21,7 @@ export default function CartPage() {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items, ...(donationCents > 0 && { donationCents }) }),
       });
       const data = (await res.json()) as { url?: string; error?: string };
       if (res.ok && data.url) {
@@ -111,6 +113,46 @@ export default function CartPage() {
           Tax and delivery calculated at checkout.
         </p>
 
+        <div className="mt-6 rounded-lg border border-leaf/30 bg-leaf-tint/40 p-4">
+          <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+            <HeartHandshake className="h-4 w-4 shrink-0 text-leaf" />
+            Add to the Community Harvest Fund
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Chip in and it goes straight toward subsidizing a Community Share
+            for another family. Totally optional.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setDonationCents(0)}
+              className={cn(
+                "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
+                donationCents === 0
+                  ? "border-border-strong bg-surface text-foreground"
+                  : "border-border bg-surface text-muted-foreground hover:text-foreground",
+              )}
+            >
+              No thanks
+            </button>
+            {DONATION_PRESETS_CENTS.map((cents) => (
+              <button
+                key={cents}
+                type="button"
+                onClick={() => setDonationCents(cents)}
+                className={cn(
+                  "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
+                  donationCents === cents
+                    ? "border-leaf bg-leaf text-white"
+                    : "border-border bg-surface text-muted-foreground hover:border-leaf hover:text-foreground",
+                )}
+              >
+                +{formatPrice(cents / 100)}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <button
           type="button"
           onClick={checkout}
@@ -124,7 +166,7 @@ export default function CartPage() {
             </>
           ) : (
             <>
-              Checkout
+              Checkout{donationCents > 0 ? ` — ${formatPrice(total + donationCents / 100)}` : ""}
               <ArrowRight className="h-5 w-5" />
             </>
           )}

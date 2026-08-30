@@ -12,9 +12,10 @@ import { useCart } from "@/components/cart-provider";
 
 const NAV = [
   { href: "/shop", label: "Shop" },
-  { href: "/csa", label: "Harvest Box (CSA)" },
+  { href: "/csa", label: "CSA" },
+  { href: "/growing-guides", label: "Learn to Grow" },
+  { href: "/community", label: "Community" },
   { href: "/about", label: "Our Farm" },
-  { href: "/contact", label: "Contact" },
 ];
 
 export function Navbar() {

@@ -2,10 +2,13 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import Stripe from "stripe";
 import { auth } from "@/lib/auth";
-import { getCsaPlan } from "@/lib/pricing";
+import { clampToPayWhatYouCan, getCsaPlan } from "@/lib/pricing";
 
 const bodySchema = z.object({
   planId: z.string().min(1).max(64),
+  // Only honored for the pay-what-you-can Community Share plan; ignored (and
+  // clamped server-side either way) for fixed-price plans.
+  pledgeCents: z.number().int().min(0).max(1_000_000).optional(),
 });
 
 function siteOrigin(req: Request): string {
@@ -62,6 +65,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "We couldn't find that plan." }, { status: 404 });
   }
 
+  const amountCents = plan.payWhatYouCan
+    ? clampToPayWhatYouCan(plan, parsed.data.pledgeCents ?? plan.amountCents)
+    : plan.amountCents;
+
   const stripe = new Stripe(secret);
   const origin = siteOrigin(req);
 
@@ -73,7 +80,7 @@ export async function POST(req: Request) {
           quantity: 1,
           price_data: {
             currency: "usd",
-            unit_amount: plan.amountCents,
+            unit_amount: amountCents,
             recurring: { interval: plan.interval === "week" ? "week" : "month" },
             product_data: { name: plan.name, description: plan.description },
           },

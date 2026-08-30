@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import { CalendarClock, PauseCircle, Sprout, Truck } from "lucide-react";
+import Link from "next/link";
+import { CalendarClock, HeartHandshake, PauseCircle, Sprout, Truck } from "lucide-react";
 import { CSA_PLANS } from "@/lib/pricing";
 import { CsaSubscribeButton } from "@/components/csa-subscribe-button";
+import { CommunityShareCard } from "@/components/community-share-card";
 import { HarvestWheel } from "@/components/harvest-wheel";
 
 export const metadata: Metadata = {
@@ -67,7 +69,7 @@ export default function CsaPage() {
         <div className="container-page">
           <p className="eyebrow">Plans</p>
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            {CSA_PLANS.map((plan) => (
+            {CSA_PLANS.filter((p) => !p.payWhatYouCan).map((plan) => (
               <div key={plan.id} className="panel p-6">
                 <h2 className="font-display text-xl font-medium text-foreground">{plan.name}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.description}</p>
@@ -83,10 +85,29 @@ export default function CsaPage() {
               </div>
             ))}
           </div>
+
+          <div className="mt-6">
+            {CSA_PLANS.filter((p) => p.payWhatYouCan).map((plan) => (
+              <CommunityShareCard key={plan.id} plan={plan} />
+            ))}
+          </div>
+
           <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
             <CalendarClock className="h-4 w-4" />
             You&rsquo;ll need an account so you can manage your subscription later.
           </p>
+          <div className="mt-6 flex items-start gap-3 rounded-lg border border-border bg-surface p-4">
+            <HeartHandshake className="mt-0.5 h-4 w-4 shrink-0 text-leaf" />
+            <p className="text-sm text-muted-foreground">
+              Every Small and Family share helps fund the Community Share
+              tier. Curious how the whole system works, or how to pay with
+              SNAP/EBT at the farm stand?{" "}
+              <Link href="/community" className="font-medium text-lake underline underline-offset-4">
+                See Making It Affordable
+              </Link>
+              .
+            </p>
+          </div>
         </div>
       </section>
 
