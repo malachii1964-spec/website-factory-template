@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Lake Erie IronRoots — design system
+   Concept: a year-round farm on the Lake Erie shoreline. The signature is the
+   Harvest Wheel — a 12-month strip that makes the site's one real claim
+   ("healthiest vegetables, all year round, local") a structural element
+   instead of a marketing line. Fraunces (soft, organic display) + Public Sans
+   (body/UI). Light "greenhouse morning" ground by default, dark toggle for
+   evening browsing.
+   ========================================================================== */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Greenhouse-morning light theme */
+  --background: #f4f6ef;
+  --surface: #ffffff;
+  --surface-2: #eaeee1;
+  --foreground: #14231c;
+  --muted-foreground: #55604f;
+  --border: #dde2d1;
+  --border-strong: #c7cfb8;
+
+  /* Lake Erie teal — primary brand color */
+  --lake: #0e4f4a;
+  --lake-hover: #0a3b37;
+  --lake-foreground: #ffffff;
+  --lake-tint: #e2eeec;
+
+  /* Harvest amber — the single CTA / signature accent */
+  --harvest: #e08a1e;
+  --harvest-hover: #c67715;
+  --harvest-foreground: #1c1206;
+  --harvest-tint: #fbedd7;
+
+  /* Soil brown + leaf green — used sparingly for grounding + tags */
+  --soil: #4a3423;
+  --leaf: #4f7a34;
+  --leaf-tint: #e7efdc;
+
+  --ring: var(--harvest);
+  --radius: 0.65rem;
+
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: #101913;
+  --surface: #17211a;
+  --surface-2: #1e2a21;
+  --foreground: #eaf0e6;
+  --muted-foreground: #a3b09a;
+  --border: #2a382d;
+  --border-strong: #3a4c3d;
+
+  --lake: #4fc7bd;
+  --lake-hover: #6fd6cd;
+  --lake-foreground: #0a1a18;
+  --lake-tint: #14302d;
+
+  --harvest: #f0a53e;
+  --harvest-hover: #f4b862;
+  --harvest-foreground: #1c1206;
+  --harvest-tint: #2e2210;
+
+  --soil: #c9a483;
+  --leaf: #8fc06a;
+  --leaf-tint: #1d2b17;
+
+  --ring: var(--harvest);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-lake: var(--lake);
+  --color-lake-hover: var(--lake-hover);
+  --color-lake-foreground: var(--lake-foreground);
+  --color-lake-tint: var(--lake-tint);
+
+  --color-harvest: var(--harvest);
+  --color-harvest-hover: var(--harvest-hover);
+  --color-harvest-foreground: var(--harvest-foreground);
+  --color-harvest-tint: var(--harvest-tint);
+
+  --color-soil: var(--soil);
+  --color-leaf: var(--leaf);
+  --color-leaf-tint: var(--leaf-tint);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+
+  --radius-sm: calc(var(--radius) - 3px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 6px);
+  --radius-xl: calc(var(--radius) + 14px);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--harvest);
+    color: var(--harvest-foreground);
+  }
+  :focus-visible {
+    outline: 2px solid var(--harvest);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--lake);
+  }
+  .dark .eyebrow {
+    color: var(--lake);
+  }
+
+  /* Signature — the Harvest Wheel: a 12-cell month strip. In-season cells are
+     filled with leaf-tint + a live dot; out-of-season cells sit quiet. */
+  .harvest-wheel {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0.3rem;
+  }
+  .harvest-cell {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .harvest-cell[data-active="true"] {
+    background: var(--leaf-tint);
+    border-color: color-mix(in oklab, var(--leaf) 45%, var(--border));
+  }
+  .harvest-cell[data-current="true"] {
+    outline: 2px solid var(--harvest);
+    outline-offset: 2px;
+  }
+  .harvest-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 9999px;
+    background: var(--leaf);
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+
+  .hairline {
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .lift:hover {
+      transform: translateY(-3px);
+    }
+  }
+
+  /* Furrow texture — a quiet field-row wash used behind ONE hero, never repeated */
+  .furrow-ground {
+    background-image: repeating-linear-gradient(
+      100deg,
+      color-mix(in oklab, var(--leaf) 6%, transparent) 0px,
+      color-mix(in oklab, var(--leaf) 6%, transparent) 2px,
+      transparent 2px,
+      transparent 34px
+    );
+  }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fade-up {
+    animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}

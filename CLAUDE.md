@@ -134,3 +134,68 @@ At the end of every working session:
 - Sample previews only cover ~3 products; roll out to the rest.
 - Minor: Turbopack NFT over-trace warning from /api/download local-fs fallback
   (harmless; prod path is DOWNLOAD_STORAGE_URL bucket).
+
+---
+
+## Project: Lake Erie IronRoots (apps/ironroots)
+A second, independent site in this repo — a year-round vegetable farm
+storefront — kept in `apps/ironroots` as its own workspace package so it
+never touches the FutureDeskAI app at the repo root (this repo doubles as
+FutureDeskAI's live codebase, not a blank template, so a second unrelated
+business gets its own app rather than overwriting it).
+
+### Current state
+- Built via the ecommerce template (+ accounts, since a CSA needs them):
+  full storefront, cart (localStorage), Stripe Checkout, Better Auth
+  accounts, Drizzle/Neon schema for orders + CSA subscriptions, Resend
+  emails, weekly Harvest Box CSA (recurring Stripe subscription).
+- Pages: /, /shop (+ category filter), /shop/[slug], /cart,
+  /checkout/{success,cancel}, /csa, /account (sign in/up), /account/orders,
+  /account/subscription, /about, /contact, /legal/{terms,privacy}, 404.
+- Catalog: 19 items in code (src/lib/products.ts) — leafy greens, roots &
+  alliums, tomatoes & peppers, herbs, 2 Harvest Box sizes — each with real
+  in-season months (hydroponic/greenhouse crops run all 12; field/storage
+  crops don't) driving the Harvest Wheel signature component.
+- Design: "Harvest Wheel" system — Lake Erie teal + harvest amber + soil/leaf
+  accents, Fraunces (display) + Public Sans (body), light "greenhouse
+  morning" default with a dark toggle. Signature: a 12-month Harvest Wheel
+  that encodes the year-round claim structurally (home, product pages,
+  about, CSA page).
+- All gates green: tsc, eslint, vitest (14 tests), next build. Verified in a
+  real browser incl. failure cases (checkout with no Stripe key, sign-up
+  with no DB configured) — both degrade to a clear message, no crash.
+- Everything is database/service-optional by design (matches the root app's
+  pattern): shop + cart + Stripe checkout work with zero services; accounts/
+  orders/CSA activate once DATABASE_URL is set (`pnpm db:push` to create
+  tables), matching src/lib/db.ts, auth.ts, and the API routes' 503
+  "not configured" fallbacks.
+- No `.claude/agents/` reviewer or design-critic subagents exist in this
+  repo checkout (README describes them but the files aren't present), so
+  QA was a manual adversarial pass: full route smoke test, Playwright
+  screenshots at 1280px and 375px, and the two failure-case checks above.
+
+### Decisions made (do not relitigate)
+- Kept as a separate `apps/ironroots` workspace package rather than
+  replacing the root app's content — the root app is FutureDeskAI's real,
+  already-built storefront, not a blank template instance.
+- Skipped fabricated testimonials/founder bio — no real customer quotes or
+  a named farmer backstory exist yet, so the home/about pages stay in the
+  farm's voice without inventing attributed claims.
+- Cart is client-side (localStorage), not server/DB-backed — the catalog is
+  small (19 items) and checkout doesn't require an account; accounts exist
+  for order history + CSA management, not for shopping.
+- No product photography exists — product cards use category icons +
+  copy, not stock imagery or placeholder photos.
+
+### Known issues / TODO
+- ACTIVATION NEEDED (all no-op until set): STRIPE_SECRET_KEY +
+  STRIPE_WEBHOOK_SECRET, DATABASE_URL (Neon) + BETTER_AUTH_SECRET,
+  RESEND_API_KEY + verified domain. See apps/ironroots/.env.example.
+- Real product photography needed — current cards use icons only.
+- No Lighthouse/production performance run yet (no deployed URL) — route
+  JS bundles look reasonable in dev (no heavy client libs) but budgets
+  from performance.md haven't been measured against a live build.
+- CSA billing-portal self-serve (pause/cancel from the account page) isn't
+  wired — /account/subscription currently tells the customer to contact
+  the farm directly instead of a Stripe customer-portal link.
+- Deploy needs the owner's Vercel account + the env keys above.
