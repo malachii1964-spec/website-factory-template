@@ -236,7 +236,21 @@ Roots Chicago, Raleigh City Farm) actually operationalize this.
 - No Lighthouse/production performance run yet (no deployed URL) — route
   JS bundles look reasonable in dev (no heavy client libs) but budgets
   from performance.md haven't been measured against a live build.
-- CSA billing-portal self-serve (pause/cancel from the account page) isn't
-  wired — /account/subscription currently tells the customer to contact
-  the farm directly instead of a Stripe customer-portal link.
 - Deploy needs the owner's Vercel account + the env keys above.
+
+### Update: Stripe Customer Portal self-serve for CSA (closes prior TODO)
+- /account/subscription now has a real "Pause / cancel" button per
+  subscription (src/components/manage-subscription-button.tsx) instead of
+  "contact us directly." It calls /api/csa/portal, which verifies the
+  subscription belongs to the signed-in user (userId + stripeSubscriptionId
+  match in the DB — a guessed Stripe id can't open someone else's billing),
+  retrieves the Stripe customer from the subscription, and opens a Stripe
+  Billing Portal session. Falls back to the old "contact us" copy when
+  STRIPE_SECRET_KEY isn't set.
+- ACTIVATION NEEDED (one-time, no env var): turn on the Customer Portal at
+  https://dashboard.stripe.com/settings/billing/portal — the API call
+  fails until that's enabled for the Stripe account.
+- Gates re-verified green (tsc, eslint, vitest 23 tests, next build); the
+  not-configured fallback was checked in a real browser (no DB configured
+  here, so the page correctly shows the existing "isn't connected yet"
+  notice rather than crashing).

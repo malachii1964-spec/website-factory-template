@@ -9,6 +9,7 @@ import { db } from "@/lib/db";
 import { csaSubscription } from "@/lib/schema";
 import { getCsaPlan } from "@/lib/pricing";
 import { NotConfiguredNotice } from "@/components/not-configured-notice";
+import { ManageSubscriptionButton } from "@/components/manage-subscription-button";
 import { buttonVariants } from "@/components/ui/button";
 
 export const metadata: Metadata = { title: "Harvest Box subscription" };
@@ -25,6 +26,8 @@ export default async function SubscriptionPage() {
     .select()
     .from(csaSubscription)
     .where(eq(csaSubscription.userId, session.user.id));
+
+  const billingConnected = Boolean(process.env.STRIPE_SECRET_KEY);
 
   return (
     <section className="py-16 lg:py-20">
@@ -49,20 +52,26 @@ export default async function SubscriptionPage() {
             {subs.map((s) => {
               const plan = getCsaPlan(s.planId);
               return (
-                <div key={s.id} className="panel flex items-center justify-between p-5">
+                <div key={s.id} className="panel flex items-center justify-between gap-4 p-5">
                   <div>
                     <p className="font-medium text-foreground">{plan?.name ?? s.planId}</p>
                     <p className="text-sm text-muted-foreground">Delivered every {plan?.interval ?? "week"}</p>
                   </div>
-                  <span className="rounded-full border border-leaf/30 bg-leaf-tint px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-leaf">
-                    {s.status}
-                  </span>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className="rounded-full border border-leaf/30 bg-leaf-tint px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-leaf">
+                      {s.status}
+                    </span>
+                    {billingConnected ? (
+                      <ManageSubscriptionButton stripeSubscriptionId={s.stripeSubscriptionId} />
+                    ) : null}
+                  </div>
                 </div>
               );
             })}
             <p className="text-sm text-muted-foreground">
-              To pause, change, or cancel your subscription, contact us or use the
-              billing link in your confirmation email.
+              {billingConnected
+                ? "Pause / cancel opens Stripe's secure billing portal, where you can also update your card or delivery frequency."
+                : "Billing management isn't connected yet — contact us to pause, change, or cancel your subscription."}
             </p>
           </div>
         )}
