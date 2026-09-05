@@ -25,6 +25,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Strain Directory", href: "/strain-directory" },
       { label: "Terpenes", href: "/terpenes" },
       { label: "Seeds & Breeders", href: "/seeds" },
+      { label: "Limited Drops", href: "/drops" },
     ],
   },
   {

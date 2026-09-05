@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/frostybuds-soil`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE}/grow-like-the-greats`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE}/seeds`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${SITE}/drops`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE}/recipes`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE}/gear`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE}/local-ny`, changeFrequency: "monthly", priority: 0.5 },

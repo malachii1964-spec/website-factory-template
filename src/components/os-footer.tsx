@@ -18,6 +18,7 @@ const NAV_COLS: { heading: string; links: { label: string; href: string }[] }[] 
         { label: "Strain Finder", href: "/strain-finder" },
         { label: "Terpenes", href: "/terpenes" },
         { label: "Seeds & Breeders", href: "/seeds" },
+      { label: "Limited Drops", href: "/drops" },
       ],
     },
     {

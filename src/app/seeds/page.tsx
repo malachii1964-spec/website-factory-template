@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { OsHeader } from "@/components/os-header";
 import { OsFooter } from "@/components/os-footer";
+import { DropStrip } from "@/components/drop-strip";
 import { SEED_BANKS, seedBanksByType } from "@/lib/seed-banks";
 
 const SITE =
@@ -105,6 +106,14 @@ export default function SeedsPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* live codes — placed here because a visitor on this page is already
+            deciding where to buy, which is the only moment a code is useful */}
+        <section className="border-t border-white/5">
+          <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+            <DropStrip />
           </div>
         </section>
 
