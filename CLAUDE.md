@@ -99,6 +99,30 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- CACHE + COMMERCE (2026-09-05): Cloudflare showed 10.63% cache hit
+  across 50k requests / 5.7k uniques in 30 days — ~45k origin hits that
+  should be edge-served. Root cause is two-part: routes must BE static,
+  and Cloudflare must be told to cache HTML (it never caches HTML by
+  default on any plan). Code half done: /guides is now static (filtering
+  moved client-side via useSyncExternalStore over server-rendered cards,
+  all 153 links still in the static HTML), and 107 of 153 guide detail
+  pages now prerender — the session is consulted ONLY for gated guides
+  and BookmarkButton resolves its own state. All 46 members-only guides
+  correctly stay request-time; verified no gated guide is prerendered
+  and gating is intact (text at 30/60/90% through a gated guide absent
+  from signed-out HTML). Dashboard half is NOT done — see
+  docs/cloudflare-caching.md for the exact rules. ** OWNER ACTION. **
+  Also: Vercel Analytics + Speed Insights added (site had none despite
+  5.7k uniques). NEW /drops page + strip on /seeds for affiliate promo
+  codes (copyable codes, optional expiry, rel="nofollow sponsored",
+  disclosure). Fixed 2 guides with invalid MDX ("<50" parses as a JSX
+  tag) that were 500ing at request time and went unnoticed because the
+  route was dynamic. Fixed the min-w-0 truncate bug in 5 more places and
+  added layout-guards.test.ts so it cannot ship a third time.
+  132 tests, all gates green.
+  ** OWNER ACTIONS: (a) db:push for grow journals; (b) Cloudflare cache
+  rules; (c) drop 5 promo images into public/promos/; (d) set
+  NEXT_PUBLIC_SEED_AFFILIATE_URL. **
 - GROW JOURNALS (2026-08-10): "Start a grow the Mr. Canucks Grow way"
   now seeds a real journal. NEW tables `grow` + `grow_event_done`, NEW
   /grows and /grows/[id], NEW grow-journal.ts (pure, 18 tests) and
