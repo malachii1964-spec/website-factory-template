@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Fraunces, Albert_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AgeGate } from "@/components/age-gate";
 
 const fraunces = Fraunces({
@@ -79,6 +81,10 @@ export default function RootLayout({
         <AgeGate />
         <div id="main-content" />
         {children}
+        {/* Analytics load after interactive and are excluded from the LCP path.
+            Both are no-ops off Vercel, so local dev stays clean. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
