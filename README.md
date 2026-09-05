@@ -1,6 +1,6 @@
-# THCMed Solutions
+# Lake Erie Cannabis
 
-The grower's almanac for medical cannabis cultivation: stage-by-stage grow
+The grower's almanac for home cannabis cultivation: stage-by-stage grow
 guides (germination → cure), free membership that unlocks the deep-dive
 library, bookmarks, a 21+ age gate, and a legal notice. Built with Next.js 16
 (App Router, TypeScript strict), Tailwind 4, MDX content, Better Auth, and
@@ -25,7 +25,7 @@ Sign-ups, logins, and bookmarks all work out of the box; dev data lives in
 2. In Vercel → Project → Settings → Environment Variables, set:
    - `DATABASE_URL` — the Neon connection string
    - `BETTER_AUTH_SECRET` — generate with `openssl rand -base64 32`
-   - `BETTER_AUTH_URL` — the site's public URL, e.g. `https://thcmedsolutions.com`
+   - `BETTER_AUTH_URL` — the site's public URL, e.g. `https://lakeeriecannabis.com`
 3. Create the tables once: locally run
    `DATABASE_URL="<neon url>" npm run db:push`
 4. Push to GitHub; Vercel builds and deploys.
