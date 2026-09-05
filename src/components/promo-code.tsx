@@ -48,7 +48,7 @@ export function PromoCode({ code, label }: { code: string; label?: string }) {
         type="button"
         onClick={copy}
         aria-label={`Copy discount code ${code}${label ? ` for ${label}` : ""}`}
-        className="group flex items-center justify-between gap-3 rounded-xl border border-lime/35 bg-lime/[0.06] px-3.5 py-2.5 text-left transition hover:border-lime/60 hover:bg-lime/[0.1] focus-visible:ring-2 focus-visible:ring-cyan"
+        className="group flex min-w-0 items-center justify-between gap-3 rounded-xl border border-lime/35 bg-lime/[0.06] px-3.5 py-2.5 text-left transition hover:border-lime/60 hover:bg-lime/[0.1] focus-visible:ring-2 focus-visible:ring-cyan"
       >
         <span className="min-w-0">
           <span className="block font-mono text-[9px] uppercase tracking-[0.16em] text-frost-dim">

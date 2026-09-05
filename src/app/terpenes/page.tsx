@@ -165,7 +165,7 @@ export default function TerpenesPage() {
                             <Link
                               key={s.slug}
                               href={`/strains/${s.slug}`}
-                              className="glass group flex items-center justify-between gap-3 rounded-xl px-4 py-3 transition hover:brightness-125"
+                              className="glass group flex min-w-0 items-center justify-between gap-3 rounded-xl px-4 py-3 transition hover:brightness-125"
                             >
                               <div className="min-w-0">
                                 <span className="block truncate font-display text-base font-semibold">

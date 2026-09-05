@@ -96,7 +96,7 @@ export function StrainDirectory({ entries }: { entries: DirectoryEntry[] }) {
           {results.map((e) => {
             const inner = (
               <>
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex min-w-0 items-center justify-between gap-2">
                   <h3 className="min-w-0 truncate font-display text-base font-semibold">
                     {e.name}
                   </h3>

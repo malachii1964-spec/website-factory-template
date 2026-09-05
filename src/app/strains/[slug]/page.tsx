@@ -246,7 +246,7 @@ export default async function StrainPage({
                 <Link
                   key={g.slug}
                   href={`/guides/${g.slug}`}
-                  className="glass group flex items-center justify-between gap-3 rounded-2xl p-4 transition hover:brightness-125"
+                  className="glass group flex min-w-0 items-center justify-between gap-3 rounded-2xl p-4 transition hover:brightness-125"
                 >
                   <div className="min-w-0">
                     <h3 className="truncate font-display text-base font-semibold">
