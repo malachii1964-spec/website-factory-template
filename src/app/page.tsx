@@ -98,8 +98,8 @@ const MODULES = [
   },
   {
     name: "Seeds & Breeders",
-    body: "Where to buy seeds you can trust — community-vetted seed banks, top breeders, and red flags to avoid.",
-    cta: "Find seeds",
+    body: "Where to buy seeds you can trust — community-vetted seed banks, top breeders, red flags to avoid, and the discount codes running right now.",
+    cta: "Find seeds & codes",
     href: "/seeds",
     visual: SeedGlyph,
   },
