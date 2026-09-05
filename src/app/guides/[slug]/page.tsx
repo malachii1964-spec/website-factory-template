@@ -11,13 +11,13 @@ import { getAllGuides, getAdjacentGuides, getGuide, teaserOf, extractLinkedGuide
 import { strainsForGuide } from "@/lib/strains";
 import { getStage } from "@/lib/stages";
 import { getSessionUser } from "@/lib/session";
-import { listBookmarks } from "@/lib/bookmarks";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { GuideNav } from "@/components/guide-nav";
 import { GuideToc, GuideTocMobile } from "@/components/guide-toc";
 import { ReadingProgress } from "@/components/reading-progress";
 import { extractTocItems } from "@/lib/toc";
 
+/** Prerender every guide. Gated ones still consult the session per request. */
 export function generateStaticParams() {
   return getAllGuides().map((g) => ({ slug: g.slug }));
 }
@@ -66,11 +66,12 @@ export default async function GuidePage({
   const guide = getGuide(slug);
   if (!guide) notFound();
 
-  const user = await getSessionUser();
-  const locked = guide.membersOnly && !user;
+  // The session is consulted ONLY for gated guides. Free guides therefore
+  // touch no request-scoped API and can be prerendered and cached; the
+  // bookmark control resolves its own state on the client.
+  const locked = guide.membersOnly ? !(await getSessionUser()) : false;
   const body = locked ? teaserOf(guide.content) : guide.content;
   const stage = getStage(guide.stage);
-  const saved = user ? (await listBookmarks()).includes(guide.slug) : false;
 
   const tocItems = extractTocItems(body);
   const { prev, next } = getAdjacentGuides(guide.slug);
@@ -177,7 +178,7 @@ export default async function GuidePage({
           {stage?.hoursOn !== null && stage ? (
             <LightCycle hoursOn={stage.hoursOn} className="w-full max-w-xs" />
           ) : null}
-          {user ? <BookmarkButton slug={guide.slug} saved={saved} /> : null}
+          <BookmarkButton slug={guide.slug} />
         </div>
 
         <article className="prose-guide mt-10">
@@ -265,7 +266,7 @@ export default async function GuidePage({
                 <Link
                   key={g.slug}
                   href={`/guides/${g.slug}`}
-                  className="glass group flex items-center justify-between gap-3 rounded-2xl p-4 transition hover:brightness-125"
+                  className="glass group flex min-w-0 items-center justify-between gap-3 rounded-2xl p-4 transition hover:brightness-125"
                 >
                   <div className="min-w-0">
                     <h3 className="truncate font-display text-base font-semibold">
