@@ -5,6 +5,7 @@ import { OsHeader } from "@/components/os-header";
 import { OsFooter } from "@/components/os-footer";
 import { getSessionUser } from "@/lib/session";
 import { deleteGrow, getGrow, toggleGrowEvent } from "@/lib/grow-journals";
+import { GrowTablesMissingError } from "@/lib/grow-errors";
 import {
   buildTasks,
   dayOfGrow,
@@ -28,7 +29,14 @@ export default async function GrowPage({
   const user = await getSessionUser();
   if (!user) redirect(`/login?next=/grows/${encodeURIComponent(id)}`);
 
-  const detail = await getGrow(id);
+  let detail: Awaited<ReturnType<typeof getGrow>>;
+  try {
+    detail = await getGrow(id);
+  } catch (err) {
+    // Schema not pushed yet — /grows explains that state properly.
+    if (err instanceof GrowTablesMissingError) redirect("/grows");
+    throw err;
+  }
   if (!detail) notFound();
 
   const method = getMethod(detail.methodSlug);

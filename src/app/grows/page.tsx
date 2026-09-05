@@ -5,6 +5,7 @@ import { OsHeader } from "@/components/os-header";
 import { OsFooter } from "@/components/os-footer";
 import { getSessionUser } from "@/lib/session";
 import { listGrows } from "@/lib/grow-journals";
+import { GrowTablesMissingError } from "@/lib/grow-errors";
 import {
   buildTasks,
   dayOfGrow,
@@ -23,7 +24,14 @@ export default async function GrowsPage() {
   const user = await getSessionUser();
   if (!user) redirect("/login?next=/grows");
 
-  const grows = await listGrows();
+  let grows: Awaited<ReturnType<typeof listGrows>>;
+  try {
+    grows = await listGrows();
+  } catch (err) {
+    if (err instanceof GrowTablesMissingError) return <GrowsNotReady />;
+    throw err;
+  }
+
   const cards = await Promise.all(
     grows.map(async (g) => {
       const method = getMethod(g.methodSlug);
@@ -120,6 +128,41 @@ export default async function GrowsPage() {
             )}
           </div>
         )}
+      </main>
+      <OsFooter />
+    </div>
+  );
+}
+
+/**
+ * Shown when the grow tables are not in the database yet. A member seeing this
+ * has done nothing wrong, so it reads as "not switched on yet" rather than an
+ * error, and it never mentions internals.
+ */
+function GrowsNotReady() {
+  return (
+    <div className="os-scope min-h-screen bg-void text-frost">
+      <OsHeader />
+      <main className="mx-auto w-full max-w-2xl px-4 pb-20 pt-28 sm:px-6 lg:pt-32">
+        <div className="glass iris-border rounded-3xl p-8 text-center">
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
+            Almost ready
+          </p>
+          <h1 className="mt-3 font-display text-2xl font-semibold sm:text-3xl">
+            Grow journals are being switched on
+          </h1>
+          <p className="mx-auto mt-4 max-w-md leading-relaxed text-frost-dim">
+            This feature is finished but not live on the site yet. Nothing is
+            wrong with your account, and nothing you have saved is affected —
+            check back shortly.
+          </p>
+          <Link
+            href="/guides"
+            className="btn-iris mt-6 inline-flex rounded-full px-5 py-3 text-sm font-semibold"
+          >
+            Read the grow guides meanwhile →
+          </Link>
+        </div>
       </main>
       <OsFooter />
     </div>

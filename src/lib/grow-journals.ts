@@ -25,6 +25,10 @@ import {
   POT_SIZES,
 } from "@/lib/grow-journal";
 import { getSessionUser } from "@/lib/session";
+import {
+  GrowTablesMissingError,
+  isMissingGrowTable,
+} from "@/lib/grow-errors";
 
 const idSchema = z.string().uuid();
 
@@ -51,18 +55,25 @@ export type GrowDetail = GrowRecord & { doneEventIds: string[] };
 export async function listGrows(): Promise<GrowRecord[]> {
   const user = await getSessionUser();
   if (!user) return [];
-  return db
-    .select({
-      id: grow.id,
-      methodSlug: grow.methodSlug,
-      name: grow.name,
-      potGallons: grow.potGallons,
-      plants: grow.plants,
-      startedOn: grow.startedOn,
-    })
-    .from(grow)
-    .where(eq(grow.userId, user.id))
-    .orderBy(desc(grow.createdAt));
+  try {
+    return await db
+      .select({
+        id: grow.id,
+        methodSlug: grow.methodSlug,
+        name: grow.name,
+        potGallons: grow.potGallons,
+        plants: grow.plants,
+        startedOn: grow.startedOn,
+      })
+      .from(grow)
+      .where(eq(grow.userId, user.id))
+      .orderBy(desc(grow.createdAt));
+  } catch (err) {
+    // Until `npm run db:push` runs against this database, show a designed
+    // message rather than a 500.
+    if (isMissingGrowTable(err)) throw new GrowTablesMissingError();
+    throw err;
+  }
 }
 
 export async function getGrow(rawId: string): Promise<GrowDetail | null> {
@@ -71,28 +82,33 @@ export async function getGrow(rawId: string): Promise<GrowDetail | null> {
   const parsed = idSchema.safeParse(rawId);
   if (!parsed.success) return null;
 
-  const rows = await db
-    .select({
-      id: grow.id,
-      methodSlug: grow.methodSlug,
-      name: grow.name,
-      potGallons: grow.potGallons,
-      plants: grow.plants,
-      startedOn: grow.startedOn,
-    })
-    .from(grow)
-    // Scoped by userId, so another member's id simply does not exist here.
-    .where(and(eq(grow.id, parsed.data), eq(grow.userId, user.id)));
+  try {
+    const rows = await db
+      .select({
+        id: grow.id,
+        methodSlug: grow.methodSlug,
+        name: grow.name,
+        potGallons: grow.potGallons,
+        plants: grow.plants,
+        startedOn: grow.startedOn,
+      })
+      .from(grow)
+      // Scoped by userId, so another member's id simply does not exist here.
+      .where(and(eq(grow.id, parsed.data), eq(grow.userId, user.id)));
 
-  const found = rows[0];
-  if (!found) return null;
+    const found = rows[0];
+    if (!found) return null;
 
-  const done = await db
-    .select({ eventId: growEventDone.eventId })
-    .from(growEventDone)
-    .where(eq(growEventDone.growId, found.id));
+    const done = await db
+      .select({ eventId: growEventDone.eventId })
+      .from(growEventDone)
+      .where(eq(growEventDone.growId, found.id));
 
-  return { ...found, doneEventIds: done.map((d) => d.eventId) };
+    return { ...found, doneEventIds: done.map((d) => d.eventId) };
+  } catch (err) {
+    if (isMissingGrowTable(err)) throw new GrowTablesMissingError();
+    throw err;
+  }
 }
 
 /** Creates a journal and returns its id, or null if the caller is signed out. */
