@@ -15,6 +15,35 @@ describe("isMissingGrowTable", () => {
     ).toBe(true);
   });
 
+  it("sees through the driver's wrapper error", () => {
+    // The shape actually observed in the browser: Drizzle throws its own error
+    // and hangs the Postgres error off `cause`. Checking only the top level
+    // missed every real occurrence, so this is the case that matters most.
+    const wrapped = Object.assign(
+      new Error('Failed query: select "id" from "grow" where "user_id" = $1'),
+      { cause: Object.assign(new Error("relation \"grow\" does not exist"), { code: "42P01" }) },
+    );
+    expect(isMissingGrowTable(wrapped)).toBe(true);
+  });
+
+  it("walks more than one level of wrapping", () => {
+    const deep = { cause: { cause: { code: "42P01" } } };
+    expect(isMissingGrowTable(deep)).toBe(true);
+  });
+
+  it("terminates on a self-referencing cause chain", () => {
+    const loop: Record<string, unknown> = { message: "boom" };
+    loop.cause = loop;
+    expect(isMissingGrowTable(loop)).toBe(false);
+  });
+
+  it("does NOT swallow a wrapped error of a different kind", () => {
+    const wrapped = Object.assign(new Error("Failed query: insert into grow"), {
+      cause: Object.assign(new Error("duplicate key"), { code: "23505" }),
+    });
+    expect(isMissingGrowTable(wrapped)).toBe(false);
+  });
+
   it("does NOT swallow other database failures", () => {
     // The whole point: only a missing schema gets the friendly screen.
     // Connection refused, auth failure, and constraint violations must surface.
