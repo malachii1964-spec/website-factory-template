@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Each site under sites/ is its own project with its own configs.
+    "sites/**",
   ]),
 ]);
 
