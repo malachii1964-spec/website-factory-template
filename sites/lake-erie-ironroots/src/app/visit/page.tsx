@@ -8,6 +8,7 @@ import {
   formattedPhone,
   hasRealContactDetails,
 } from "@/lib/farm";
+import { farmToday } from "@/lib/clock";
 import { frostLine, readyOn } from "@/lib/season";
 
 export const revalidate = 3600;
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 const SHELL = "mx-auto w-full max-w-6xl px-5 md:pr-8 md:pl-32";
 
 export default function VisitPage() {
-  const today = new Date();
+  const today = farmToday();
   const ready = readyOn(today);
   const real = hasRealContactDetails();
   const mapQuery = encodeURIComponent(

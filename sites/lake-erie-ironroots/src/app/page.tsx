@@ -6,6 +6,7 @@ import { SeasonRule } from "@/components/season-rule";
 import { Wordmark } from "@/components/wordmark";
 import { humanTime } from "@/components/site-footer";
 import { establishedLine, FARM, PILLARS, SOIL_HORIZONS } from "@/lib/farm";
+import { farmToday } from "@/lib/clock";
 import { frostLine } from "@/lib/season";
 
 /**
@@ -20,7 +21,7 @@ export const revalidate = 3600;
 const SHELL = "mx-auto w-full max-w-6xl px-5 md:pr-8 md:pl-32";
 
 export default function Home() {
-  const today = new Date();
+  const today = farmToday();
 
   return (
     <>
