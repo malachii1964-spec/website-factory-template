@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     template: `%s — ${FARM.name}`,
   },
   description:
-    "A certified-organic fruit and vegetable farm on the Lake Erie plain in Chautauqua County, New York. See what is ready at the stand today.",
+    "An organic fruit and vegetable farm on the Lake Erie plain in Chautauqua County, New York. See what is ready at the stand today.",
   openGraph: {
     type: "website",
     siteName: FARM.name,

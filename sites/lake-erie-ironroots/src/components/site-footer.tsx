@@ -1,5 +1,13 @@
+import Link from "next/link";
 import { Wordmark } from "@/components/wordmark";
-import { establishedLine, FARM, formattedPhone } from "@/lib/farm";
+import {
+  establishedLine,
+  FARM,
+  formattedPhone,
+  hasRealAddress,
+  hasRealEmail,
+  hasRealPhone,
+} from "@/lib/farm";
 
 function joinDays(days: readonly string[]): string {
   if (days.length === 1) return days[0];
@@ -15,6 +23,10 @@ export function humanTime(t: string): string {
 }
 
 export function SiteFooter() {
+  const address = hasRealAddress();
+  const phone = hasRealPhone();
+  const email = hasRealEmail();
+
   return (
     <footer className="relative z-40 mt-24 border-t border-[var(--hairline)] bg-shale">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 md:grid-cols-3 md:px-8">
@@ -44,30 +56,52 @@ export function SiteFooter() {
 
         <div>
           <h2 className="label">Find us</h2>
-          <address className="mt-4 space-y-2 text-sm not-italic text-parchment/85">
-            <p>
-              {FARM.address.street}
-              <br />
-              {FARM.address.locality}, {FARM.address.region}{" "}
-              {FARM.address.postalCode}
+          {/* Nothing here is published until it is real. A placeholder street
+              and a dead tel: link in the chrome of every page is worse than a
+              line telling the truth. */}
+          {address || phone || email ? (
+            <address className="mt-4 space-y-2 text-sm not-italic text-parchment/85">
+              {address && (
+                <p>
+                  {FARM.address.street}
+                  <br />
+                  {FARM.address.locality}, {FARM.address.region}{" "}
+                  {FARM.address.postalCode}
+                </p>
+              )}
+              {phone && (
+                <p>
+                  <a
+                    className="text-gold transition-colors hover:text-gold-lit"
+                    href={`tel:${FARM.phone}`}
+                  >
+                    {formattedPhone()}
+                  </a>
+                </p>
+              )}
+              {email && (
+                <p>
+                  <a
+                    className="text-gold transition-colors hover:text-gold-lit"
+                    href={`mailto:${FARM.email}`}
+                  >
+                    {FARM.email}
+                  </a>
+                </p>
+              )}
+            </address>
+          ) : (
+            <p className="mt-4 text-sm text-iron">
+              {FARM.county}, {FARM.state}. The stand&rsquo;s address and phone
+              number go up here before opening day.
             </p>
-            <p>
-              <a
-                className="text-gold transition-colors hover:text-gold-lit"
-                href={`tel:${FARM.phone}`}
-              >
-                {formattedPhone()}
-              </a>
-            </p>
-            <p>
-              <a
-                className="text-gold transition-colors hover:text-gold-lit"
-                href={`mailto:${FARM.email}`}
-              >
-                {FARM.email}
-              </a>
-            </p>
-          </address>
+          )}
+          <Link
+            href="/visit"
+            className="label mt-5 inline-block text-gold transition-colors hover:text-gold-lit"
+          >
+            Visit the stand &rarr;
+          </Link>
         </div>
       </div>
 

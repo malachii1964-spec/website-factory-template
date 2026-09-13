@@ -5,17 +5,31 @@ import { RootLine } from "@/components/root-line";
 import { SeasonRule } from "@/components/season-rule";
 import { Wordmark } from "@/components/wordmark";
 import { humanTime } from "@/components/site-footer";
-import { establishedLine, FARM, PILLARS, SOIL_HORIZONS } from "@/lib/farm";
+import {
+  establishedLine,
+  FARM,
+  hasRealAddress,
+  PILLARS,
+  SOIL_HORIZONS,
+} from "@/lib/farm";
 import { farmToday } from "@/lib/clock";
 import { frostLine } from "@/lib/season";
 
 /**
- * Re-rendered hourly. The page states what is ready *today*, so it cannot be
- * baked once at build time — and it must not be request-time dynamic either,
- * or every visitor pays for a render of a page that changes at most once a
- * day. An hour is the honest middle: always right, always CDN-cacheable.
+ * Revalidated every five minutes.
+ *
+ * The page states what is ready *today*, so it cannot be baked once at build
+ * time. It must not be request-time dynamic either, or every visitor pays for
+ * a render of a page that changes at most once a day.
+ *
+ * What ISR actually does, stated honestly rather than optimistically:
+ * regeneration is triggered BY a request and serves the NEXT one. On a farm
+ * stand with no overnight traffic, the first visitor after midnight is served
+ * the previous render and their request kicks off the refresh. Five minutes
+ * narrows that window to one stale view rather than a stale morning; it does
+ * not eliminate it. A daily cron hitting the page at 5am would — see README.
  */
-export const revalidate = 3600;
+export const revalidate = 300;
 
 /** One shared container, so the left gutter for the Root Line never drifts. */
 const SHELL = "mx-auto w-full max-w-6xl px-5 md:pr-8 md:pl-32";
@@ -115,14 +129,23 @@ export default function Home() {
             are the things we check a decision against.
           </p>
 
-          <ul className="mt-14 grid list-none gap-px p-0 md:grid-cols-2">
+          {/*
+            Five full-width rows, not a two-column grid. The grid left the
+            fifth pillar orphaned in the left cell with half a page of void
+            beside it and a hairline that stopped halfway across. Stacked, the
+            five rules read as five strata and rhyme with the soil section
+            below instead of fighting it.
+          */}
+          <ul className="mt-14 list-none p-0">
             {PILLARS.map((p) => (
               <li
                 key={p.id}
-                className="min-w-0 border-t border-[var(--hairline)] py-8 md:pr-10"
+                className="grid gap-x-10 gap-y-2 border-t border-[var(--hairline)] py-7 md:grid-cols-[18rem_1fr]"
               >
-                <h3 className="display text-2xl text-gold-lit">{p.title}</h3>
-                <p className="prose-farm mt-3 text-sm">{p.body}</p>
+                <h3 className="display min-w-0 text-2xl text-gold-lit">
+                  {p.title}
+                </h3>
+                <p className="prose-farm min-w-0 text-sm">{p.body}</p>
               </li>
             ))}
           </ul>
@@ -142,27 +165,46 @@ export default function Home() {
             IronRoots because the name is the colour of the dirt.
           </p>
 
-          <div className="mt-12 max-w-3xl">
-            {SOIL_HORIZONS.map((h) => (
-              <div key={h.id} className="flex items-stretch gap-4 md:gap-6">
-                <div className="w-10 shrink-0 pt-3 text-right">
-                  <span className="label text-[0.5625rem] text-iron">
+          {/*
+            Drawn to depth. Four equal bands would have been a swatch chip on a
+            page that says "drawn to scale" two sections above — the O horizon
+            is two inches and the C is thirty-two, and the column should show
+            that. Each band's height is its real thickness; the text sits
+            beside it at its own natural height.
+          */}
+          <div className="mt-12 flex max-w-3xl gap-4 md:gap-6">
+            <div className="flex w-16 shrink-0 flex-col md:w-24">
+              {SOIL_HORIZONS.map((h) => (
+                <div
+                  key={h.id}
+                  className="flex items-start justify-end gap-2 pr-2"
+                  style={{ flexGrow: h.to - h.from, flexBasis: 0 }}
+                >
+                  <span className="label pt-1 text-[0.5625rem] text-iron">
                     {h.id}
                   </span>
+                  <div
+                    className="h-full w-6 shrink-0 md:w-10"
+                    style={{ background: h.hex }}
+                    aria-hidden="true"
+                  />
                 </div>
-                <div
-                  className="w-6 shrink-0 md:w-10"
-                  style={{ background: h.hex }}
-                  aria-hidden="true"
-                />
-                <div className="min-w-0 grow border-t border-[var(--hairline)] py-3">
+              ))}
+            </div>
+
+            <ul className="m-0 min-w-0 grow list-none p-0">
+              {SOIL_HORIZONS.map((h) => (
+                <li
+                  key={h.id}
+                  className="border-t border-[var(--hairline)] py-3"
+                >
                   <p className="text-sm text-parchment/85">{h.label}</p>
                   <p className="text-xs text-iron tabular-nums">
                     {h.from}&ndash;{h.to} inches
                   </p>
-                </div>
-              </div>
-            ))}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
@@ -207,10 +249,19 @@ export default function Home() {
                   </div>
                 ))}
               </dl>
-              <p className="mt-5 text-sm text-[#4A3B29]">
-                {FARM.address.street}, {FARM.address.locality},{" "}
-                {FARM.address.region} {FARM.address.postalCode}
-              </p>
+              {/* Same rule as the header, the footer and the structured
+                  data: a placeholder street is not published. */}
+              {hasRealAddress() ? (
+                <p className="mt-5 text-sm text-[#4A3B29]">
+                  {FARM.address.street}, {FARM.address.locality},{" "}
+                  {FARM.address.region} {FARM.address.postalCode}
+                </p>
+              ) : (
+                <p className="mt-5 text-sm text-[#4A3B29]">
+                  {FARM.address.locality} area, {FARM.county}. The exact address
+                  goes up before opening day.
+                </p>
+              )}
             </div>
           </div>
         </div>

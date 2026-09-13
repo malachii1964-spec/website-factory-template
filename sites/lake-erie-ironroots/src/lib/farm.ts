@@ -54,7 +54,7 @@ export const FARM = {
     { days: ["Sunday"], opens: "10:00", closes: "15:00" },
   ],
   /** Months the stand is open at all. NEEDS OWNER. */
-  openSeason: { from: "June", to: "November" },
+  openSeason: { from: "May", to: "November" },
 } as const;
 
 /** The five pillars, taken verbatim from the brand artwork. */
@@ -82,7 +82,10 @@ export const PILLARS = [
   {
     id: "legacy",
     title: "Cultivating Legacy",
-    body: "This is the oldest farmed ground of its kind in the country and we are eleven days into our turn with it. We intend to hand it on better than we found it.",
+    // Deliberately no number in this sentence. It used to say "eleven days
+    // into our turn", which was wrong the day after it was written and gets
+    // wronger every morning with nothing to catch it.
+    body: "This is the oldest farmed ground of its kind in the country, and our turn with it has barely started. We intend to hand it on better than we found it.",
   },
 ] as const;
 
@@ -104,12 +107,27 @@ export const SOIL_HORIZONS = [
  * A map pin on the wrong road is worse than no map, and a tel: link to
  * 716-000-0000 is worse than no phone number. The UI checks this and renders a
  * designed "not published yet" state instead of confidently lying.
+ *
+ * This is checked by the header, the footer and the JSON-LD as well as the
+ * Visit page. It was originally only honoured on /visit, which meant the
+ * placeholder street, phone and email still shipped in the chrome of every
+ * page and — worse — went out as indexable structured data asserting a
+ * business at an address the owner does not occupy.
  */
 export function hasRealContactDetails(): boolean {
-  return (
-    !FARM.address.street.startsWith("0000") &&
-    !FARM.phone.endsWith("000-0000")
-  );
+  return hasRealAddress() && hasRealPhone() && hasRealEmail();
+}
+
+export function hasRealAddress(): boolean {
+  return !FARM.address.street.startsWith("0000");
+}
+
+export function hasRealPhone(): boolean {
+  return !FARM.phone.replace(/\D/g, "").endsWith("0000000");
+}
+
+export function hasRealEmail(): boolean {
+  return !FARM.email.startsWith("hello@lakeerieironroots.com");
 }
 
 export function formattedPhone(): string {
