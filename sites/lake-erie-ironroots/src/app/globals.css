@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+/*
+  Lake Erie IronRoots — design tokens.
+
+  Every colour here is pulled off the brand artwork (wet breakwall stone,
+  forged iron, burnished gold, the sun on the horizon) except --ironroot,
+  which is Munsell 10YR 4/4: the published colour of the Chautauqua soil
+  series. See docs/design-plan.md. Do not add a colour without adding it
+  there first.
+
+  The rule that keeps this from looking like a luxury template: gold is a
+  hairline, never a fill, and --ember means exactly one thing — ready now.
+*/
+@theme {
+  --color-pier: #0c0f12;
+  --color-shale: #171b1f;
+  --color-iron: #8c9296;
+  --color-gold: #c79a3c;
+  --color-gold-lit: #f0d08a;
+  --color-ember: #e2702a;
+  --color-ironroot: #6e5232;
+  --color-parchment: #ede8dc;
+
+  --font-display: var(--font-bodoni), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+  /* Hairline used for every rule on the site, so they can never drift. */
+  --hairline: color-mix(in srgb, var(--color-gold) 28%, transparent);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-pier);
+}
+
+body {
+  background: var(--color-pier);
+  color: var(--color-iron);
+  font-family: var(--font-sans);
+  /* Grain. One 1px-repeat gradient, no image request, no GPU cost worth
+     measuring — it stops the large dark fields reading as flat #000 plastic. */
+  background-image: radial-gradient(
+    circle at 50% 0%,
+    color-mix(in srgb, var(--color-ironroot) 14%, transparent),
+    transparent 60%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 900px;
+}
+
+/* --------------------------------------------------------- typography --- */
+
+/*
+  These live in the components layer so a Tailwind utility on the same element
+  wins. Unlayered rules beat every layered utility, which silently turned a
+  `text-[#2A2118]` heading back to parchment on the parchment band the first
+  time this was built.
+*/
+@layer components {
+  .display {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 0.98;
+    color: var(--color-parchment);
+    text-wrap: balance;
+  }
+
+  /* The brand board's own label style: wide-tracked grotesk caps. */
+  .label {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .prose-farm p {
+    max-width: 62ch;
+    line-height: 1.7;
+  }
+}
+
+/* ------------------------------------------------------------- chrome --- */
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+}
+
+/*
+  Lit metal edge. A 1px gradient border, not a glow: in the artwork the gold
+  is an edge catching one light source, never a surface.
+*/
+.edge-lit {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-shale), var(--color-shale)) padding-box,
+    linear-gradient(
+        160deg,
+        color-mix(in srgb, var(--color-gold-lit) 70%, transparent),
+        color-mix(in srgb, var(--color-gold) 22%, transparent) 38%,
+        transparent 70%
+      )
+      border-box;
+}
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-gold-lit);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------------------------------------------------- THE SIGNATURE ----- */
+/*
+  The Root Line. One gold root grows down the page as you scroll, branching
+  at each section. Driven by a native scroll timeline: it runs on the
+  compositor, off the main thread, and ships zero JavaScript.
+
+  Default state is FULLY DRAWN. A browser without scroll timelines shows a
+  complete, correct illustration rather than an empty box — the feature
+  degrades to a drawing, never to nothing.
+*/
+.root-line path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .root-line path {
+      /*
+        Deliberately NOT setting stroke-dashoffset here. A scroll timeline is
+        inactive whenever the document cannot scroll — a short page, a 404, a
+        tall desktop window — and an inactive timeline produces no effect at
+        all, so the element falls back to its base style. Keeping the base at
+        "fully drawn" means an unscrollable page shows the whole root instead
+        of an empty rail. The keyframes carry the undrawn state instead.
+      */
+      animation: root-grow linear forwards;
+      animation-timeline: scroll(root block);
+    }
+    /*
+      A branch may not start drawing before the trunk has reached the point it
+      grows from, or branches hang detached in mid-air ahead of the root. Each
+      range below begins at that branch's own origin expressed as a fraction of
+      the trunk path, so every branch sprouts exactly as the trunk passes it.
+    */
+    .root-line path[data-branch="trunk"] { animation-range: 0% 100%; }
+    .root-line path[data-branch="1"] { animation-range: 17% 32%; }
+    .root-line path[data-branch="2"] { animation-range: 32% 47%; }
+    .root-line path[data-branch="3"] { animation-range: 49% 64%; }
+    .root-line path[data-branch="4"] { animation-range: 66% 80%; }
+    .root-line path[data-branch="5"] { animation-range: 82% 96%; }
+  }
+}
+
+@keyframes root-grow {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* One orchestrated moment: the hero lockup settles once, on load. */
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 900ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+  .rise-2 { animation-delay: 120ms; }
+  .rise-3 { animation-delay: 240ms; }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
