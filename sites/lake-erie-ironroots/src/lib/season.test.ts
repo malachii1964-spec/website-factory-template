@@ -6,6 +6,7 @@ import {
   cropSegment,
   daysBetween,
   daysUntilFirstFrost,
+  daysUntilLastSpringFrost,
   FIRST_FALL_FROST,
   formatWindow,
   frostLine,
@@ -200,7 +201,48 @@ describe("daysUntilFirstFrost and frostLine", () => {
     expect(frostLine(on(9, 12))).toBe("25 days to first frost");
     expect(frostLine(on(10, 6))).toBe("First frost expected tomorrow");
     expect(frostLine(on(10, 7))).toBe("First frost expected today");
-    expect(frostLine(on(10, 12))).toBe("5 days past first frost");
+    // Past first frost the line points at next spring, not up from autumn.
+    expect(frostLine(on(10, 12))).toMatch(/^\d+ days to last frost$/);
+  });
+});
+
+describe("marker and bars share one coordinate space", () => {
+  /*
+    The bug this pins: the Season Rule drew today's marker from
+    seasonPosition() but drew each bar from cropSegment(), and a layout mistake
+    put the marker a full label-width to the right — sixteen days late, sitting
+    past the end of bars the same component had lit as "ready today".
+
+    The arithmetic invariant that makes that class of error impossible: on any
+    day, the marker MUST fall inside the segment of every crop that is ready,
+    and outside the segment of every crop that is not. If these two functions
+    ever stop agreeing, this fails.
+  */
+  const days = [
+    on(5, 15), on(6, 1), on(7, 4), on(8, 20), on(9, 12), on(9, 13), on(10, 6),
+  ];
+
+  it("puts the marker inside every ready crop's segment", () => {
+    for (const day of days) {
+      const marker = seasonPosition(day);
+      for (const crop of readyOn(day)) {
+        const seg = cropSegment(crop, 2026);
+        expect(
+          marker,
+          `${crop.id} is ready on ${day.toDateString()} but the marker sits outside its bar`,
+        ).toBeGreaterThanOrEqual(seg.start - 1e-9);
+        expect(marker).toBeLessThanOrEqual(seg.end + 1e-9);
+      }
+    }
+  });
+
+  it("puts the marker outside the segment of anything not yet started", () => {
+    for (const day of days) {
+      const marker = seasonPosition(day);
+      for (const crop of comingSoon(day, 60)) {
+        expect(marker).toBeLessThan(cropSegment(crop, 2026).start + 1e-9);
+      }
+    }
   });
 });
 
@@ -218,6 +260,34 @@ describe("monthTicks", () => {
     }
     const positions = ticks.map((t) => t.at);
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
+  });
+});
+
+describe("frostLine out of season", () => {
+  it("counts toward spring once the fall frost has passed", () => {
+    // It used to count up forever: "85 days past first frost" on New Year's
+    // Eve, in the colour reserved for "ready now", beside copy saying the
+    // stand is shut.
+    expect(frostLine(on(10, 12))).toBe(`${daysUntilLastSpringFrost(on(10, 12))} days to last frost`);
+    expect(frostLine(on(12, 31))).toMatch(/days to last frost$/);
+    expect(frostLine(on(2, 1))).toMatch(/days to last frost$/);
+  });
+
+  it("never reports a negative or absurd number of days", () => {
+    for (let m = 1; m <= 12; m++) {
+      for (const d of [1, 15, 28]) {
+        const line = frostLine(on(m, d));
+        const n = Number(line.match(/^(\d+) days/)?.[1] ?? 0);
+        expect(n, `${m}/${d} -> ${line}`).toBeLessThanOrEqual(366);
+        expect(line).not.toContain("past first frost");
+        expect(line).not.toContain("-");
+      }
+    }
+  });
+
+  it("rolls to next year's spring frost after the fall frost", () => {
+    expect(daysUntilLastSpringFrost(on(10, 12))).toBeGreaterThan(180);
+    expect(daysUntilLastSpringFrost(on(3, 1))).toBeLessThan(90);
   });
 });
 

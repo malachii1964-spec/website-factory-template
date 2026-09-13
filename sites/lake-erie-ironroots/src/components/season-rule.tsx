@@ -2,6 +2,7 @@ import {
   CROPS,
   cropSegment,
   FIRST_FALL_FROST,
+  formatWindow,
   frostLine,
   isReady,
   LAST_SPRING_FROST,
@@ -23,8 +24,20 @@ const shortDate = (d: Date) =>
  * the truck this morning; that is the entire argument, made without a
  * sentence of marketing copy.
  *
- * Server Component: the whole thing is static HTML and CSS percentages. No
- * chart library, no canvas, no client JavaScript.
+ * Server Component: static HTML and CSS percentages. No chart library, no
+ * canvas, no client JavaScript.
+ *
+ * GEOMETRY, and why it is written this way. Every row is [label | track], and
+ * a bar's `left`/`width` are percentages of the TRACK. Anything else drawn on
+ * the chart must therefore be positioned inside a box that spans the track and
+ * nothing else — which is what `.season-overlay` below is for.
+ *
+ * The first version of this component put the marker directly in the row
+ * wrapper with a `ml-[7.5rem]` label offset. On an absolutely positioned
+ * element that margin is ADDED to the used `left`, and the percentage resolved
+ * against the full row rather than the track, so the marker landed a full
+ * label-width too far right — 16 days late, sitting past the end of bars the
+ * same component had lit as "ready today". There is a test pinning this now.
  */
 export function SeasonRule({ today }: { today: Date }) {
   const year = today.getFullYear();
@@ -35,6 +48,12 @@ export function SeasonRule({ today }: { today: Date }) {
     seg: cropSegment(crop, year),
     live: isReady(crop, today),
   }));
+  const readyCount = rows.filter((r) => r.live).length;
+
+  const todayLabel = today.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 
   return (
     <figure className="m-0">
@@ -47,12 +66,20 @@ export function SeasonRule({ today }: { today: Date }) {
         </p>
       </figcaption>
 
-      {/* Horizontal scroll is the honest answer on a phone: the axis is a
-          real measurement and squashing it would make the drawing lie. */}
-      <div className="mt-6 overflow-x-auto">
-        <div className="min-w-[34rem]">
-          {/* Month axis */}
-          <div className="relative mb-2 ml-[7.5rem] h-4">
+      {/*
+        The label column is one variable so the track overlay and the rows can
+        never drift apart. It narrows on a phone so the whole five-month axis
+        fits on screen: a chart that needs sideways scrolling hides bars, and a
+        hidden bar reads as "we do not have that", which is the exact opposite
+        of what this drawing exists to say.
+      */}
+      <div
+        className="mt-6 overflow-x-auto [--label-w:5.5rem] md:[--label-w:7.5rem]"
+      >
+        <div className="min-w-[19rem]">
+          {/* Month axis. Statically positioned, so the margin shrinks the box
+              rather than offsetting it, and the percentages are track-relative. */}
+          <div className="relative mb-2 ml-[var(--label-w)] h-4">
             {ticks.map((t) => (
               <span
                 key={t.label}
@@ -65,32 +92,58 @@ export function SeasonRule({ today }: { today: Date }) {
           </div>
 
           <div className="relative">
-            {/* Today. Drawn behind the rows so it never hides a segment. */}
+            {/* Spans exactly the track, so everything inside is measured
+                against the same box the bars are. */}
             <div
-              className="pointer-events-none absolute top-0 bottom-0 z-0 ml-[7.5rem] w-px bg-ember"
-              style={{ left: pct(marker) }}
               aria-hidden="true"
-            />
+              className="pointer-events-none absolute inset-y-0 right-0 left-[var(--label-w)] z-0"
+            >
+              {/* First frost: the one date the whole chart is organised
+                  around, and it was named in the caption but never drawn. */}
+              <div
+                className="absolute inset-y-0 right-0 w-0 border-r border-dashed border-iron/70"
+                title="First frost"
+              />
+              {/* Today. */}
+              <div
+                className="absolute inset-y-0 w-[2px] bg-ember"
+                style={{ left: pct(marker) }}
+              />
+            </div>
 
             <ul className="relative z-10 m-0 list-none p-0">
               {rows.map(({ crop, seg, live }) => (
-                <li key={crop.id} className="flex items-center gap-0 py-[3px]">
+                <li key={crop.id} className="flex items-center py-[3px]">
                   <span
-                    className={`w-[7.5rem] shrink-0 pr-3 text-right text-xs ${
+                    className={`w-[var(--label-w)] shrink-0 pr-3 text-right text-[0.6875rem] md:text-xs ${
                       live ? "text-parchment" : "text-iron"
                     }`}
                   >
                     {crop.name}
+                    {/*
+                      The bars carry "ready" in colour alone, which is a WCAG
+                      1.4.1 failure and leaves a screen reader with a bare list
+                      of twenty crop names that reads identically in January and
+                      August. This says it in words instead.
+                    */}
+                    <span className="sr-only">
+                      {" — "}
+                      {formatWindow(crop)}
+                      {live ? ", ready today" : ", not ready today"}
+                    </span>
                   </span>
                   <span className="relative h-[6px] grow">
                     <span
                       className="absolute inset-y-0 block"
                       style={{
                         left: pct(seg.start),
-                        width: pct(Math.max(seg.end - seg.start, 0.004)),
+                        width: pct(Math.max(seg.end - seg.start, 0.006)),
+                        // An opaque mix against the ground, not alpha: 45%
+                        // gold over near-black desaturates to a murky olive
+                        // that reads as "disabled" rather than as gold.
                         background: live
                           ? "var(--color-ember)"
-                          : "color-mix(in srgb, var(--color-gold) 45%, transparent)",
+                          : "color-mix(in srgb, var(--color-gold) 34%, var(--color-pier))",
                         // A window that runs past first frost fades out rather
                         // than stopping dead, because the crop does not stop.
                         maskImage: seg.overrunsFrost
@@ -102,20 +155,35 @@ export function SeasonRule({ today }: { today: Date }) {
                 </li>
               ))}
             </ul>
+
+            {/* The marker's label sits under the chart so it cannot collide
+                with a bar, and it names the date rather than implying it. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute right-0 left-[var(--label-w)] -bottom-5"
+            >
+              <span
+                className="label absolute -translate-x-1/2 text-[0.5625rem] whitespace-nowrap text-ember"
+                style={{ left: pct(marker) }}
+              >
+                Today · {todayLabel}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      <p className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-iron">
+      <p className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-iron">
         <span className="inline-flex items-center gap-2">
           <span className="inline-block h-[6px] w-6 bg-ember" aria-hidden="true" />
-          Ready today
+          Ready today ({readyCount})
         </span>
         <span className="inline-flex items-center gap-2">
           <span
             className="inline-block h-[6px] w-6"
             style={{
-              background: "color-mix(in srgb, var(--color-gold) 45%, transparent)",
+              background:
+                "color-mix(in srgb, var(--color-gold) 34%, var(--color-pier))",
             }}
             aria-hidden="true"
           />
