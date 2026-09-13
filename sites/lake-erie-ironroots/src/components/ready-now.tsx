@@ -1,24 +1,16 @@
 import { comingSoon, type Crop, justFinished, readyOn } from "@/lib/season";
 
-function CropRow({ crop, live }: { crop: Crop; live: boolean }) {
+/**
+ * No ember bullet here any more. Every row in this list is ready by
+ * definition, so the marker was always on and marked nothing — fourteen
+ * accent squares spending the one hot colour on a distinction that did not
+ * exist, before the reader ever reached the button that needs it.
+ */
+function CropRow({ crop }: { crop: Crop }) {
   return (
     <li className="border-b border-[var(--hairline)] py-4 last:border-0">
-      <div className="flex items-baseline gap-3">
-        {live && (
-          <span
-            aria-hidden="true"
-            className="mt-[0.35rem] inline-block size-[7px] shrink-0 bg-ember"
-          />
-        )}
-        <h3
-          className={`display text-xl md:text-2xl ${
-            live ? "text-parchment" : "text-iron"
-          }`}
-        >
-          {crop.name}
-        </h3>
-      </div>
-      <p className="mt-1 pl-0 text-sm text-iron md:pl-[1.1rem]">{crop.note}</p>
+      <h3 className="display text-xl text-parchment md:text-2xl">{crop.name}</h3>
+      <p className="mt-1 text-sm text-iron">{crop.note}</p>
     </li>
   );
 }
@@ -46,7 +38,7 @@ export function ReadyNow({ today }: { today: Date }) {
             </h2>
             <ul className="mt-8 list-none p-0">
               {ready.map((c) => (
-                <CropRow key={c.id} crop={c} live />
+                <CropRow key={c.id} crop={c} />
               ))}
             </ul>
           </>
@@ -69,7 +61,8 @@ export function ReadyNow({ today }: { today: Date }) {
           short, which otherwise leaves a dead half-page of nothing next to it.
           Travelling with the reader also keeps "what is next" in view while
           they read what is here now. */}
-      <div className="min-w-0 space-y-10 md:sticky md:top-24 md:self-start">
+      <div className="min-w-0">
+        <div className="space-y-10 md:sticky md:top-24">
         {soon.length > 0 && (
           <section>
             <h3 className="label">Next three weeks</h3>
@@ -99,6 +92,7 @@ export function ReadyNow({ today }: { today: Date }) {
             </p>
           </section>
         )}
+        </div>
       </div>
     </div>
   );

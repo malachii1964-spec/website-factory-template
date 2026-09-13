@@ -33,8 +33,19 @@
 }
 
 html {
-  scroll-behavior: smooth;
   background: var(--color-pier);
+}
+
+/*
+  Smooth scrolling is motion too. Every in-page anchor here jumps thousands of
+  pixels, and animating that for someone who asked for no motion is the one
+  effect on this site that can actually cause symptoms. It was gated for the
+  two decorative animations and missed here.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -182,13 +193,15 @@ body {
 }
 
 /*
-  The trunk starts already entering the frame from above. Beginning it at a
-  true zero would leave the hero with an empty left gutter that reads as a
-  broken margin rather than as a root about to grow.
+  The trunk starts already well into the frame. Beginning it at a true zero
+  would leave the hero — the one screen that has to carry the brand — with an
+  empty left gutter that reads as a broken margin. At 0.88 the visible stub was
+  short enough to sit behind the header and read as an orphaned tick, so a
+  quarter of the trunk is drawn before the reader scrolls at all.
 */
 @keyframes root-grow-trunk {
   from {
-    stroke-dashoffset: 0.88;
+    stroke-dashoffset: 0.75;
   }
   to {
     stroke-dashoffset: 0;
@@ -208,5 +221,20 @@ body {
   from {
     opacity: 0;
     transform: translateY(14px);
+  }
+}
+
+/*
+  Windows forced-colors / high-contrast mode replaces backgrounds wholesale.
+  The wordmark paints its letters with a clipped gradient and transparent text,
+  so there it would vanish completely — and it is the h1 of the home page.
+*/
+@media (forced-colors: active) {
+  .wordmark-lockup {
+    background: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    color: CanvasText !important;
+    forced-color-adjust: none;
   }
 }

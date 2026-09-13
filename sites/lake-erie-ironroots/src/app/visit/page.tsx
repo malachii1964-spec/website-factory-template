@@ -11,7 +11,8 @@ import {
 import { farmToday } from "@/lib/clock";
 import { frostLine, readyOn } from "@/lib/season";
 
-export const revalidate = 3600;
+// See the note on src/app/page.tsx — same five-minute window, same caveat.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Visit the stand",

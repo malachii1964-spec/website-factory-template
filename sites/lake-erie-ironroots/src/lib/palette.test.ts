@@ -146,16 +146,18 @@ describe("token hygiene", () => {
   it("keeps a ready bar clearly separated from an off-season bar", () => {
     /*
       The pair that matters on the Season Rule is not --ember against --gold.
-      It is --ember against what an off-season bar actually renders as: 45%
-      gold composited over --pier. Comparing the raw tokens says 1.23 and
-      looks alarming; comparing what is actually on screen is the real test.
+      It is --ember against what an off-season bar actually renders as: gold
+      mixed 34% into --pier. Comparing the raw tokens says 1.23 and looks
+      alarming; comparing what is actually on screen is the real test.
 
-      Note the drawing never relies on colour alone either — a ready row also
-      gets a parchment label and an ember dot, so the state survives being
-      read by someone who cannot separate the two hues.
+      The drawing must not rely on colour alone either. It does not: each row
+      carries visually-hidden text naming the crop's window and whether it is
+      ready today. An earlier version of this comment claimed an "ember dot"
+      in the chart that was never there — a comment justifying a weak
+      assertion by describing a mitigation that did not exist.
     */
     const ready = token("ember");
-    const offSeason = mix(token("gold"), token("pier"), 0.45);
+    const offSeason = mix(token("gold"), token("pier"), 0.34);
     expect(contrast(ready, offSeason)).toBeGreaterThan(2);
   });
 });

@@ -177,13 +177,45 @@ export function daysUntilFirstFrost(date: Date): number {
   return daysBetween(date, resolve(FIRST_FALL_FROST, date.getFullYear()));
 }
 
-/** The one line the season instrument exists to say. */
+/**
+ * The one line the season instrument exists to say.
+ *
+ * It has a winter. The first version counted in both directions forever, so
+ * from October to May the site's single live reading was "85 days past first
+ * frost" — noise, rendered in the colour reserved for "ready now", beside copy
+ * saying the stand is shut. Out of season it says something a person actually
+ * wants: when the ground comes back.
+ */
 export function frostLine(date: Date): string {
-  const days = daysUntilFirstFrost(date);
-  if (days > 1) return `${days} days to first frost`;
-  if (days === 1) return "First frost expected tomorrow";
-  if (days === 0) return "First frost expected today";
-  return `${Math.abs(days)} days past first frost`;
+  // Before this year's last spring frost — January through mid-May. The
+  // season has not opened, so counting down to a frost seven months out is
+  // noise; the question being asked is when the ground comes back.
+  const toSpring = daysBetween(date, resolve(LAST_SPRING_FROST, date.getFullYear()));
+  if (toSpring > 1) return `${toSpring} days to last frost`;
+  if (toSpring === 1) return "Last frost expected tomorrow";
+  if (toSpring === 0) return "Last frost expected today";
+
+  // In season.
+  const toFall = daysUntilFirstFrost(date);
+  if (toFall > 1) return `${toFall} days to first frost`;
+  if (toFall === 1) return "First frost expected tomorrow";
+  if (toFall === 0) return "First frost expected today";
+
+  // Past first frost — point at next spring rather than counting up forever.
+  return `${daysUntilLastSpringFrost(date)} days to last frost`;
+}
+
+/**
+ * Days to the next last-spring-frost. After the fall frost the relevant one is
+ * next year's, so the year rolls over rather than going negative.
+ */
+export function daysUntilLastSpringFrost(date: Date): number {
+  const thisYear = resolve(LAST_SPRING_FROST, date.getFullYear());
+  const target =
+    startOfDay(date).getTime() <= thisYear.getTime()
+      ? thisYear
+      : resolve(LAST_SPRING_FROST, date.getFullYear() + 1);
+  return daysBetween(date, target);
 }
 
 /**

@@ -29,13 +29,19 @@ export function Wordmark({
         {FARM.overline}
       </span>
       <span
-        className="display mt-1 block uppercase"
+        className="display wordmark-lockup mt-1 block uppercase"
         style={{
-          fontSize: large ? "clamp(2.75rem, 12vw, 7.5rem)" : "1.375rem",
+          fontSize: large ? "clamp(3.25rem, 13vw, 7.5rem)" : "1.375rem",
           letterSpacing: large ? "0.02em" : "0.01em",
-          // The lit edge of the forged wordmark: light from above, mass below.
+          /*
+            The lit edge of the forged wordmark: light from above, mass below.
+            Deliberately a narrow parchment-to-gold ramp and nothing else — an
+            earlier version ran through --iron in the middle, which dropped the
+            centre of the logotype to grey, and a wide four-stop metallic sheen
+            is the luxury-template tell this whole palette is trying to avoid.
+          */
           backgroundImage:
-            "linear-gradient(178deg, var(--color-gold-lit) 0%, var(--color-parchment) 26%, var(--color-iron) 62%, var(--color-gold) 100%)",
+            "linear-gradient(176deg, var(--color-gold-lit) 0%, var(--color-parchment) 30%, var(--color-parchment) 58%, var(--color-gold) 100%)",
           WebkitBackgroundClip: "text",
           backgroundClip: "text",
           color: "transparent",
