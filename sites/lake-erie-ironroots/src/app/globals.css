@@ -142,8 +142,19 @@ body {
         "fully drawn" means an unscrollable page shows the whole root instead
         of an empty rail. The keyframes carry the undrawn state instead.
       */
-      animation: root-grow linear forwards;
+      /*
+        `both`, not `forwards`. With `forwards` alone a path sitting BEFORE its
+        animation-range has no filled value, so the base style applies and
+        every branch renders fully drawn at the top of the page — five gold
+        scratches floating in the hero with no trunk attached to them.
+      */
+      animation: root-grow-branch linear both;
       animation-timeline: scroll(root block);
+    }
+
+    /* The trunk enters already growing, so the hero is never an empty rail. */
+    .root-line path[data-branch="trunk"] {
+      animation-name: root-grow-trunk;
     }
     /*
       A branch may not start drawing before the trunk has reached the point it
@@ -160,9 +171,24 @@ body {
   }
 }
 
-@keyframes root-grow {
+/* A branch starts at nothing: it has not sprouted yet. */
+@keyframes root-grow-branch {
   from {
     stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/*
+  The trunk starts already entering the frame from above. Beginning it at a
+  true zero would leave the hero with an empty left gutter that reads as a
+  broken margin rather than as a root about to grow.
+*/
+@keyframes root-grow-trunk {
+  from {
+    stroke-dashoffset: 0.88;
   }
   to {
     stroke-dashoffset: 0;

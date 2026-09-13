@@ -11,10 +11,14 @@ const NAV = [
 /**
  * Solid, not translucent. A backdrop-filter here would cost GPU on every
  * scrolled frame for an effect nobody notices behind a near-black bar.
+ *
+ * The background is fully opaque for the same reason: at 95% the page text
+ * underneath bled through the bar as it scrolled past, which reads as a
+ * rendering fault rather than as glass.
  */
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--hairline)] bg-pier/95">
+    <header className="sticky top-0 z-40 border-b border-[var(--hairline)] bg-pier">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 md:px-8">
         <Link href="/" aria-label={`${FARM.name} — home`}>
           <Wordmark />

@@ -65,7 +65,11 @@ export function ReadyNow({ today }: { today: Date }) {
         )}
       </div>
 
-      <div className="min-w-0 space-y-10">
+      {/* Sticky beside the list: the crop list runs long and this column is
+          short, which otherwise leaves a dead half-page of nothing next to it.
+          Travelling with the reader also keeps "what is next" in view while
+          they read what is here now. */}
+      <div className="min-w-0 space-y-10 md:sticky md:top-24 md:self-start">
         {soon.length > 0 && (
           <section>
             <h3 className="label">Next three weeks</h3>
