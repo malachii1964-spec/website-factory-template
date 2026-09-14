@@ -95,6 +95,40 @@ body {
     max-width: 62ch;
     line-height: 1.7;
   }
+
+  /*
+    Section headings, set large on purpose.
+
+    Bodoni's whole justification here is the jump from heavy stem to razor
+    hairline — that contrast IS the beveled metal of the wordmark. At 48px the
+    hairlines are still thick enough that it reads as any high-contrast serif,
+    which meant the display face was costing a font load and buying nothing.
+    It only pays rent above ~64px, so the two big section heads get there.
+  */
+  .h-section {
+    font-size: clamp(2.5rem, 5.6vw, 4.5rem);
+    font-optical-sizing: auto;
+  }
+}
+
+/*
+  THE DESCENT. The design plan promised sections that get warmer and darker as
+  you go down, ending in soil — and every dark section was the same flat --pier
+  instead. This is that ramp: one gradient over the whole of <main>, so the
+  page travels from the cold storm sky at the top to iron-oxide ground at the
+  bottom without a single extra element.
+*/
+@layer components {
+  .descent {
+    background-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      transparent 22%,
+      color-mix(in srgb, var(--color-ironroot) 7%, transparent) 55%,
+      color-mix(in srgb, var(--color-ironroot) 16%, transparent) 82%,
+      color-mix(in srgb, var(--color-ironroot) 24%, transparent) 100%
+    );
+  }
 }
 
 /* ------------------------------------------------------------- chrome --- */
@@ -129,61 +163,43 @@ body {
 
 /* ---------------------------------------------------- THE SIGNATURE ----- */
 /*
-  The Root Line. One gold root grows down the page as you scroll, branching
-  at each section. Driven by a native scroll timeline: it runs on the
-  compositor, off the main thread, and ships zero JavaScript.
+  The Root Line. A tapering trunk runs the full height of the document, and
+  each section grows its own branch as it arrives.
 
-  Default state is FULLY DRAWN. A browser without scroll timelines shows a
-  complete, correct illustration rather than an empty box — the feature
-  degrades to a drawing, never to nothing.
+  Every branch is drawn by a VIEW timeline rather than a scroll percentage:
+  `animation-timeline: view()` is scoped to the element's own progress through
+  the viewport, so a branch is tied to its section by construction. The old
+  version used hand-tuned scroll ranges that had to be kept in sync with a page
+  they knew nothing about, and drifted the moment anything moved.
+
+  Default state is FULLY DRAWN. No scroll-timeline support, or a page too short
+  to scroll, or reduced motion, and the reader still gets a finished drawing
+  rather than an empty rail.
 */
-.root-line path {
+.root-branch-path {
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
 }
 
-@supports (animation-timeline: scroll()) {
+@supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .root-line path {
-      /*
-        Deliberately NOT setting stroke-dashoffset here. A scroll timeline is
-        inactive whenever the document cannot scroll — a short page, a 404, a
-        tall desktop window — and an inactive timeline produces no effect at
-        all, so the element falls back to its base style. Keeping the base at
-        "fully drawn" means an unscrollable page shows the whole root instead
-        of an empty rail. The keyframes carry the undrawn state instead.
-      */
-      /*
-        `both`, not `forwards`. With `forwards` alone a path sitting BEFORE its
-        animation-range has no filled value, so the base style applies and
-        every branch renders fully drawn at the top of the page — five gold
-        scratches floating in the hero with no trunk attached to them.
-      */
-      animation: root-grow-branch linear both;
-      animation-timeline: scroll(root block);
+    .root-branch-path {
+      animation: root-grow linear both;
+      animation-timeline: view();
+      /* Finish well before the section is centred, so the branch is already
+         there when the heading is read rather than still drawing under it. */
+      animation-range: entry 10% cover 34%;
     }
 
-    /* The trunk enters already growing, so the hero is never an empty rail. */
-    .root-line path[data-branch="trunk"] {
-      animation-name: root-grow-trunk;
+    .root-branch-node {
+      animation: node-arrive linear both;
+      animation-timeline: view();
+      animation-range: entry 24% cover 38%;
     }
-    /*
-      A branch may not start drawing before the trunk has reached the point it
-      grows from, or branches hang detached in mid-air ahead of the root. Each
-      range below begins at that branch's own origin expressed as a fraction of
-      the trunk path, so every branch sprouts exactly as the trunk passes it.
-    */
-    .root-line path[data-branch="trunk"] { animation-range: 0% 100%; }
-    .root-line path[data-branch="1"] { animation-range: 17% 32%; }
-    .root-line path[data-branch="2"] { animation-range: 32% 47%; }
-    .root-line path[data-branch="3"] { animation-range: 49% 64%; }
-    .root-line path[data-branch="4"] { animation-range: 66% 80%; }
-    .root-line path[data-branch="5"] { animation-range: 82% 96%; }
   }
 }
 
-/* A branch starts at nothing: it has not sprouted yet. */
-@keyframes root-grow-branch {
+@keyframes root-grow {
   from {
     stroke-dashoffset: 1;
   }
@@ -192,20 +208,21 @@ body {
   }
 }
 
-/*
-  The trunk starts already well into the frame. Beginning it at a true zero
-  would leave the hero — the one screen that has to carry the brand — with an
-  empty left gutter that reads as a broken margin. At 0.88 the visible stub was
-  short enough to sit behind the header and read as an orphaned tick, so a
-  quarter of the trunk is drawn before the reader scrolls at all.
-*/
-@keyframes root-grow-trunk {
+@keyframes node-arrive {
   from {
-    stroke-dashoffset: 0.75;
+    opacity: 0;
+    /* transform only — the node must not move layout as it appears. */
+    transform: scale(0.2);
   }
   to {
-    stroke-dashoffset: 0;
+    opacity: 1;
+    transform: scale(1);
   }
+}
+
+.root-branch-node {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 /* One orchestrated moment: the hero lockup settles once, on load. */

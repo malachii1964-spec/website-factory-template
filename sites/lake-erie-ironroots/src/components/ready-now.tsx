@@ -32,7 +32,7 @@ export function ReadyNow({ today }: { today: Date }) {
       <div className="min-w-0">
         {ready.length > 0 ? (
           <>
-            <h2 className="display text-3xl md:text-5xl">
+            <h2 className="display h-section">
               Ready at the stand
               <span className="block text-ember">this week</span>
             </h2>
@@ -44,7 +44,7 @@ export function ReadyNow({ today }: { today: Date }) {
           </>
         ) : (
           <>
-            <h2 className="display text-3xl md:text-5xl">
+            <h2 className="display h-section">
               The stand is closed
               <span className="block text-iron">until the ground thaws</span>
             </h2>

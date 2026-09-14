@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FarmJsonLd } from "@/components/json-ld";
-import { RootLine } from "@/components/root-line";
 import { humanTime } from "@/components/site-footer";
 import {
   FARM,
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
   description: `Hours, directions and what is ready at ${FARM.name} in ${FARM.address.locality}, ${FARM.state}.`,
 };
 
-const SHELL = "mx-auto w-full max-w-6xl px-5 md:pr-8 md:pl-32";
+const SHELL = "mx-auto w-full max-w-6xl px-5 md:pr-8 md:pl-28";
 
 export default function VisitPage() {
   const today = farmToday();
@@ -32,8 +31,6 @@ export default function VisitPage() {
   return (
     <>
       <FarmJsonLd />
-      <RootLine />
-
       <section className={`${SHELL} py-16 md:py-24`}>
         <p className="label">Visit</p>
         <h1 className="display mt-5 text-4xl md:text-6xl">

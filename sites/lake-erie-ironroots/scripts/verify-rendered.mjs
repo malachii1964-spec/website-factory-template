@@ -89,19 +89,36 @@ for (const width of [1440, 375]) {
 
 /* ------------------------------------------------------- the Root Line --- */
 
+const window_innerHeightGuess = 812;
 for (const [label, width] of [["desktop", 1440], ["mobile", 375]]) {
   const { ctx, page } = await open("/", { width, height: 812 });
   const vis = await page.evaluate(() => {
-    const paths = [...document.querySelectorAll(".root-line path")];
-    const wrap = document.querySelector(".root-line")?.parentElement;
-    const w = wrap?.getBoundingClientRect();
-    return paths.filter((p) => {
-      const r = p.getBoundingClientRect();
-      return r.width > 0 && r.height > 0 && w && r.left < w.right && r.right > w.left;
-    }).length;
+    const onScreen = (el) => {
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && r.height > 0 && r.right > 0 && r.left < window.innerWidth;
+    };
+    const trunkSvg = document.querySelector("main svg[viewBox='0 0 16 1000'] path");
+    const branches = [...document.querySelectorAll(".root-branch")];
+    return {
+      trunk: trunkSvg ? onScreen(trunkSvg) : false,
+      trunkHeight: trunkSvg ? Math.round(trunkSvg.getBoundingClientRect().height) : 0,
+      branches: branches.length,
+      branchesVisible: branches.filter(onScreen).length,
+      docHeight: document.documentElement.scrollHeight,
+    };
   });
   console.log(`\nRoot Line @${label}`);
-  check(vis > 0, "the signature renders at all", `${vis} visible paths`);
+  check(vis.trunk, "the trunk renders", `height ${vis.trunkHeight} of doc ${vis.docHeight}`);
+  // The trunk must span the document, not one viewport — that was the whole
+  // point of moving it out of `position: fixed`.
+  check(
+    vis.trunkHeight > window_innerHeightGuess * 1.5 || vis.trunkHeight > 2000,
+    "the trunk spans the document, not a viewport",
+    `${vis.trunkHeight}px`,
+  );
+  if (width >= 768) {
+    check(vis.branchesVisible > 0, "branches render on desktop", `${vis.branchesVisible}/${vis.branches}`);
+  }
   await ctx.close();
 }
 

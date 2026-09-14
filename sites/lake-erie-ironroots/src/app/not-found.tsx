@@ -1,11 +1,9 @@
 import Link from "next/link";
-import { RootLine } from "@/components/root-line";
 
 export default function NotFound() {
   return (
     <>
-      <RootLine />
-      <section className="mx-auto w-full max-w-6xl px-5 py-28 md:pr-8 md:pl-32 md:py-40">
+      <section className="mx-auto w-full max-w-6xl px-5 py-28 md:pr-8 md:pl-28 md:py-40">
         <p className="label">Nothing here</p>
         <h1 className="display mt-5 text-4xl md:text-6xl">
           That row was never planted

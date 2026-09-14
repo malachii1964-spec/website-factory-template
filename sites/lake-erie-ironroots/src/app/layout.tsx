@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Archivo, Bodoni_Moda } from "next/font/google";
+import { RootTrunk } from "@/components/root";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { FARM } from "@/lib/farm";
@@ -55,7 +56,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <SiteHeader />
-        <main id="main" className="flex-1">
+        {/*
+          The trunk lives here, once, spanning the whole document — not in each
+          page and not pinned to the viewport. Sections grow their own branches
+          off it (see components/root.tsx).
+        */}
+        <main id="main" className="descent relative flex-1">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 inset-x-0"
+          >
+            <div className="relative mx-auto h-full w-full max-w-6xl">
+              <RootTrunk />
+            </div>
+          </div>
           {children}
         </main>
         <SiteFooter />
