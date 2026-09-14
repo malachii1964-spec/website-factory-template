@@ -26,12 +26,14 @@ There are eight values:
 | Email | `hello@lakeerieironroots.com` |
 | Map coordinates | `42.3223, -79.5784` |
 | Stand hours | Thu/Fri 10–6, Sat 9–5, Sun 10–3 |
-| Open season | June through November |
+| Open season | May through November |
 
-Until the address and phone are real, the Visit page **deliberately hides the
-map** and shows a note instead. That is on purpose — a pin on the wrong road
-sends a customer to a stranger's driveway. Fill them in and the map turns
-itself on.
+Until each one is real, the site **refuses to publish it** — no address in the
+footer, no tap-to-call button in the header, no map on the Visit page, and
+nothing sent to Google. That is on purpose. A pin on the wrong road sends a
+customer to a stranger's driveway, and a search result claiming you trade at
+an address you do not occupy outlives the mistake. Fill them in and every one
+of those turns itself on; that switch-on has been tested end to end.
 
 ### 2. Your logo is not on the site yet
 
@@ -85,9 +87,30 @@ Run these four. All four have to pass. If one fails, the change is not done.
 ```bash
 npm run typecheck   # 1. no type errors
 npm run lint        # 2. no lint errors
-npm test            # 3. all tests pass
+npm test            # 3. all tests pass (52 of them)
 npm run build       # 4. it actually builds
 ```
+
+Then the fifth one, which checks the things tests cannot see — that the season
+chart's "today" line is where it claims to be, that nothing overflows a phone
+screen, and that none of the placeholder details leaked onto the page:
+
+```bash
+npm run build && npx next start -p 3000   # in one terminal
+npm run verify:rendered                   # in another
+```
+
+And the one that proves it is fast on a cheap phone, not just on your laptop
+(simulated Pixel 5, four-times-slower processor, slow 4G, cache off):
+
+```bash
+npm run verify:performance
+```
+
+Last measured: home page loads its biggest element in **2.1 seconds**, Visit in
+**0.8**, nothing jumps around as it loads (layout shift 0.000), taps respond in
+**32ms**, and the whole page needs **134.6KB** of compressed JavaScript against
+a 150KB budget. Almost all of that is React itself — this site adds barely any.
 
 Then look at it in the browser — including on your phone — before you ship it.
 
@@ -113,13 +136,20 @@ Then look at it in the browser — including on your phone — before you ship i
 
 ### The thing that makes it yours
 
-A single gold root grows down the left edge of the page as you scroll,
-branching once for each of your five pillars and spreading into a root network
-at the bottom. It is your own mark, drawn as you read.
+A single gold root runs the whole height of the page. It is thicker where it
+enters at the top and thins as it goes down, the way a real root does. Each
+section grows its own branch off it as you scroll to that section, and each
+branch ends in a small lit node level with that section's heading — so the
+left edge of the page doubles as a place marker. At the bottom the root fans
+out into the network from your logo.
 
-It ships **zero JavaScript** — it is done with a new CSS feature that runs on
-the graphics chip instead of the browser's main thread. That is why the site
-feels cinematic and still loads fast on a bad phone signal.
+It ships **zero JavaScript**. It is done with a new CSS feature that runs on
+the graphics chip instead of the browser's main thread, which is why the site
+can feel cinematic and still load fast on a bad phone signal.
+
+If someone has motion turned off in their system settings, or their browser is
+too old for the effect, the whole root simply renders already-drawn. It never
+degrades to an empty margin. That is checked automatically, not assumed.
 
 ---
 
@@ -162,6 +192,13 @@ The site is four static pages, so hosting is free and fast.
 
 There is nothing to configure. No database, no API keys, no environment
 variables — this site does not need any.
+
+**One honest caveat about freshness.** The page rebuilds itself five minutes
+after someone visits, which keeps hosting free. But the rebuild is triggered
+*by* a visit and serves the *next* one — so on a quiet night, the first person
+to open the site in the morning may briefly see yesterday's produce list before
+it catches up. If that ever bothers you, tell me and I will add a scheduled
+5am ping that keeps it a day ahead. It is a ten-line change.
 
 **After it is live**, change `BASE_URL` in `src/app/sitemap.ts` and
 `metadataBase` in `src/app/layout.tsx` to your real domain.

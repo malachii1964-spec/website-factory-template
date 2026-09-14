@@ -87,22 +87,48 @@ Two families, four weights total — inside the performance budget, no third fac
 ### Layout concept — descent
 
 The page descends: storm sky, then horizon, then waterline, then rock, then
-soil. Sections get darker and warmer as you go down, ending in `--ironroot`.
-Section order is the brand's own five pillars, not a generic marketing stack.
+soil. Sections get warmer as you go down, ending in `--ironroot` — delivered as
+one gradient across `<main>` (`.descent`) rather than as per-section colours,
+so there is a single place it can go wrong.
 
 ### THE SIGNATURE — the Root Line
 
-**One golden root grows down the page as you scroll.**
+**A root grows down the page, and each section grows its own branch off it.**
 
-It begins at the emblem in the hero and descends the left edge as a single
-drawn SVG path, **branching at each section**, every branch terminating at that
-section's anchor. Five primary branches — one per pillar. At the bottom it
-spreads into the full root network from the mark and meets the soil band.
+- **The trunk** spans the full height of the document — measured at 4826px of a
+  5308px page, not one viewport. It is a filled *taper*, 3.6px where it enters
+  and 1.2px where it ends; at a uniform width it read as a border-left, which is
+  the whole difference between a root and a rule. A fill rather than a stroke,
+  because it stretches to a page height nobody knows at build time and a
+  stroked path would distort.
+- **Each branch is rendered by its own section**, so its position is that
+  section's position by construction and cannot drift. It forks once more and
+  terminates in a lit node level with that section's heading — which is what
+  turns the left gutter into a table of contents and makes the asymmetric
+  layout earn its width.
+- **The spread** — the root network the brand mark is built around — fans out
+  where the trunk reaches the soil section at the foot of the dark half.
 
-Drawn with `stroke-dasharray` / `stroke-dashoffset` driven by native CSS
-`animation-timeline: scroll()`. **Compositor thread. Zero JavaScript. Zero
-library.** It is the navigation, the scroll progress, and the client's own
-central symbol, all at once — the page is literally rooted by it.
+Drawn by native CSS `animation-timeline: view()`: a view timeline is scoped to
+an element's own progress through the viewport, so a branch is tied to its
+section with no scroll percentages to keep in sync. **Compositor thread. Zero
+JavaScript. Zero library.**
+
+Degradation is measured, not asserted (scripts/verify-rendered.mjs):
+
+| Condition | Result |
+|---|---|
+| `prefers-reduced-motion: reduce` | 14 paths present, 0 animated, 0 undrawn |
+| No `animation-timeline` support | Base rule sits outside `@supports`, so everything renders fully drawn |
+| Below 768px | Trunk only, in its own viewBox framed on the trunk; branches hide |
+
+> **What this replaced, and why it is written down.** The first version was a
+> `position: fixed` SVG whose branch endpoints were magic numbers in *viewport*
+> coordinates. It looked like a root and meant nothing — the branches landed
+> wherever the window put them, related to no section and no anchor, and
+> `slice` meant there was no window size at which the whole drawing was
+> visible. design.md requires structure to encode something true about the
+> content, so either this document's claim went or the code did.
 
 ### The quieter second instrument — the Season Rule
 
@@ -143,9 +169,13 @@ and it would compete with the root line. Boldness is spent in one place. Cut.
 - `prefers-reduced-motion` stops the root from drawing and the marker from
   animating. Both stay fully legible as static instruments.
 - Browsers without `animation-timeline` get the root fully drawn and static —
-  it degrades to an illustration, never to nothing.
-- 375px is designed first. The root line narrows to the screen edge and keeps
-  its meaning; the season rule scrolls horizontally inside its own container.
+  it degrades to an illustration, never to nothing. Measured, not assumed; see
+  the degradation table above.
+- 375px is designed first. Below 768px the root uses a second viewBox framed
+  on the trunk — the desktop one clipped it out of the box entirely, so the
+  signature was absent on the device most of this farm's customers use. The
+  Season Rule fits the screen rather than scrolling: a bar scrolled off-screen
+  reads as "we do not have that".
 - The emblem is the owner's asset. Until the file is supplied the hero renders
   a typographic lockup in the brand's own letterspacing — **no invented
   emblem**, because faking a client's mark is worse than omitting it.

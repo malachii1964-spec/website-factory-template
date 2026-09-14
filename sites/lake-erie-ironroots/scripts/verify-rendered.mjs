@@ -157,6 +157,59 @@ for (const path of ["/", "/visit", "/nope"]) {
   }
 }
 
+/* ------------------------------------------- the degradation paths -------- */
+/*
+  The component comments and the design plan both promise that the root
+  degrades to a FINISHED DRAWING rather than to nothing. Four of the five
+  worst findings in this project's code review were places where prose
+  asserted behaviour the code did not have, so these are measured.
+*/
+{
+  const ctx = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: "reduce",
+  });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  const rm = await page.evaluate(() => {
+    const paths = [...document.querySelectorAll(".root-branch-path")];
+    return {
+      count: paths.length,
+      animated: paths.filter((p) => getComputedStyle(p).animationName !== "none").length,
+      undrawn: paths.filter((p) => parseFloat(getComputedStyle(p).strokeDashoffset) > 0.01).length,
+    };
+  });
+  console.log("\nprefers-reduced-motion: reduce");
+  check(rm.count > 0, "branches are present", `${rm.count} paths`);
+  check(rm.animated === 0, "nothing animates", `${rm.animated} animated`);
+  check(rm.undrawn === 0, "every branch is fully drawn, not blank", `${rm.undrawn} undrawn`);
+  await ctx.close();
+}
+
+{
+  // A browser with no view-timeline support falls through to the base rule.
+  // Assert that rule exists OUTSIDE the @supports block, which is the only
+  // thing making the no-support path a drawing rather than an empty rail.
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  const href = await page.evaluate(
+    () => document.querySelector('link[rel="stylesheet"]')?.getAttribute("href") ?? "",
+  );
+  const css = href ? await (await fetch(`${BASE}${href}`)).text() : "";
+  const supportsAt = css.indexOf("@supports (animation-timeline");
+  const baseAt = css.indexOf(".root-branch-path{");
+  console.log("\nno view-timeline support");
+  check(css.length > 0, "stylesheet is reachable", href);
+  check(baseAt >= 0, "the base .root-branch-path rule exists");
+  check(
+    baseAt >= 0 && (supportsAt < 0 || baseAt < supportsAt),
+    "the fully-drawn base rule sits outside @supports",
+    `base @${baseAt}, supports @${supportsAt}`,
+  );
+  await ctx.close();
+}
+
 /* -------------------------------------- placeholder data is not published -- */
 
 {
