@@ -134,6 +134,15 @@ Then look at it in the browser — including on your phone — before you ship i
 
 **404 (`/nope`, or any wrong address)** — a designed page, not a browser error
 
+**The stand sign (`/sign`)** — the one page that is for *you*, not for
+customers. Open it in the morning, press Ctrl+P, and you get a one-page sign
+for the table listing exactly what is picked today, in your own branding, dated.
+It is built from the same list as the website, so the paper on your table can
+never disagree with the page on someone's phone. Black on white to save ink,
+and the crop names are set big enough to read from the far side of a trestle
+table. There is a link to it in the footer. Search engines are told to ignore
+it.
+
 ### The thing that makes it yours
 
 A single gold root runs the whole height of the page. It is thicker where it

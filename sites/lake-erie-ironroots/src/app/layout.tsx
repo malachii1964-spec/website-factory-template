@@ -64,6 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main id="main" className="descent relative flex-1">
           <div
             aria-hidden="true"
+            data-root-line
             className="pointer-events-none absolute inset-y-0 inset-x-0"
           >
             <div className="relative mx-auto h-full w-full max-w-6xl">

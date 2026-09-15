@@ -210,6 +210,47 @@ for (const path of ["/", "/visit", "/nope"]) {
   await ctx.close();
 }
 
+/* ------------------------------------------------- the printable sign ----- */
+/*
+  The sign is a printed object, so what matters is what the PRINT stylesheet
+  produces — not what the screen shows. A bare `header, footer { display:none }`
+  in the print block hid the sign's own header and footer, and it printed as an
+  unbranded list of vegetables. Caught by looking at the paper; pinned here.
+*/
+{
+  const ctx = await browser.newContext({ viewport: { width: 1100, height: 1000 } });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/sign`, { waitUntil: "networkidle" });
+  await page.emulateMedia({ media: "print" });
+  const sign = await page.evaluate(() => {
+    const vis = (sel) => {
+      const el = document.querySelector(sel);
+      if (!el) return false;
+      const s = getComputedStyle(el);
+      return s.display !== "none" && s.visibility !== "hidden";
+    };
+    const first = document.querySelector(".sign-list li");
+    return {
+      wordmark: vis(".sign-wordmark"),
+      head: vis(".sign-head"),
+      foot: vis(".sign-foot"),
+      date: document.querySelector(".sign-date")?.textContent ?? "",
+      items: document.querySelectorAll(".sign-list li").length,
+      itemPt: first ? parseFloat(getComputedStyle(first).fontSize) : 0,
+      bg: getComputedStyle(document.querySelector(".sign")).backgroundColor,
+      chromeHidden: !vis("body > header") && !vis("body > footer"),
+    };
+  });
+  console.log("\n/sign, print stylesheet");
+  check(sign.wordmark && sign.head, "the farm name prints on the sign");
+  check(sign.foot, "the sign's own footer prints");
+  check(sign.chromeHidden, "site nav and footer do NOT print");
+  check(sign.bg === "rgb(255, 255, 255)", "sign prints on white, not on the dark palette", sign.bg);
+  check(sign.itemPt > 30, "crop names are big enough to read across a table", `${sign.itemPt}px`);
+  check(sign.date.length > 0, "the sign is dated", sign.date);
+  await ctx.close();
+}
+
 /* -------------------------------------- placeholder data is not published -- */
 
 {

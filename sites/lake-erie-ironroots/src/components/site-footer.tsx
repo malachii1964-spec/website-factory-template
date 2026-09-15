@@ -52,6 +52,14 @@ export function SiteFooter() {
             Open {FARM.openSeason.from} through {FARM.openSeason.to}. Closed once
             the ground freezes.
           </p>
+          {/* For the farm, not for customers — but it belongs on the site
+              rather than in a bookmark only one person has. */}
+          <Link
+            href="/sign"
+            className="label mt-5 inline-block text-iron transition-colors hover:text-gold-lit"
+          >
+            Print today&rsquo;s sign &rarr;
+          </Link>
         </div>
 
         <div>

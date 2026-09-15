@@ -255,3 +255,168 @@ body {
     forced-color-adjust: none;
   }
 }
+
+/* ------------------------------------------------------- the stand sign --- */
+/*
+  A printed object, previewed on screen exactly as it will come out of the
+  printer. Black on white with two gold hairlines: ink costs the farm money,
+  and a dark page that prints as a black rectangle is worse than no feature.
+
+  Sizes are in points because the target is paper, not a display.
+*/
+.sign {
+  background: #ffffff;
+  color: #1a1a1a;
+  padding: 2.2rem 2rem 1.6rem;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 40%, transparent);
+}
+
+.sign-head {
+  text-align: center;
+  border-bottom: 2px solid var(--color-gold);
+  padding-bottom: 1rem;
+}
+
+.sign-overline {
+  font-family: var(--font-sans);
+  font-size: 10pt;
+  font-weight: 500;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: #6b5a2e;
+  /* Letterspacing adds trailing space; pull the block back to optical centre. */
+  text-indent: 0.55em;
+}
+
+.sign-wordmark {
+  font-family: var(--font-display);
+  font-size: 38pt;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-top: 0.15rem;
+  color: #14181a;
+}
+
+.sign-tagline {
+  font-family: var(--font-display);
+  font-size: 12pt;
+  margin-top: 0.5rem;
+  color: #4a3b29;
+}
+
+.sign-date {
+  font-family: var(--font-sans);
+  font-size: 13pt;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 1.1rem;
+  color: #8a5f18;
+}
+
+.sign-h2 {
+  font-family: var(--font-sans);
+  font-size: 10pt;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #6b6b6b;
+  margin-top: 1.6rem;
+}
+
+/*
+  Two columns on paper. A single column of eleven crops at 26pt runs off the
+  page; two columns fit a normal late-summer list without shrinking the type,
+  and the type size is the point — this has to be readable from the far side
+  of a trestle table.
+*/
+.sign-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.9rem 0 0;
+  columns: 2;
+  column-gap: 2.5rem;
+}
+
+.sign-list li {
+  font-family: var(--font-display);
+  font-size: 26pt;
+  line-height: 1.32;
+  break-inside: avoid;
+  color: #14181a;
+}
+
+.sign-empty {
+  font-family: var(--font-display);
+  font-size: 18pt;
+  text-align: center;
+  margin-top: 1.2rem;
+  color: #4a3b29;
+}
+
+.sign-soon {
+  font-family: var(--font-sans);
+  font-size: 10pt;
+  line-height: 1.5;
+  margin-top: 1.6rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-gold) 45%, transparent);
+  color: #4a4a4a;
+}
+
+.sign-soon span {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #8a5f18;
+}
+
+.sign-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 8.5pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 1.4rem;
+  color: #7a7a7a;
+}
+
+@media print {
+  /*
+    The site's chrome has no business on a sheet of paper — but this must be
+    scoped to the chrome. Written as bare `header, footer` it also hid the
+    sign's OWN <header> and <footer>, so the page printed as a bare list of
+    vegetables with no farm name on it. Only direct children of <body> are the
+    site's nav and footer.
+  */
+  body > header,
+  body > footer,
+  [data-root-line] {
+    display: none !important;
+  }
+
+  html,
+  body,
+  main {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #1a1a1a !important;
+  }
+
+  .sign {
+    border: 0;
+    padding: 0;
+    /* One sheet, no orphan footer on a second page. */
+    break-inside: avoid;
+  }
+
+  @page {
+    size: portrait;
+    margin: 14mm;
+  }
+}

@@ -43,4 +43,5 @@ next-env.d.ts
 # scratch probes (mine and any review agent's)
 *.local.mjs
 probe-*.mjs
-.critic-*.mjs
+*critic*.mjs
+*.probe.mjs
