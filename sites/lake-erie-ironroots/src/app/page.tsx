@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { FarmJsonLd } from "@/components/json-ld";
 import { ReadyNow } from "@/components/ready-now";
@@ -12,6 +13,7 @@ import {
   PILLARS,
   SOIL_HORIZONS,
 } from "@/lib/farm";
+import { heroImage } from "@/lib/brand";
 import { farmToday } from "@/lib/clock";
 import { frostLine } from "@/lib/season";
 
@@ -36,6 +38,7 @@ const SHELL = "mx-auto w-full max-w-6xl pr-5 pl-9 md:pr-8 md:pl-28";
 
 export default function Home() {
   const today = farmToday();
+  const hero = heroImage();
 
   return (
     <>
@@ -43,18 +46,76 @@ export default function Home() {
 
       {/* ---------------------------------------------------------- hero -- */}
       <Section className="overflow-hidden" branchTop="top-[9.5rem]">
-        {/* The horizon from the brand artwork: one light source, low and
-            warm, behind everything. A single gradient — no image request. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(120% 70% at 78% 92%, color-mix(in srgb, var(--color-ember) 26%, transparent) 0%, transparent 58%)",
-          }}
-        />
+        {/*
+          The horizon.
 
-        <div className={`${SHELL} relative py-20 md:py-32`}>
+          With the owner's photograph on disk this is the real breakwall at
+          sunset — the scene the entire palette was derived from, and the thing
+          that turns "dark because it was decided to be dark" into "dark
+          because that is what the place looks like".
+
+          Without it, a single gradient standing in for the same light. No
+          stock photograph of somebody else's farm will ever be substituted
+          here; the fallback is honestly synthetic rather than dishonestly
+          photographic.
+        */}
+        {hero.present ? (
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+            <Image
+              src={hero.src}
+              alt=""
+              fill
+              // The LCP element on the site's most important page.
+              priority
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+            {/*
+              A scrim, not a filter. The hero carries 72px display type and a
+              CTA over this, and unreadable text on a beautiful photograph is
+              still unreadable text. Weighted to the left, where the copy is,
+              so the sunset stays visible on the right.
+            */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(90deg, var(--color-pier) 0%, color-mix(in srgb, var(--color-pier) 88%, transparent) 38%, color-mix(in srgb, var(--color-pier) 45%, transparent) 72%, color-mix(in srgb, var(--color-pier) 25%, transparent) 100%)",
+              }}
+            />
+            <div
+              className="absolute inset-x-0 bottom-0 h-32"
+              style={{
+                background:
+                  "linear-gradient(180deg, transparent, var(--color-pier))",
+              }}
+            />
+            {/*
+              The photograph is opaque and painted over the trunk that <main>
+              draws behind every section, so the root vanished for the whole
+              height of the hero. The hero carries its own segment on top of
+              the image, the same way the parchment bands do. Only when the
+              image is present — otherwise it would double-draw over itself and
+              the trunk would come out darker here than everywhere else.
+            */}
+            <div className="absolute inset-y-0 inset-x-0">
+              <div className="relative mx-auto h-full w-full max-w-6xl">
+                <RootTrunk />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(120% 70% at 78% 92%, color-mix(in srgb, var(--color-ember) 26%, transparent) 0%, transparent 58%)",
+            }}
+          />
+        )}
+
+        <div className={`${SHELL} relative py-20 md:py-36`}>
           <p className="label rise">
             {FARM.county}, {FARM.state}
           </p>

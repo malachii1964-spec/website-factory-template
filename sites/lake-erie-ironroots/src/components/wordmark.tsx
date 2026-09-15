@@ -1,13 +1,15 @@
+import Image from "next/image";
+import { emblem, EMBLEM_ALT } from "@/lib/brand";
 import { FARM } from "@/lib/farm";
 
 /**
  * The typographic lockup: letterspaced "LAKE ERIE" over "IRONROOTS", matching
  * the proportions of the brand artwork.
  *
- * This deliberately does NOT draw the emblem. The ring-and-roots mark is the
- * owner's asset; an approximation of someone's logo is worse than its absence.
- * When the file lands in /public/brand/ it replaces this lockup in the hero
- * and sits beside it in the header.
+ * This never DRAWS the emblem. The ring-and-roots mark is the owner's asset and
+ * an approximation of somebody's logo is worse than its absence — but when the
+ * real file is at public/brand/emblem.png it is rendered here, above the
+ * lockup in the hero and beside it in the header. See lib/brand.ts.
  */
 export function Wordmark({
   size = "sm",
@@ -17,8 +19,25 @@ export function Wordmark({
   as?: "span" | "h1";
 }) {
   const large = size === "lg";
+  const mark = emblem();
+
   return (
-    <Tag className="block leading-none">
+    <Tag className={large ? "block leading-none" : "flex items-center gap-2.5"}>
+      {mark.present && (
+        <Image
+          src={mark.src}
+          alt={large ? EMBLEM_ALT : ""}
+          width={large ? 132 : 30}
+          height={large ? 132 : 30}
+          priority={large}
+          className={
+            large
+              ? "rise mb-6 h-20 w-20 object-contain md:h-32 md:w-32"
+              : "h-[30px] w-[30px] shrink-0 object-contain"
+          }
+        />
+      )}
+      <span className="block leading-none">
       <span
         className="label block"
         style={{
@@ -48,6 +67,7 @@ export function Wordmark({
         }}
       >
         {FARM.wordmark}
+      </span>
       </span>
     </Tag>
   );

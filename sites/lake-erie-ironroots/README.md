@@ -35,16 +35,25 @@ customer to a stranger's driveway, and a search result claiming you trade at
 an address you do not occupy outlives the mistake. Fill them in and every one
 of those turns itself on; that switch-on has been tested end to end.
 
-### 2. Your logo is not on the site yet
+### 2. Your two brand files are not on the site yet
 
-I did **not** draw your emblem. That ring-and-roots mark is yours, and a
-half-remembered copy of someone's logo is worse than no logo. Right now the
-header and hero use a typographic version of the name in your brand's own
-letterspacing.
+The wiring is already built and tested. **You do not need me for this step** —
+drop two files into `public/brand/` and the site upgrades itself:
 
-**Send me the logo as a PNG with a transparent background** (or drop it at
-`public/brand/logo.png`) and I will wire it into the header, the hero, the
-share card and the favicon.
+| File | What it is |
+|---|---|
+| `emblem.png` | Your ring-and-roots mark, transparent background, square, 1024px+ |
+| `hero.jpg` | The breakwall and lighthouse at sunset, landscape, 2000px+ wide |
+
+The emblem appears above the name in the hero and beside it in the header. The
+photograph becomes the full-bleed hero background, under a scrim that keeps the
+headline readable and leaves the sunset showing on the right.
+
+Until they arrive the hero uses a gradient standing in for that light, and the
+name stands alone. **No stock photo of somebody else's farm will ever be put
+there**, and I will not draw an approximation of your mark.
+
+Full instructions are in `public/brand/README.md`.
 
 ---
 
