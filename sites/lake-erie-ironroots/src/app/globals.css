@@ -97,16 +97,23 @@ body {
   }
 
   /*
-    Section headings, set large on purpose.
+    ONE head at signature scale per page.
 
-    Bodoni's whole justification here is the jump from heavy stem to razor
-    hairline — that contrast IS the beveled metal of the wordmark. At 48px the
-    hairlines are still thick enough that it reads as any high-contrast serif,
-    which meant the display face was costing a font load and buying nothing.
-    It only pays rent above ~64px, so the two big section heads get there.
+    Bodoni's justification here is the jump from heavy stem to razor hairline,
+    and that only shows above about 64px — so `.h-section` goes there. But it
+    was applied to three headings on the home page, which is three signatures
+    competing: the reader met the loudest type on the page three times and it
+    stopped meaning anything. It is now reserved for the one head that carries
+    the page's job ("Ready at the stand this week"), and everything else uses
+    `.h-sub`.
   */
   .h-section {
     font-size: clamp(2.5rem, 5.6vw, 4.5rem);
+    font-optical-sizing: auto;
+  }
+
+  .h-sub {
+    font-size: clamp(1.75rem, 3.2vw, 2.5rem);
     font-optical-sizing: auto;
   }
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RootTrunk } from "@/components/root";
 import { Wordmark } from "@/components/wordmark";
 import {
   establishedLine,
@@ -28,7 +29,13 @@ export function SiteFooter() {
   const email = hasRealEmail();
 
   return (
-    <footer className="relative z-40 mt-24 border-t border-[var(--hairline)] bg-shale">
+    <footer className="relative z-40 border-t border-[var(--hairline)] bg-shale">
+      {/* The root runs to the bottom of the page, not to the last section. */}
+      <div className="pointer-events-none absolute inset-y-0 inset-x-0">
+        <div className="relative mx-auto h-full w-full max-w-6xl">
+          <RootTrunk />
+        </div>
+      </div>
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 md:grid-cols-3 md:px-8">
         <div>
           <Wordmark />

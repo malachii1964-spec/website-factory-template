@@ -28,14 +28,24 @@
 /** Horizontal home of the root, shared by the trunk and every branch. */
 export const TRUNK_LEFT = "left-[7px] md:left-10";
 
-export function RootTrunk() {
+/**
+ * The trunk.
+ *
+ * `tone="light"` renders the same shape in burnished gold for the parchment
+ * bands. The main trunk sits under those bands, so without this the root ran
+ * down the page, stopped dead at the daylight section, and started again
+ * below it — and a root that stops and restarts is not a root, it is a
+ * leftover border. A light section drops one of these in and the line is
+ * continuous from the header to the footer.
+ */
+export function RootTrunk({ tone = "dark" }: { tone?: "dark" | "light" }) {
   return (
     <div
       aria-hidden="true"
       className={`pointer-events-none absolute inset-y-0 ${TRUNK_LEFT} w-3 md:w-4`}
     >
       <svg
-        className="h-full w-full fill-gold"
+        className={`h-full w-full ${tone === "light" ? "fill-[#8A5F18]" : "fill-gold"}`}
         viewBox="0 0 16 1000"
         // The page height is unknown at build time, so the trunk stretches to
         // fill it. A filled shape survives that; a stroked path would not.
@@ -43,24 +53,22 @@ export function RootTrunk() {
         aria-hidden="true"
       >
         {/*
-          A taper, not a rule. The trunk is thickest where it enters at the top
-          and thins as it descends, the way a root actually does — that single
-          property is most of what separates "a root" from "a 1px border-left".
-        */}
-        {/*
-          The horizontal axis is NOT stretched — the viewBox is 16 units wide
-          in a 16px box — so these numbers are pixels. The trunk is 3.6px where
-          it enters and 1.2px where it ends: a third of its entry weight. At a
-          uniform width it read as a border-left, which is the difference
-          between a root and a rule.
+          A taper, not a rule — and it has to be a taper you can SEE.
+
+          The viewBox is 16 units wide in a 16px box, so these numbers are
+          pixels. The first version ran 3.6px to 1.2px: a 2.4px change spread
+          over five thousand pixels of scrolling, which is perceptually zero.
+          On screen it was a border-left, exactly the thing the comment
+          claimed it was not. It now enters at 6.2px and ends at 1.4px — a
+          4.4x ratio — which reads as a root that thins as it descends.
         */}
         <path
-          d="M5.6 0
-             C5.9 180 7.6 320 6.5 500
-             C5.7 680 7.3 820 6.4 1000
-             L7.6 1000
-             C8.5 820 9.6 680 8.8 500
-             C7.9 320 9.5 180 9.2 0
+          d="M4.4 0
+             C4.9 180 6.6 320 5.6 500
+             C4.9 680 7.0 830 7.1 1000
+             L8.5 1000
+             C8.6 830 10.2 680 9.4 500
+             C8.6 320 10.3 180 10.6 0
              Z"
           opacity={0.6}
         />
@@ -85,15 +93,24 @@ export function RootBranch({
   className?: string;
 }) {
   return (
+    /*
+      Present at every width. These used to be `hidden md:block`, which meant
+      that below 768px there were no branches, no nodes and no spread — the
+      signature did not exist on the device the design plan says is designed
+      first, and what was left was a 2px gold stripe near the screen edge.
+
+      The phone gets a smaller box reaching into a slightly wider gutter, and
+      `vector-effect: non-scaling-stroke` keeps the strokes at their authored
+      weight instead of scaling down to invisible hairlines with the box.
+    */
     <span
       aria-hidden="true"
-      className={`root-branch pointer-events-none absolute hidden md:block ${TRUNK_LEFT} ${className}`}
-      style={{ width: "5.5rem", height: "3.5rem" }}
+      className={`root-branch pointer-events-none absolute h-6 w-7 md:h-14 md:w-22 ${TRUNK_LEFT} ${className}`}
     >
       <svg
         viewBox="0 0 88 56"
         fill="none"
-        className="h-full w-full stroke-gold"
+        className="h-full w-full stroke-gold [&_*]:[vector-effect:non-scaling-stroke]"
         strokeLinecap="round"
       >
         {side === "down" ? (
@@ -105,15 +122,18 @@ export function RootBranch({
               strokeWidth={1.4}
               opacity={0.75}
             />
-            {/* One secondary fork. Roots fork again; a single stub reads as a
-                scratch. Two path commands buy the entire read. */}
+            {/* One secondary fork. Roots fork again; a single stub reads
+                as a scratch. It is shortened to stop level with the main
+                branch's node — it used to run on past it and stop in empty
+                space, which read as a stray vector artifact. */}
             <path
               className="root-branch-path"
               pathLength={1}
-              d="M44 20 C54 20 64 17 74 14"
+              d="M44 20 C51 19 57 17 63 15"
               strokeWidth={0.9}
               opacity={0.55}
             />
+            <circle className="root-branch-node fill-gold" cx={63} cy={15} r={1.2} stroke="none" />
           </>
         ) : (
           <>
@@ -127,10 +147,11 @@ export function RootBranch({
             <path
               className="root-branch-path"
               pathLength={1}
-              d="M44 36 C54 36 64 39 74 42"
+              d="M44 36 C51 37 57 39 63 41"
               strokeWidth={0.9}
               opacity={0.55}
             />
+            <circle className="root-branch-node fill-gold" cx={63} cy={41} r={1.2} stroke="none" />
           </>
         )}
         {/* The terminal node, level with the section's heading. This is what
@@ -158,15 +179,24 @@ export function RootBranch({
  */
 export function RootSpread() {
   return (
+    /*
+      Centred on the trunk, not offset beside it.
+
+      This used to be positioned with `translateX(-3.4rem)`, a number picked by
+      eye, which left the fan's own stem about 13px left of the trunk — the two
+      lines visibly CROSSED, so the drawing read as a wire with a root-shaped
+      scribble next to it. The outer box now matches the trunk's box exactly
+      and the fan is centred inside it, so the fan's stem and the trunk are the
+      same line by construction rather than by a magic number.
+    */
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute bottom-0 hidden md:block ${TRUNK_LEFT}`}
-      style={{ width: "7rem", height: "7rem", transform: "translateX(-3.4rem)" }}
+      className={`pointer-events-none absolute bottom-0 ${TRUNK_LEFT} w-3 md:w-4`}
     >
       <svg
         viewBox="0 0 112 112"
         fill="none"
-        className="h-full w-full stroke-gold"
+        className="absolute bottom-0 left-1/2 h-20 w-20 -translate-x-1/2 stroke-gold md:h-28 md:w-28 [&_*]:[vector-effect:non-scaling-stroke]"
         strokeLinecap="round"
       >
         <g className="root-branch-path-group">

@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <>
-      <section className="mx-auto w-full max-w-6xl px-5 py-28 md:pr-8 md:pl-28 md:py-40">
+      <section className="mx-auto w-full max-w-6xl pr-5 pl-9 py-24 md:pr-8 md:pl-28 md:py-32">
         <p className="label">Nothing here</p>
         <h1 className="display mt-5 text-4xl md:text-6xl">
           That row was never planted

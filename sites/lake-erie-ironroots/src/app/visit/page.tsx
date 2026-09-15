@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FarmJsonLd } from "@/components/json-ld";
+import { RootTrunk } from "@/components/root";
 import { humanTime } from "@/components/site-footer";
 import {
   FARM,
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   description: `Hours, directions and what is ready at ${FARM.name} in ${FARM.address.locality}, ${FARM.state}.`,
 };
 
-const SHELL = "mx-auto w-full max-w-6xl px-5 md:pr-8 md:pl-28";
+const SHELL = "mx-auto w-full max-w-6xl pr-5 pl-9 md:pr-8 md:pl-28";
 
 export default function VisitPage() {
   const today = farmToday();
@@ -45,11 +46,17 @@ export default function VisitPage() {
       </section>
 
       <section className="relative z-40 bg-parchment text-[#3A2E20]">
+        {/* The root continues through the daylight band. */}
+        <div className="pointer-events-none absolute inset-y-0 inset-x-0">
+          <div className="relative mx-auto h-full w-full max-w-6xl">
+            <RootTrunk tone="light" />
+          </div>
+        </div>
         <div className={`${SHELL} py-16 md:py-24`}>
           <div className="grid gap-12 md:grid-cols-2 md:gap-16">
             {/* ---------------------------------------------------- hours */}
             <div className="min-w-0">
-              <h2 className="label text-[#8A5F18]">Hours</h2>
+              <h3 className="label text-[#8A5F18]">Hours</h3>
               <dl className="mt-5">
                 {FARM.hours.map((h) => (
                   <div
@@ -68,7 +75,7 @@ export default function VisitPage() {
                 close for the winter once the last of the squash is sold.
               </p>
 
-              <h2 className="label mt-12 text-[#8A5F18]">Get in touch</h2>
+              <h3 className="label mt-12 text-[#8A5F18]">Get in touch</h3>
               {real ? (
                 <div className="mt-5 space-y-3">
                   <a
@@ -89,20 +96,25 @@ export default function VisitPage() {
                   </p>
                 </div>
               ) : (
-                <div className="mt-5 border border-[#8A5F18]/40 bg-[#8A5F18]/8 p-5">
-                  <p className="text-sm text-[#4A3B29]">
-                    The phone number and address have not been published yet.
-                    They are set in one file — <code>src/lib/farm.ts</code> —
-                    and this block turns into a real tap-to-call link and a map
-                    the moment they are filled in.
-                  </p>
-                </div>
+                /*
+                  One line of customer-facing copy, in a normal paragraph.
+
+                  What used to be here was a tinted box telling a farm customer
+                  that the number "is set in one file — src/lib/farm.ts". That
+                  is the build narrating its own scaffolding to a stranger
+                  looking for a phone number, on the one page whose job is
+                  "how do I reach you". Nothing rendered may ever name a source
+                  path.
+                */
+                <p className="mt-5 text-[#4A3B29]">
+                  The phone number goes up here before opening day.
+                </p>
               )}
             </div>
 
             {/* ------------------------------------------------------ map */}
             <div className="min-w-0">
-              <h2 className="label text-[#8A5F18]">Where</h2>
+              <h3 className="label text-[#8A5F18]">Where</h3>
               {real ? (
                 <>
                   <address className="mt-5 text-lg not-italic text-[#2A2118]">
@@ -129,13 +141,17 @@ export default function VisitPage() {
                   />
                 </>
               ) : (
-                <div className="mt-5 flex aspect-[4/3] w-full items-center justify-center border border-dashed border-[#8A5F18]/50 p-6 text-center">
-                  <p className="text-sm text-[#4A3B29]">
-                    The map appears here once the farm&rsquo;s address and
-                    coordinates are set. Nothing is shown in the meantime rather
-                    than a pin on the wrong road.
-                  </p>
-                </div>
+                /*
+                  No dashed rectangle reserving space for a map. A dashed box
+                  with centred grey text explaining that content will exist
+                  later is the most recognisable generated-UI shape there is,
+                  and it made the top of this page two placeholders side by
+                  side. One honest line instead.
+                */
+                <p className="mt-5 text-lg text-[#2A2118]">
+                  {FARM.address.locality} area, {FARM.county}. The exact address
+                  goes up before opening day.
+                </p>
               )}
             </div>
           </div>

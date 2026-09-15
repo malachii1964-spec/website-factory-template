@@ -231,9 +231,22 @@ export function monthTicks(year: number): { label: string; at: number }[] {
   if (span <= 0) return [];
 
   const ticks: { label: string; at: number }[] = [];
+
+  // The season opens mid-May, so the first of May sits before the axis and was
+  // skipped — leaving the drawing starting at JUN while the caption beside it
+  // said the season starts on 15 May. The opening month is labelled at the
+  // origin instead of being dropped.
+  ticks.push({
+    label: new Date(year, LAST_SPRING_FROST.month - 1, 1).toLocaleDateString(
+      "en-US",
+      { month: "short" },
+    ),
+    at: 0,
+  });
+
   for (let m = 0; m < 12; m++) {
     const t = new Date(year, m, 1).getTime();
-    if (t < first || t > last) continue;
+    if (t <= first || t > last) continue;
     ticks.push({
       label: new Date(year, m, 1).toLocaleDateString("en-US", { month: "short" }),
       at: (t - first) / span,

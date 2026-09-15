@@ -11,7 +11,20 @@ import {
   seasonPosition,
 } from "@/lib/season";
 
-const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
+/*
+  The frost-to-frost season occupies 86% of the track, not all of it.
+
+  Eight of twenty crops legitimately run past first frost, and their bars are
+  faded out by a mask at the end of their window. When the season filled the
+  whole track, every one of those faded at the exact right edge of the frame —
+  which reads as "the chart ran out of room", not as "this crop keeps going".
+  The most interesting thing the drawing knows was rendering as a clipping
+  artifact. Holding back a strip of empty ground past the frost line puts the
+  fade visibly inside the frame, where it means what it says.
+*/
+const SEASON_SCALE = 0.86;
+
+const pct = (n: number) => `${(n * SEASON_SCALE * 100).toFixed(3)}%`;
 
 const shortDate = (d: Date) =>
   d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -43,11 +56,22 @@ export function SeasonRule({ today }: { today: Date }) {
   const year = today.getFullYear();
   const marker = seasonPosition(today);
   const ticks = monthTicks(year);
+  /*
+    Ready crops first, then everything else in season order.
+
+    Leaving these in CROPS source order sorted them by start date, which draws
+    the classic descending staircase — the single most project-plan-looking
+    arrangement available, and it buried today's actual produce in the middle
+    of the chart. What the reader wants is at the top now.
+  */
   const rows = CROPS.map((crop) => ({
     crop,
     seg: cropSegment(crop, year),
     live: isReady(crop, today),
-  }));
+  })).sort((a, b) => {
+    if (a.live !== b.live) return a.live ? -1 : 1;
+    return a.seg.start - b.seg.start;
+  });
   const readyCount = rows.filter((r) => r.live).length;
 
   const todayLabel = today.toLocaleDateString("en-US", {
@@ -63,6 +87,12 @@ export function SeasonRule({ today }: { today: Date }) {
           Last frost {shortDate(resolve(LAST_SPRING_FROST, year))} · First frost{" "}
           {shortDate(resolve(FIRST_FALL_FROST, year))} ·{" "}
           <span className="text-ember">{frostLine(today)}</span>
+          {readyCount > 0 && (
+            <>
+              {" · "}
+              <span className="text-parchment">{readyCount} ready today</span>
+            </>
+          )}
         </p>
       </figcaption>
 
@@ -101,7 +131,8 @@ export function SeasonRule({ today }: { today: Date }) {
               {/* First frost: the one date the whole chart is organised
                   around, and it was named in the caption but never drawn. */}
               <div
-                className="absolute inset-y-0 right-0 w-0 border-r border-dashed border-iron/70"
+                className="absolute inset-y-0 w-0 border-r border-dashed border-iron/70"
+                style={{ left: pct(1) }}
                 title="First frost"
               />
               {/* Today. */}
@@ -173,23 +204,13 @@ export function SeasonRule({ today }: { today: Date }) {
         </div>
       </div>
 
-      <p className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-iron">
-        <span className="inline-flex items-center gap-2">
-          <span className="inline-block h-[6px] w-6 bg-ember" aria-hidden="true" />
-          Ready today ({readyCount})
-        </span>
-        <span className="inline-flex items-center gap-2">
-          <span
-            className="inline-block h-[6px] w-6"
-            style={{
-              background:
-                "color-mix(in srgb, var(--color-gold) 34%, var(--color-pier))",
-            }}
-            aria-hidden="true"
-          />
-          Its window, elsewhere in the year
-        </span>
-      </p>
+      {/*
+        No swatch-and-label legend. That row of two colour chips under a chart
+        is default chart-library furniture bolted onto a drawing that was
+        otherwise hand-built, and the information was already carried by the
+        ember/muted split and by the dated marker. The one fact it added — how
+        many are ready — belongs in the caption.
+      */}
     </figure>
   );
 }

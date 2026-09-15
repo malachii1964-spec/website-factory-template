@@ -249,7 +249,10 @@ describe("marker and bars share one coordinate space", () => {
 describe("monthTicks", () => {
   it("only returns months inside the season", () => {
     const ticks = monthTicks(2026);
-    expect(ticks.map((t) => t.label)).toEqual(["Jun", "Jul", "Aug", "Sep", "Oct"]);
+    // May is labelled at the origin: the season opens on 15 May, so 1 May is
+    // off the axis, but an axis that starts at JUN contradicts the caption.
+    expect(ticks.map((t) => t.label)).toEqual(["May", "Jun", "Jul", "Aug", "Sep", "Oct"]);
+    expect(ticks[0].at).toBe(0);
   });
 
   it("places every tick on the rule, in order", () => {

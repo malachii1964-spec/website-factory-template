@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FarmJsonLd } from "@/components/json-ld";
 import { ReadyNow } from "@/components/ready-now";
-import { RootSpread, Section } from "@/components/root";
+import { RootSpread, RootTrunk, Section } from "@/components/root";
 import { SeasonRule } from "@/components/season-rule";
 import { Wordmark } from "@/components/wordmark";
 import { humanTime } from "@/components/site-footer";
@@ -32,7 +32,7 @@ import { frostLine } from "@/lib/season";
 export const revalidate = 300;
 
 /** One shared container, so the left gutter for the Root Line never drifts. */
-const SHELL = "mx-auto w-full max-w-6xl px-5 md:pr-8 md:pl-28";
+const SHELL = "mx-auto w-full max-w-6xl pr-5 pl-9 md:pr-8 md:pl-28";
 
 export default function Home() {
   const today = farmToday();
@@ -110,19 +110,19 @@ export default function Home() {
       </Section>
 
       {/* --------------------------------------------------------- ready -- */}
-      <Section id="ready" className="py-20 md:py-28" side="up">
+      <Section id="ready" className="py-14 md:py-20" side="up">
         <div className={SHELL}>
           <ReadyNow today={today} />
-          <div className="mt-20 border-t border-[var(--hairline)] pt-12">
+          <div className="mt-14 border-t border-[var(--hairline)] pt-10">
             <SeasonRule today={today} />
           </div>
         </div>
       </Section>
 
       {/* ---------------------------------------------------------- farm -- */}
-      <Section id="farm" className="py-20 md:py-28">
+      <Section id="farm" className="py-14 md:py-20">
         <div className={SHELL}>
-          <h2 className="display h-section">What we stand on</h2>
+          <h2 className="display h-sub">What we stand on</h2>
           <p className="prose-farm mt-5">
             Five lines came with the name. They are not a mission statement; they
             are the things we check a decision against.
@@ -152,7 +152,7 @@ export default function Home() {
       </Section>
 
       {/* ---------------------------------------------------- the ground -- */}
-      <Section className="py-20 md:py-28" side="up">
+      <Section className="py-14 md:py-20" side="up">
         {/* The trunk reaches the soil and fans out. */}
         <div className="pointer-events-none absolute inset-x-0 top-0 bottom-0">
           <div className="relative mx-auto h-full w-full max-w-6xl">
@@ -160,7 +160,7 @@ export default function Home() {
           </div>
         </div>
         <div className={SHELL}>
-          <h2 className="display h-section">The ground itself</h2>
+          <h2 className="display h-sub">The ground itself</h2>
           <p className="prose-farm mt-5">
             The county and the soil share a name. The Chautauqua series is a
             gravelly silt loam laid down by a glacier and the old beaches of a
@@ -219,6 +219,12 @@ export default function Home() {
           person reads standing in a parking lot, so it gets the readable
           palette rather than the atmospheric one. */}
       <section className="relative z-40 bg-parchment text-[#3A2E20]">
+        {/* The root continues through the daylight band. */}
+        <div className="pointer-events-none absolute inset-y-0 inset-x-0">
+          <div className="relative mx-auto h-full w-full max-w-6xl">
+            <RootTrunk tone="light" />
+          </div>
+        </div>
         <div className={`${SHELL} py-20 md:py-28`}>
           <div className="grid gap-12 md:grid-cols-2 md:gap-16">
             <div className="min-w-0">
