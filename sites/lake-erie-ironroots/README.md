@@ -15,22 +15,22 @@ I do not know your address, your phone number, or your hours, so the site is
 running on placeholders. It is built so this is **one file, one time**.
 
 Open **`src/lib/farm.ts`**. Every line that needs you is marked `NEEDS OWNER`.
-There are eight values:
+Three are confirmed and already live. The rest are still placeholders:
 
 | What | Looks like now |
 |---|---|
-| Street address | `0000 Route 20` |
-| Town | `Westfield` |
-| Zip | `14787` |
+| ~~Street address~~ | **154 North Portage St — confirmed, live on the site** |
+| ~~Town, Zip~~ | **Westfield NY 14787 — confirmed** |
 | Phone | `+1-716-000-0000` |
 | Email | `hello@lakeerieironroots.com` |
-| Map coordinates | `42.3223, -79.5784` |
+| Map coordinates | Not needed — the map reads your street address |
 | Stand hours | Thu/Fri 10–6, Sat 9–5, Sun 10–3 |
 | Open season | May through November |
 
-Until each one is real, the site **refuses to publish it** — no address in the
-footer, no tap-to-call button in the header, no map on the Visit page, and
-nothing sent to Google. That is on purpose. A pin on the wrong road sends a
+Each fact publishes the moment it is real, one at a time. Your address is live
+now — it is in the footer, on the Visit page, in the map, and in the structured
+data Google reads. The phone and email are still withheld, so there is no
+tap-to-call button and nothing fake in the markup. That is on purpose. A pin on the wrong road sends a
 customer to a stranger's driveway, and a search result claiming you trade at
 an address you do not occupy outlives the mistake. Fill them in and every one
 of those turns itself on; that switch-on has been tested end to end.
@@ -54,16 +54,6 @@ name stands alone. **No stock photo of somebody else's farm will ever be put
 there**, and I will not draw an approximation of your mark.
 
 Full instructions are in `public/brand/README.md`.
-
----
-
-## One thing I need you to settle
-
-Your artwork says **ESTD 2024**. You told me **Established 9/1/26**.
-
-The site currently says 9/1/26 because that is what you told me. One of the
-two is wrong and I did not want to guess. Tell me which and I will change the
-one place it lives.
 
 ---
 

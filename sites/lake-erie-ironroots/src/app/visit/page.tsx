@@ -6,7 +6,10 @@ import { humanTime } from "@/components/site-footer";
 import {
   FARM,
   formattedPhone,
-  hasRealContactDetails,
+  fullAddress,
+  hasRealAddress,
+  hasRealEmail,
+  hasRealPhone,
 } from "@/lib/farm";
 import { farmToday } from "@/lib/clock";
 import { frostLine, readyOn } from "@/lib/season";
@@ -24,10 +27,17 @@ const SHELL = "mx-auto w-full max-w-6xl pr-5 pl-9 md:pr-8 md:pl-28";
 export default function VisitPage() {
   const today = farmToday();
   const ready = readyOn(today);
-  const real = hasRealContactDetails();
-  const mapQuery = encodeURIComponent(
-    `${FARM.address.street}, ${FARM.address.locality}, ${FARM.address.region} ${FARM.address.postalCode}`,
-  );
+  /*
+    Per-field, not all-or-nothing.
+
+    These were gated on one combined flag, so the day the owner supplied a real
+    street address the map still stayed hidden because the phone number was
+    not in yet. Each fact publishes as soon as it is true.
+  */
+  const address = hasRealAddress();
+  const phone = hasRealPhone();
+  const email = hasRealEmail();
+  const mapQuery = encodeURIComponent(fullAddress());
 
   return (
     <>
@@ -76,20 +86,20 @@ export default function VisitPage() {
               </p>
 
               <h3 className="label mt-12 text-[#8A5F18]">Get in touch</h3>
-              {real ? (
+              {phone || email ? (
                 <div className="mt-5 space-y-3">
-                  <a
+                  {phone && (<a
                     href={`tel:${FARM.phone}`}
                     className="block text-lg text-[#2A2118] underline decoration-[#8A5F18] underline-offset-4"
                   >
                     {formattedPhone()}
-                  </a>
-                  <a
+                  </a>)}
+                  {email && (<a
                     href={`mailto:${FARM.email}`}
                     className="block text-[#4A3B29] underline decoration-[#8A5F18] underline-offset-4"
                   >
                     {FARM.email}
-                  </a>
+                  </a>)}
                   <p className="text-sm text-[#4A3B29]">
                     Calling is faster than emailing. We are usually in the field
                     and the phone is in a pocket.
@@ -115,7 +125,7 @@ export default function VisitPage() {
             {/* ------------------------------------------------------ map */}
             <div className="min-w-0">
               <h3 className="label text-[#8A5F18]">Where</h3>
-              {real ? (
+              {address ? (
                 <>
                   <address className="mt-5 text-lg not-italic text-[#2A2118]">
                     {FARM.address.street}
@@ -137,7 +147,7 @@ export default function VisitPage() {
                     title={`Map to ${FARM.name}`}
                     loading="lazy"
                     className="mt-6 aspect-[4/3] w-full max-w-full border border-[#2A2118]/20"
-                    src={`https://maps.google.com/maps?q=${FARM.geo.lat},${FARM.geo.lng}&z=13&output=embed`}
+                    src={`https://maps.google.com/maps?q=${mapQuery}&z=15&output=embed`}
                   />
                 </>
               ) : (

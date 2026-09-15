@@ -19,29 +19,41 @@ export const FARM = {
   tagline: "Built on purpose. Rooted in strength.",
 
   /**
-   * The owner stated 1 September 2026. The brand artwork reads "ESTD 2024".
-   * One of the two is wrong; this constant follows what the owner said, and
-   * the conflict is flagged in docs/design-plan.md rather than guessed at.
+   * The year, not a date.
+   *
+   * The owner first said 1 September 2026, which contradicted the "ESTD 2024"
+   * on the brand artwork; asked which was right, they confirmed 2024. Only the
+   * year is known, so only the year is stored — a made-up founding DAY would
+   * have gone straight into the page and into the structured data, and nobody
+   * would ever have noticed it was invented.
    */
-  established: new Date(2026, 8, 1),
+  establishedYear: 2024,
 
   county: "Chautauqua County",
   state: "New York",
 
-  // ---------------------------------------------------------- NEEDS OWNER --
+  /** Confirmed by the owner. */
   address: {
-    street: "0000 Route 20", // NEEDS OWNER
-    locality: "Westfield", // NEEDS OWNER
+    street: "154 North Portage St",
+    locality: "Westfield",
     region: "NY",
-    postalCode: "14787", // NEEDS OWNER
+    postalCode: "14787",
     country: "US",
   },
   /** NEEDS OWNER. Used for tap-to-call, so it must be dialable. */
   phone: "+1-716-000-0000",
   /** NEEDS OWNER. Where the contact form delivers. */
   email: "hello@lakeerieironroots.com",
-  /** NEEDS OWNER. Exact latitude/longitude of the farm stand for the map. */
-  geo: { lat: 42.3223, lng: -79.5784 },
+  /**
+   * Coordinates are deliberately absent.
+   *
+   * The map and the structured data are driven by the street address instead,
+   * which Google geocodes itself. Typing in an approximate lat/long for a real
+   * street address is exactly the "pin on a stranger's driveway" this file
+   * exists to prevent, and a wrong pin looks authoritative in a way a missing
+   * one does not. Set this only from a reading taken AT the stand.
+   */
+  geo: null as { lat: number; lng: number } | null,
 
   /**
    * Farm-stand hours. NEEDS OWNER — these are a normal seasonal-stand pattern,
@@ -122,6 +134,12 @@ export function hasRealAddress(): boolean {
   return !FARM.address.street.startsWith("0000");
 }
 
+/** The single-line address, for map queries and "open in maps" links. */
+export function fullAddress(): string {
+  const a = FARM.address;
+  return `${a.street}, ${a.locality}, ${a.region} ${a.postalCode}`;
+}
+
 export function hasRealPhone(): boolean {
   return !FARM.phone.replace(/\D/g, "").endsWith("0000000");
 }
@@ -137,9 +155,5 @@ export function formattedPhone(): string {
 }
 
 export function establishedLine(): string {
-  return `Established ${FARM.established.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  })}`;
+  return `Established ${FARM.establishedYear}`;
 }

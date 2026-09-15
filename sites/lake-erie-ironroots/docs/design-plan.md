@@ -180,8 +180,10 @@ and it would compete with the root line. Boldness is spent in one place. Cut.
   a typographic lockup in the brand's own letterspacing — **no invented
   emblem**, because faking a client's mark is worse than omitting it.
 
-## 5. Open factual conflict (for the owner)
+## 5. Resolved: the founding year
 
-The artwork reads **ESTD 2024**. The owner stated **Established 9/1/26**. The
-site uses a single constant for this, set to the owner's stated date. One of
-the two needs correcting before launch — flagged, not silently chosen.
+The artwork reads **ESTD 2024**; the owner first said 9/1/26, and when asked
+which was right confirmed **2024**. The artwork was correct. The site stores a
+year and not a date, because only the year was ever supplied — a founding day
+invented to make the field look complete would have gone into the page and into
+the structured data with nobody able to tell it was fiction.

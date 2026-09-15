@@ -5,12 +5,6 @@ import {
   hasRealPhone,
 } from "@/lib/farm";
 
-/** Local-date ISO day, so a build machine east of UTC cannot shift it. */
-function isoDay(d: Date): string {
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-}
-
 /**
  * LocalBusiness structured data. This is what puts the hours, the phone number
  * and the pin on a Google result for "farm stand near me" — for a farm that
@@ -37,7 +31,10 @@ export function FarmJsonLd() {
     description:
       "Organic fruit and vegetable farm on the Lake Erie plain in Chautauqua County, New York.",
     slogan: FARM.tagline,
-    foundingDate: isoDay(FARM.established),
+    // Only the year is known, so only the year is asserted. schema.org Date
+    // accepts a bare year; inventing a month and day to look complete would
+    // publish a fact nobody could check and nobody entered.
+    foundingDate: String(FARM.establishedYear),
     areaServed: `${FARM.county}, ${FARM.state}`,
     openingHoursSpecification: FARM.hours.map((h) => ({
       "@type": "OpeningHoursSpecification",
@@ -58,11 +55,16 @@ export function FarmJsonLd() {
       postalCode: FARM.address.postalCode,
       addressCountry: FARM.address.country,
     };
-    data.geo = {
-      "@type": "GeoCoordinates",
-      latitude: FARM.geo.lat,
-      longitude: FARM.geo.lng,
-    };
+    // Coordinates only if somebody actually took a reading at the stand.
+    // Google geocodes the postal address on its own, and a guessed lat/long
+    // would override the correct address with a wrong pin.
+    if (FARM.geo) {
+      data.geo = {
+        "@type": "GeoCoordinates",
+        latitude: FARM.geo.lat,
+        longitude: FARM.geo.lng,
+      };
+    }
   }
 
   return (

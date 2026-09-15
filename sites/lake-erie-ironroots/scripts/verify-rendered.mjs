@@ -256,14 +256,19 @@ for (const path of ["/", "/visit", "/nope"]) {
 {
   const { ctx, page } = await open("/", { width: 1440, height: 900 });
   const html = await page.content();
-  console.log("\nPlaceholder containment");
-  check(!html.includes("0000 Route 20"), "no placeholder street in the HTML");
-  check(!html.includes("tel:+1-716-000-0000"), "no dead tel: link");
+  console.log("\nWhat the site publishes about the business");
   const ld = await page.evaluate(
     () => document.querySelector('script[type="application/ld+json"]')?.textContent ?? "",
   );
-  check(!ld.includes("0000 Route 20"), "no placeholder address in structured data");
-  check(!ld.includes("79.57"), "no placeholder geo in structured data");
+  // Confirmed facts must actually reach the page and the crawler.
+  check(html.includes("154 North Portage St"), "the real street address is published");
+  check(ld.includes("154 North Portage St"), "the real address reaches structured data");
+  check(/"foundingDate":"2024"/.test(ld), "founding year is 2024, with no invented day", ld.match(/"foundingDate":"[^"]*"/)?.[0]);
+  // Unconfirmed facts must not.
+  check(!html.includes("0000 Route 20"), "no placeholder street anywhere");
+  check(!html.includes("tel:+1-716-000-0000"), "no dead tel: link");
+  check(!ld.includes("telephone"), "no placeholder phone in structured data");
+  check(!ld.includes("GeoCoordinates"), "no guessed coordinates in structured data");
   check(!html.includes("certified-organic"), "no unsubstantiated certification claim");
   await ctx.close();
 }
