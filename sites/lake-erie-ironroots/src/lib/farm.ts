@@ -40,10 +40,18 @@ export const FARM = {
     postalCode: "14787",
     country: "US",
   },
-  /** NEEDS OWNER. Used for tap-to-call, so it must be dialable. */
-  phone: "+1-716-000-0000",
-  /** NEEDS OWNER. Where the contact form delivers. */
-  email: "hello@lakeerieironroots.com",
+  /** Confirmed by the owner. E.164 so tel: links dial correctly anywhere. */
+  phone: "+1-716-753-0404",
+  /**
+   * Confirmed by the owner.
+   *
+   * Worth knowing: this is a personal inbox and it is now on a public page,
+   * where address-harvesting bots will find it. That is a normal trade for a
+   * small farm and it is the owner's call. If the spam ever gets tiresome, a
+   * forwarding address on the domain (stand@lakeerieironroots.com) can be
+   * swapped in here and nothing else has to change.
+   */
+  email: "malachii1964@gmail.com",
   /**
    * Coordinates are deliberately absent.
    *
@@ -130,8 +138,30 @@ export function hasRealContactDetails(): boolean {
   return hasRealAddress() && hasRealPhone() && hasRealEmail();
 }
 
+/*
+  The guards are written as pure predicates over a value, with thin
+  FARM-bound wrappers. They decide what this site asserts about a real
+  business to customers and to Google, so they are worth being able to test
+  against a placeholder AND a real value — which is impossible when they only
+  ever read one module constant.
+*/
+export function isRealStreet(street: string): boolean {
+  return street.trim().length > 0 && !/^0{3,}\b/.test(street.trim());
+}
+
+export function isRealPhone(phone: string): boolean {
+  const digits = phone.replace(/\D/g, "").replace(/^1/, "");
+  // A real US number is ten digits and its last seven are not all zero.
+  return digits.length === 10 && !/^0{7}$/.test(digits.slice(3));
+}
+
+export function isRealEmail(email: string): boolean {
+  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) &&
+    email !== "hello@lakeerieironroots.com";
+}
+
 export function hasRealAddress(): boolean {
-  return !FARM.address.street.startsWith("0000");
+  return isRealStreet(FARM.address.street);
 }
 
 /** The single-line address, for map queries and "open in maps" links. */
@@ -141,11 +171,11 @@ export function fullAddress(): string {
 }
 
 export function hasRealPhone(): boolean {
-  return !FARM.phone.replace(/\D/g, "").endsWith("0000000");
+  return isRealPhone(FARM.phone);
 }
 
 export function hasRealEmail(): boolean {
-  return !FARM.email.startsWith("hello@lakeerieironroots.com");
+  return isRealEmail(FARM.email);
 }
 
 export function formattedPhone(): string {

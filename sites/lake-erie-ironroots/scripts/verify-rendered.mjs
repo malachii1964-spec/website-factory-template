@@ -265,9 +265,13 @@ for (const path of ["/", "/visit", "/nope"]) {
   check(ld.includes("154 North Portage St"), "the real address reaches structured data");
   check(/"foundingDate":"2024"/.test(ld), "founding year is 2024, with no invented day", ld.match(/"foundingDate":"[^"]*"/)?.[0]);
   // Unconfirmed facts must not.
+  check(html.includes("tel:+1-716-753-0404"), "the real phone is a live tap-to-call link");
+  check(/"telephone":"\+1-716-753-0404"/.test(ld), "the real phone reaches structured data");
+  check(ld.includes("malachii1964@gmail.com"), "the real email reaches structured data");
+  // Unconfirmed facts must still not publish.
   check(!html.includes("0000 Route 20"), "no placeholder street anywhere");
-  check(!html.includes("tel:+1-716-000-0000"), "no dead tel: link");
-  check(!ld.includes("telephone"), "no placeholder phone in structured data");
+  check(!html.includes("000-0000"), "no placeholder phone anywhere");
+  check(!html.includes("hello@lakeerieironroots.com"), "no placeholder email anywhere");
   check(!ld.includes("GeoCoordinates"), "no guessed coordinates in structured data");
   check(!html.includes("certified-organic"), "no unsubstantiated certification claim");
   await ctx.close();

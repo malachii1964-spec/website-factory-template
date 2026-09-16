@@ -5,53 +5,89 @@ import {
   formattedPhone,
   fullAddress,
   hasRealAddress,
+  hasRealContactDetails,
   hasRealEmail,
   hasRealPhone,
+  isRealEmail,
+  isRealPhone,
+  isRealStreet,
 } from "@/lib/farm";
 
 /**
  * These guards decide what the site publishes about a real business — to
  * customers and, through the structured data, to Google. They started as a
- * single all-or-nothing flag that was honoured on one page, which shipped a
- * fictitious street address on every route. They are load-bearing now, so
- * they are tested.
+ * single all-or-nothing flag honoured on one page, which shipped a fictitious
+ * street address on every route. They are load-bearing, so they are tested
+ * against placeholders AND real values rather than only against whatever
+ * happens to be in the file today.
  */
 
-describe("the publish guards", () => {
-  it("recognises the owner's confirmed address as real", () => {
+describe("isRealStreet", () => {
+  it("rejects the placeholder shape", () => {
+    expect(isRealStreet("0000 Route 20")).toBe(false);
+    expect(isRealStreet("   0000 Some Road ")).toBe(false);
+    expect(isRealStreet("")).toBe(false);
+  });
+
+  it("accepts a real street, including one that starts with a zero-ish number", () => {
+    expect(isRealStreet("154 North Portage St")).toBe(true);
+    // Guard against an over-eager rule: "00" is not the placeholder sentinel.
+    expect(isRealStreet("00 Lakeshore Dr")).toBe(true);
+  });
+});
+
+describe("isRealPhone", () => {
+  it("rejects the placeholder and anything not ten digits", () => {
+    expect(isRealPhone("+1-716-000-0000")).toBe(false);
+    expect(isRealPhone("716-555-123")).toBe(false);
+    expect(isRealPhone("")).toBe(false);
+  });
+
+  it("accepts a real number in any of the ways a human writes one", () => {
+    for (const written of [
+      "+1-716-753-0404",
+      "716.753.0404",
+      "(716) 753-0404",
+      "7167530404",
+    ]) {
+      expect(isRealPhone(written), written).toBe(true);
+    }
+  });
+});
+
+describe("isRealEmail", () => {
+  it("rejects the placeholder and malformed addresses", () => {
+    expect(isRealEmail("hello@lakeerieironroots.com")).toBe(false);
+    expect(isRealEmail("not-an-email")).toBe(false);
+    expect(isRealEmail("two@at@signs.com")).toBe(false);
+  });
+
+  it("accepts a real address", () => {
+    expect(isRealEmail("malachii1964@gmail.com")).toBe(true);
+    expect(isRealEmail("stand@lakeerieironroots.com")).toBe(true);
+  });
+});
+
+describe("what the site currently publishes", () => {
+  it("has the owner's confirmed address, phone and email", () => {
     expect(hasRealAddress()).toBe(true);
-    expect(FARM.address.street).toBe("154 North Portage St");
+    expect(hasRealPhone()).toBe(true);
+    expect(hasRealEmail()).toBe(true);
+    expect(hasRealContactDetails()).toBe(true);
   });
 
-  it("still withholds the placeholder phone and email", () => {
-    // If either of these starts passing, the real value went in — update the
-    // test with the real value rather than deleting the assertion.
-    expect(hasRealPhone()).toBe(false);
-    expect(hasRealEmail()).toBe(false);
+  it("stores the phone in E.164, so a tel: link dials from anywhere", () => {
+    expect(FARM.phone).toMatch(/^\+1-\d{3}-\d{3}-\d{4}$/);
   });
 
-  it("is per-field, so one real fact is not blocked by a missing one", () => {
-    // The bug this pins: a combined flag meant supplying the street address
-    // did nothing, because the phone number was not in yet.
-    expect(hasRealAddress()).not.toBe(hasRealPhone());
+  it("displays the phone the way a person reads it", () => {
+    expect(formattedPhone()).toBe("(716) 753-0404");
   });
 });
 
 describe("fullAddress", () => {
   it("reads as a single line a map can resolve", () => {
     expect(fullAddress()).toBe("154 North Portage St, Westfield, NY 14787");
-  });
-
-  it("contains every part of the postal address", () => {
-    const line = fullAddress();
-    for (const part of [
-      FARM.address.street,
-      FARM.address.locality,
-      FARM.address.region,
-      FARM.address.postalCode,
-    ]) {
-      expect(line).toContain(part);
-    }
   });
 });
 
@@ -68,12 +104,6 @@ describe("geo", () => {
     // A guessed lat/long for a real street address is the "pin on a
     // stranger's driveway" failure, and it overrides the correct address.
     expect(FARM.geo).toBeNull();
-  });
-});
-
-describe("formattedPhone", () => {
-  it("formats a ten-digit US number", () => {
-    expect(formattedPhone()).toMatch(/^\(\d{3}\) \d{3}-\d{4}$/);
   });
 });
 

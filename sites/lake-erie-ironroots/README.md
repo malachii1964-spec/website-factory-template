@@ -15,22 +15,30 @@ I do not know your address, your phone number, or your hours, so the site is
 running on placeholders. It is built so this is **one file, one time**.
 
 Open **`src/lib/farm.ts`**. Every line that needs you is marked `NEEDS OWNER`.
-Three are confirmed and already live. The rest are still placeholders:
+Five are confirmed and live. **Two are still guesses** — your real opening
+days and hours are the last thing the site needs from you.
 
-| What | Looks like now |
+| What | Status |
 |---|---|
-| ~~Street address~~ | **154 North Portage St — confirmed, live on the site** |
-| ~~Town, Zip~~ | **Westfield NY 14787 — confirmed** |
-| Phone | `+1-716-000-0000` |
-| Email | `hello@lakeerieironroots.com` |
-| Map coordinates | Not needed — the map reads your street address |
-| Stand hours | Thu/Fri 10–6, Sat 9–5, Sun 10–3 |
-| Open season | May through November |
+| Street address | **154 North Portage St — live** |
+| Town, Zip | **Westfield NY 14787 — live** |
+| Phone | **(716) 753-0404 — live, tap-to-call everywhere** |
+| Email | **malachii1964@gmail.com — live** |
+| Established | **2024 — live** |
+| Map coordinates | Not needed. The map reads your street address. |
+| **Stand hours** | **Still a guess: Thu/Fri 10–6, Sat 9–5, Sun 10–3** |
+| **Open season** | **Still a guess: May through November** |
 
-Each fact publishes the moment it is real, one at a time. Your address is live
-now — it is in the footer, on the Visit page, in the map, and in the structured
-data Google reads. The phone and email are still withheld, so there is no
-tap-to-call button and nothing fake in the markup. That is on purpose. A pin on the wrong road sends a
+Each fact publishes the moment it is real, one at a time. Your address, phone
+and email are all live now — in the footer, on the Visit page, on the printable
+sign, and in the structured data Google reads. There is a tap-to-call button in
+the header of every page.
+
+**One thing worth knowing about the email.** `malachii1964@gmail.com` is a
+personal inbox and it is now on a public page, where address-harvesting bots
+will find it. That is a normal trade for a small farm and it is your call — but
+if the spam ever gets tiresome, set up `stand@lakeerieironroots.com` to forward
+to it, change one line in `src/lib/farm.ts`, and nothing else has to move. That is on purpose. A pin on the wrong road sends a
 customer to a stranger's driveway, and a search result claiming you trade at
 an address you do not occupy outlives the mistake. Fill them in and every one
 of those turns itself on; that switch-on has been tested end to end.

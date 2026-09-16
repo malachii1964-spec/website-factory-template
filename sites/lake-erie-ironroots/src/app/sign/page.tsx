@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { farmToday } from "@/lib/clock";
-import { establishedLine, FARM } from "@/lib/farm";
+import {
+  establishedLine,
+  FARM,
+  formattedPhone,
+  hasRealPhone,
+} from "@/lib/farm";
 import { comingSoon, readyOn } from "@/lib/season";
 
 export const revalidate = 300;
@@ -109,8 +114,10 @@ export default function SignPage() {
 
         <footer className="sign-foot">
           <span>
-            {FARM.address.locality}, {FARM.county}, {FARM.state}
+            {FARM.address.street}, {FARM.address.locality} {FARM.address.region}
           </span>
+          {/* Somebody will photograph this sign. Give them a way to call. */}
+          {hasRealPhone() && <span>{formattedPhone()}</span>}
           <span>{establishedLine()}</span>
         </footer>
       </article>
