@@ -5,6 +5,7 @@ import { RootTrunk } from "@/components/root";
 import { humanTime } from "@/components/site-footer";
 import {
   FARM,
+  formatDays,
   formattedPhone,
   fullAddress,
   hasRealAddress,
@@ -73,7 +74,7 @@ export default function VisitPage() {
                     key={h.days.join()}
                     className="flex justify-between gap-6 border-b border-[#2A2118]/15 py-3"
                   >
-                    <dt className="text-[#2A2118]">{h.days.join(" & ")}</dt>
+                    <dt className="text-[#2A2118]">{formatDays(h.days)}</dt>
                     <dd className="tabular-nums text-[#4A3B29]">
                       {humanTime(h.opens)} &ndash; {humanTime(h.closes)}
                     </dd>

@@ -4,16 +4,12 @@ import { Wordmark } from "@/components/wordmark";
 import {
   establishedLine,
   FARM,
+  formatDays,
   formattedPhone,
   hasRealAddress,
   hasRealEmail,
   hasRealPhone,
 } from "@/lib/farm";
-
-function joinDays(days: readonly string[]): string {
-  if (days.length === 1) return days[0];
-  return `${days.slice(0, -1).join(", ")} & ${days[days.length - 1]}`;
-}
 
 /** 24h "14:00" to "2pm" — the way hours are actually written on a sign. */
 export function humanTime(t: string): string {
@@ -48,7 +44,7 @@ export function SiteFooter() {
           <dl className="mt-4 space-y-1 text-sm">
             {FARM.hours.map((h) => (
               <div key={h.days.join()} className="flex justify-between gap-6">
-                <dt className="text-parchment/85">{joinDays(h.days)}</dt>
+                <dt className="text-parchment/85">{formatDays(h.days)}</dt>
                 <dd className="tabular-nums text-iron">
                   {humanTime(h.opens)} – {humanTime(h.closes)}
                 </dd>

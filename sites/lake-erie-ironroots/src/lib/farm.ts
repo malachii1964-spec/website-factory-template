@@ -64,16 +64,19 @@ export const FARM = {
   geo: null as { lat: number; lng: number } | null,
 
   /**
-   * Farm-stand hours. NEEDS OWNER — these are a normal seasonal-stand pattern,
-   * not the real ones. `days` uses schema.org day names so the JSON-LD and the
-   * visible hours table can never drift apart.
+   * Confirmed by the owner: Monday to Friday 8-5, Saturday 9-1, closed Sunday.
+   * `days` uses schema.org day names so the JSON-LD and the visible hours
+   * table can never drift apart.
    */
   hours: [
-    { days: ["Thursday", "Friday"], opens: "10:00", closes: "18:00" },
-    { days: ["Saturday"], opens: "09:00", closes: "17:00" },
-    { days: ["Sunday"], opens: "10:00", closes: "15:00" },
+    {
+      days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "08:00",
+      closes: "17:00",
+    },
+    { days: ["Saturday"], opens: "09:00", closes: "13:00" },
   ],
-  /** Months the stand is open at all. NEEDS OWNER. */
+  /** Months the stand is open at all. NEEDS OWNER — still a guess. */
   openSeason: { from: "May", to: "November" },
 } as const;
 
@@ -182,6 +185,58 @@ export function formattedPhone(): string {
   const digits = FARM.phone.replace(/\D/g, "").replace(/^1/, "");
   if (digits.length !== 10) return FARM.phone;
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+/* ------------------------------------------------------ opening hours --- */
+
+const DAY_ORDER = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+] as const;
+
+/**
+ * Print a set of days the way a person writes them on a sign.
+ *
+ * Three components each had their own version of this — `join(" & ")` in two
+ * places and a comma-list in the third — which was fine while the farm opened
+ * two or three days and became "Monday & Tuesday & Wednesday & Thursday &
+ * Friday" the moment it opened five. One formatter, used everywhere.
+ *
+ * Runs of consecutive days collapse to a range; anything else stays a list.
+ */
+export function formatDays(days: readonly string[]): string {
+  const idx = days
+    .map((d) => DAY_ORDER.indexOf(d as (typeof DAY_ORDER)[number]))
+    .filter((i) => i >= 0)
+    .sort((a, b) => a - b);
+  if (idx.length === 0) return "";
+
+  const runs: number[][] = [];
+  for (const i of idx) {
+    const last = runs[runs.length - 1];
+    if (last && i === last[last.length - 1] + 1) last.push(i);
+    else runs.push([i]);
+  }
+
+  const parts = runs.map((run) =>
+    // A run of two is "Monday & Tuesday", not "Monday–Tuesday": a range
+    // reads oddly when it spans a single gap.
+    run.length >= 3
+      ? `${DAY_ORDER[run[0]]}–${DAY_ORDER[run[run.length - 1]]}`
+      : run.map((i) => DAY_ORDER[i]).join(" & "),
+  );
+  if (parts.length === 1) return parts[0];
+  return `${parts.slice(0, -1).join(", ")} & ${parts[parts.length - 1]}`;
+}
+
+/** Every day the farm is open at all, as one span for the hero strip. */
+export function openDaysLine(): string {
+  return formatDays(FARM.hours.flatMap((h) => [...h.days]));
 }
 
 export function establishedLine(): string {

@@ -11,6 +11,8 @@ import {
   isRealEmail,
   isRealPhone,
   isRealStreet,
+  formatDays,
+  openDaysLine,
 } from "@/lib/farm";
 
 /**
@@ -107,7 +109,63 @@ describe("geo", () => {
   });
 });
 
+describe("formatDays", () => {
+  /*
+    Three components each rolled their own version of this. It was fine while
+    the farm opened two or three days, and became "Monday & Tuesday &
+    Wednesday & Thursday & Friday" the moment the owner said Monday to Friday.
+  */
+  it("collapses a run of three or more into a range", () => {
+    expect(
+      formatDays(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]),
+    ).toBe("Monday–Friday");
+  });
+
+  it("leaves one or two days as they are", () => {
+    expect(formatDays(["Saturday"])).toBe("Saturday");
+    // A "range" spanning a single gap reads oddly, so two stays a list.
+    expect(formatDays(["Saturday", "Sunday"])).toBe("Saturday & Sunday");
+  });
+
+  it("keeps separate runs separate", () => {
+    expect(formatDays(["Monday", "Wednesday", "Friday"])).toBe(
+      "Monday, Wednesday & Friday",
+    );
+    expect(
+      formatDays(["Monday", "Tuesday", "Wednesday", "Saturday"]),
+    ).toBe("Monday–Wednesday & Saturday");
+  });
+
+  it("sorts into week order regardless of input order", () => {
+    expect(formatDays(["Friday", "Monday", "Wednesday", "Tuesday", "Thursday"]))
+      .toBe("Monday–Friday");
+  });
+
+  it("returns nothing for nothing, rather than a stray dash", () => {
+    expect(formatDays([])).toBe("");
+  });
+});
+
+describe("openDaysLine", () => {
+  it("spans every day the farm is open", () => {
+    // Derived from FARM.hours, not spliced out of it by index.
+    expect(openDaysLine()).toBe("Monday–Saturday");
+  });
+});
+
 describe("hours", () => {
+  it("matches what the owner confirmed", () => {
+    expect(FARM.hours).toHaveLength(2);
+    expect(FARM.hours[0].days).toHaveLength(5);
+    expect(FARM.hours[0].opens).toBe("08:00");
+    expect(FARM.hours[0].closes).toBe("17:00");
+    expect(FARM.hours[1].days).toEqual(["Saturday"]);
+    expect(FARM.hours[1].opens).toBe("09:00");
+    expect(FARM.hours[1].closes).toBe("13:00");
+    // Sunday was not mentioned, so the farm is closed and says nothing.
+    expect(FARM.hours.flatMap((h) => [...h.days])).not.toContain("Sunday");
+  });
+
   it("uses schema.org day names, so the markup and the table cannot drift", () => {
     const valid = new Set([
       "Monday",

@@ -9,7 +9,9 @@ import { humanTime } from "@/components/site-footer";
 import {
   establishedLine,
   FARM,
+  formatDays,
   hasRealAddress,
+  openDaysLine,
   PILLARS,
   SOIL_HORIZONS,
 } from "@/lib/farm";
@@ -159,9 +161,12 @@ export default function Home() {
           >
             <p className="label text-ember">{frostLine(today)}</p>
             <p className="text-xs text-iron">
+              {/* Derived from the hours themselves. This used to splice the
+                  first and last day out of the array by index, which printed a
+                  wrong range the moment the rows were reordered and had no
+                  test behind it. */}
               Stand open {FARM.openSeason.from}&ndash;{FARM.openSeason.to} ·{" "}
-              {FARM.hours[0].days[0]}&ndash;
-              {FARM.hours[FARM.hours.length - 1].days[0]}
+              {openDaysLine()}
             </p>
             <p className="ml-auto hidden text-xs text-iron sm:block">
               {establishedLine()}
@@ -314,7 +319,7 @@ export default function Home() {
                     key={h.days.join()}
                     className="flex justify-between gap-6 border-b border-[#2A2118]/15 py-3"
                   >
-                    <dt className="text-[#2A2118]">{h.days.join(" & ")}</dt>
+                    <dt className="text-[#2A2118]">{formatDays(h.days)}</dt>
                     <dd className="tabular-nums text-[#4A3B29]">
                       {humanTime(h.opens)} &ndash; {humanTime(h.closes)}
                     </dd>
