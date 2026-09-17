@@ -19,10 +19,21 @@
  * inflates the figure by roughly 25%.
  */
 import { chromium } from "playwright";
+import { existsSync } from "node:fs";
+
+/*
+  This container pins a Chromium build at a known path; a normal machine does
+  not have it. Use the pinned one when it is there and otherwise let Playwright
+  resolve its own browser, so the same script runs here and on the owner's
+  laptop. If neither exists Playwright says so clearly, and the fix is one
+  command: npx playwright install chromium
+*/
+const PINNED = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
+const launchOptions = existsSync(PINNED) ? { executablePath: PINNED } : {};
+
 import { gzipSync } from "node:zlib";
 
 const BASE = process.argv[2] ?? "http://localhost:4800";
-const EXE = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
 
 const BUDGET = { lcp: 2500, cls: 0.1, inp: 200, jsKb: 150 };
 
@@ -32,7 +43,7 @@ const check = (ok, label, detail = "") => {
   console.log(`  ${ok ? "PASS" : "FAIL"}  ${label}${detail ? ` — ${detail}` : ""}`);
 };
 
-const browser = await chromium.launch({ executablePath: EXE });
+const browser = await chromium.launch(launchOptions);
 
 async function measure(path) {
   const ctx = await browser.newContext({

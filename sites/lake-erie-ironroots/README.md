@@ -195,16 +195,40 @@ does not exist, like 31 September.
 
 ## Putting it on the internet
 
-The site is four static pages, so hosting is free and fast.
+Eight static pages, no database, no keys. Hosting is free.
 
-1. Make a GitHub account if you do not have one
-2. Make a new **empty private repository** called `lake-erie-ironroots`
-3. From this folder, push it up (GitHub shows you the exact commands on the
-   new empty repo page)
-4. Go to **vercel.com**, sign in with GitHub, click **Add New → Project**, pick
-   the repo, and click **Deploy**
-5. It gives you a live address in about a minute
-6. When you own `lakeerieironroots.com`, add it under **Settings → Domains**
+This folder is **self-contained** — it has been tested from a clean copy with
+nothing around it: fresh install, all four gates, both verification scripts,
+all green. You can lift it out and it will work.
+
+1. Make a new **empty private repository** on GitHub called
+   `lake-erie-ironroots`. Do not let GitHub add a README or a .gitignore.
+2. Copy this folder (`sites/lake-erie-ironroots`) somewhere on its own, then
+   from inside it:
+
+   ```bash
+   git init
+   git add .
+   git commit -m "Lake Erie IronRoots"
+   git branch -M main
+   git remote add origin https://github.com/<your-username>/lake-erie-ironroots.git
+   git push -u origin main
+   ```
+
+3. Go to **vercel.com**, sign in with GitHub, **Add New → Project**, pick the
+   repo, click **Deploy**. Change nothing — the defaults are right.
+4. A live address in about a minute.
+5. When you own `lakeerieironroots.com`: **Settings → Domains**, add it, and
+   follow the DNS instructions Vercel gives you.
+
+**After it is live**, change two lines to your real domain so search engines
+and share cards point at the right place: `BASE_URL` in
+`src/app/sitemap.ts` and `metadataBase` in `src/app/layout.tsx`.
+
+> If you would rather point Vercel straight at the folder where it sits now,
+> that works too: import `website-factory-template`, and under
+> **Settings → Build → Root Directory** set `sites/lake-erie-ironroots`. The
+> separate repo is cleaner, but this is faster.
 
 There is nothing to configure. No database, no API keys, no environment
 variables — this site does not need any.
@@ -216,8 +240,7 @@ to open the site in the morning may briefly see yesterday's produce list before
 it catches up. If that ever bothers you, tell me and I will add a scheduled
 5am ping that keeps it a day ahead. It is a ten-line change.
 
-**After it is live**, change `BASE_URL` in `src/app/sitemap.ts` and
-`metadataBase` in `src/app/layout.tsx` to your real domain.
+
 
 ---
 

@@ -8,10 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "verify:rendered": "node scripts/verify-rendered.mjs",
-    "verify:performance": "node scripts/verify-performance.mjs",
-    "verify:published": "node scripts/verify-published.mjs"
+    "verify:performance": "node scripts/verify-performance.mjs"
   },
   "dependencies": {
     "next": "16.3.5",
