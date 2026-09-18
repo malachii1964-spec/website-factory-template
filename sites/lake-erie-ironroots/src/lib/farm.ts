@@ -76,31 +76,48 @@ export const FARM = {
     },
     { days: ["Saturday"], opens: "09:00", closes: "13:00" },
   ],
-  /** Months the stand is open at all. NEEDS OWNER — still a guess. */
-  openSeason: { from: "May", to: "November" },
+  /**
+   * Confirmed by the owner 2026-09-17: indoors and outdoors, all year round.
+   *
+   * This was "May through November", which was inferred from a roadside-stand
+   * model that turned out to be the wrong business. It contradicted the hours
+   * the owner had already given — Monday to Friday 8–5 and Saturday 9–1 is a
+   * workshop schedule, not a seasonal one — and it was printed on every page.
+   */
+  yearRound: true,
 } as const;
 
-/** The five pillars, taken verbatim from the brand artwork. */
+/**
+ * The five pillars. The titles are verbatim from the owner's brand artwork; the
+ * bodies are written here.
+ *
+ * Rewritten 2026-09-17, when the owner confirmed the farm runs indoors and
+ * outdoors all year. The previous bodies described a seasonal field operation —
+ * "every bed was planned before it was planted", "the lake sets our calendar" —
+ * which is now only half the business. One of them also claimed this was "the
+ * oldest farmed ground of its kind in the country", a superlative nobody
+ * supplied and nothing supports. It is gone rather than softened.
+ */
 export const PILLARS = [
   {
     id: "purpose",
     title: "Built on Purpose",
-    body: "Every bed on this place was planned before it was planted. We grow what grows well here — on the lake plain, in Chautauqua gravelly loam — and we leave the rest to farms better suited to it.",
+    body: "Nothing here is grown because it fills a shelf. Each crop is chosen for the place it goes — the bench under lights or the ground outside — and anything that would only ever be mediocre in both is left to a farm better suited to it.",
   },
   {
     id: "strength",
     title: "Rooted in Strength",
-    body: "Soil first. We feed the ground with compost and cover crops and let the root system do the work, because a plant that can find its own water and minerals does not need rescuing later.",
+    body: "Soil first, indoors and out. We feed the ground rather than the plant and let the root system do the work, because a root that can find its own water and minerals does not need rescuing later.",
   },
   {
     id: "integrity",
     title: "Guided by Integrity",
-    body: "No synthetic pesticides, no synthetic fertilizers, and no vague words about it. Ask us what went on any bed in any week and we will tell you exactly.",
+    body: "No synthetic pesticides, no synthetic fertilizers, and no vague words about it. Ask what went into any bed or any pot in any week and you will get the actual answer.",
   },
   {
     id: "nature",
     title: "Inspired by Nature",
-    body: "The lake sets our calendar. It holds spring back past the killing frosts and holds autumn open weeks longer than inland ground. We plant to that, not to a catalogue.",
+    body: "Outside, the lake sets the calendar — it holds spring back past the killing frosts and holds autumn open weeks longer than inland ground. Inside, we are not escaping that so much as extending it, on the same soil biology, through the winter.",
   },
   {
     id: "legacy",
@@ -108,7 +125,7 @@ export const PILLARS = [
     // Deliberately no number in this sentence. It used to say "eleven days
     // into our turn", which was wrong the day after it was written and gets
     // wronger every morning with nothing to catch it.
-    body: "This is the oldest farmed ground of its kind in the country, and our turn with it has barely started. We intend to hand it on better than we found it.",
+    body: "Our turn with this ground has barely started. We intend to hand it on better than we found it.",
   },
 ] as const;
 

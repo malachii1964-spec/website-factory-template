@@ -1,8 +1,5 @@
 import Link from "next/link";
-import { RootTrunk } from "@/components/root";
-import { Wordmark } from "@/components/wordmark";
 import {
-  establishedLine,
   FARM,
   formatDays,
   formattedPhone,
@@ -11,7 +8,7 @@ import {
   hasRealPhone,
 } from "@/lib/farm";
 
-/** 24h "14:00" to "2pm" — the way hours are actually written on a sign. */
+/** "08:00" → "8am", "13:00" → "1pm", "09:30" → "9:30am". */
 export function humanTime(t: string): string {
   const [h, m] = t.split(":").map(Number);
   const suffix = h < 12 ? "am" : "pm";
@@ -19,112 +16,81 @@ export function humanTime(t: string): string {
   return m === 0 ? `${hour}${suffix}` : `${hour}:${String(m).padStart(2, "0")}${suffix}`;
 }
 
-export function SiteFooter() {
+/**
+ * The colophon — where a printed sheet says who made it and how to reach them.
+ *
+ * Each fact is published only once it is true. These were gated behind one
+ * combined flag, so the day the owner supplied a real street address the block
+ * still showed nothing because the phone number was not in yet.
+ */
+export function Colophon() {
   const address = hasRealAddress();
   const phone = hasRealPhone();
   const email = hasRealEmail();
 
   return (
-    <footer className="relative z-40 border-t border-[var(--hairline)] bg-shale">
-      {/* The root runs to the bottom of the page, not to the last section. */}
-      <div className="pointer-events-none absolute inset-y-0 inset-x-0">
-        <div className="relative mx-auto h-full w-full max-w-6xl">
-          <RootTrunk />
-        </div>
-      </div>
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 md:grid-cols-3 md:px-8">
+    <footer className="sheet band-close rule-section">
+      <div className="grid gap-10 pt-10 md:grid-cols-3 md:gap-14">
         <div>
-          <Wordmark />
-          <p className="display mt-4 text-lg text-parchment/80">{FARM.tagline}</p>
-          <p className="label mt-4 text-iron">{establishedLine()}</p>
-        </div>
-
-        <div>
-          <h2 className="label">The stand</h2>
-          <dl className="mt-4 space-y-1 text-sm">
+          <h2 className="fig text-ink">Hours</h2>
+          <dl className="mt-3">
             {FARM.hours.map((h) => (
-              <div key={h.days.join()} className="flex justify-between gap-6">
-                <dt className="text-parchment/85">{formatDays(h.days)}</dt>
-                <dd className="tabular-nums text-iron">
-                  {humanTime(h.opens)} – {humanTime(h.closes)}
+              <div key={h.days.join()} className="flex justify-between gap-6 py-1">
+                <dt className="text-ink-2">{formatDays(h.days)}</dt>
+                <dd className="fig text-ink">
+                  {humanTime(h.opens)} &ndash; {humanTime(h.closes)}
                 </dd>
               </div>
             ))}
           </dl>
-          <p className="mt-4 text-sm text-iron">
-            Open {FARM.openSeason.from} through {FARM.openSeason.to}. Closed once
-            the ground freezes.
+          <p className="mt-3 text-sm text-ink-2">
+            {FARM.yearRound
+              ? "Open all year. The bench runs through the winter."
+              : "Seasonal hours."}
           </p>
-          {/* For the farm, not for customers — but it belongs on the site
-              rather than in a bookmark only one person has. */}
-          <Link
-            href="/sign"
-            className="label mt-5 inline-block text-iron transition-colors hover:text-gold-lit"
-          >
-            Print today&rsquo;s sign &rarr;
-          </Link>
         </div>
 
         <div>
-          <h2 className="label">Find us</h2>
-          {/* Nothing here is published until it is real. A placeholder street
-              and a dead tel: link in the chrome of every page is worse than a
-              line telling the truth. */}
-          {address || phone || email ? (
-            <address className="mt-4 space-y-2 text-sm not-italic text-parchment/85">
-              {address && (
-                <p>
-                  {FARM.address.street}
-                  <br />
-                  {FARM.address.locality}, {FARM.address.region}{" "}
-                  {FARM.address.postalCode}
-                </p>
-              )}
-              {phone && (
-                <p>
-                  <a
-                    className="text-gold transition-colors hover:text-gold-lit"
-                    href={`tel:${FARM.phone}`}
-                  >
-                    {formattedPhone()}
-                  </a>
-                </p>
-              )}
-              {email && (
-                <p>
-                  <a
-                    className="text-gold transition-colors hover:text-gold-lit"
-                    href={`mailto:${FARM.email}`}
-                  >
-                    {FARM.email}
-                  </a>
-                </p>
-              )}
+          <h2 className="fig text-ink">Where</h2>
+          {address ? (
+            <address className="mt-3 not-italic text-ink-2">
+              {FARM.address.street}
+              <br />
+              {FARM.address.locality}, {FARM.address.region} {FARM.address.postalCode}
             </address>
           ) : (
-            <p className="mt-4 text-sm text-iron">
-              {FARM.county}, {FARM.state}. The stand&rsquo;s address and phone
-              number go up here before opening day.
+            <p className="mt-3 text-ink-2">
+              {FARM.address.locality}, {FARM.county}.
             </p>
           )}
-          <Link
-            href="/visit"
-            className="label mt-5 inline-block text-gold transition-colors hover:text-gold-lit"
-          >
-            Visit the stand &rarr;
-          </Link>
+        </div>
+
+        <div>
+          <h2 className="fig text-ink">Reach us</h2>
+          <div className="mt-3 space-y-1">
+            {phone && (
+              <a href={`tel:${FARM.phone}`} className="link block">
+                {formattedPhone()}
+              </a>
+            )}
+            {email && (
+              <a href={`mailto:${FARM.email}`} className="link block">
+                {FARM.email}
+              </a>
+            )}
+            {!phone && !email && (
+              <p className="text-ink-2">Details go up before opening day.</p>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="border-t border-[var(--hairline)]">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-5 text-xs text-iron md:px-8">
-          <p>
-            © {new Date().getFullYear()} {FARM.name} · {FARM.county},{" "}
-            {FARM.state}
-          </p>
-          <p className="label text-iron">Rooted in strength</p>
-        </div>
-      </div>
+      <p className="fig mt-12 text-ink-2">
+        {FARM.name} &middot; {FARM.county}, {FARM.state} &middot;{" "}
+        <Link href="/sign" className="link">
+          Print today&rsquo;s sheet
+        </Link>
+      </p>
     </footer>
   );
 }

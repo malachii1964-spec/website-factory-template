@@ -1,0 +1,171 @@
+{
+  "schema_version": "1.0",
+  "experience_thesis": "The site is the farm's open record — a printed agricultural ledger you can read to know exactly what is growing, where, and what was done to it, which is a thing no competitor publishes and a thing that cannot be faked.",
+  "brand": {
+    "promise": "Built on purpose. Rooted in strength. Living soil inside engineered hardware, and an honest account of both.",
+    "tone": ["plainspoken", "exact", "worked-in", "unhurried"],
+    "anti_tone": [
+      "artisanal farm-stand nostalgia",
+      "premium dark luxury",
+      "startup SaaS",
+      "wellness brand",
+      "anything that implies a red barn and a cornfield"
+    ],
+    "trust_posture": "Every crop shown is one the farm actually grows; anything not yet confirmed is absent rather than approximated. The record is dated.",
+    "audience_sophistication": "Local buyers who want to know where food came from, and chefs who need to know what is cuttable this week."
+  },
+  "composition": {
+    "layout_model": "A printed record. Ruled columns, a wide outer margin like a bound page, headings set as if they were struck rather than styled.",
+    "grid": "Single measured text column on phones; on desktop a narrow index margin beside a wide record body. Never a 12-column card grid.",
+    "density": "variable",
+    "rhythm": "Dense in the record itself — rows tight, the way a real book is — with long exhales between registers. Deliberately uneven: no two sections share a padding value.",
+    "focal_path": [
+      "What is cuttable right now",
+      "Where it is grown — bench or field",
+      "How to get it",
+      "What was done to the soil"
+    ],
+    "dominant_mass": "The record table. It is the biggest, densest, blackest thing on the page and nothing competes with it.",
+    "negative_space": "Wide outer margins, as on a printed page. Space is the binding, not decoration.",
+    "intensity_map": [
+      { "area": "Current record table", "level": 5, "purpose": "The signature — the thing to remember" },
+      { "area": "Masthead", "level": 2, "purpose": "Identify and date the page" },
+      { "area": "Register headings", "level": 2, "purpose": "Separate indoor bench from outdoor ground" },
+      { "area": "Crop notes", "level": 1, "purpose": "Read without effort" },
+      { "area": "Visit and contact", "level": 1, "purpose": "Answer a question, get out of the way" },
+      { "area": "Soil cross-section drawing", "level": 3, "purpose": "The one illustrated moment" }
+    ]
+  },
+  "color": {
+    "background": ["#F4F1EA", "#EAE5DA"],
+    "surface": ["#F4F1EA"],
+    "text": ["#1B1916", "#514A3F"],
+    "primary_accent": "#9E3B1D",
+    "secondary_signal": null,
+    "semantic": {
+      "cuttable": "#9E3B1D",
+      "resting": "#514A3F",
+      "rule": "#C6BDAB",
+      "focus": "#1B1916"
+    },
+    "contrast_strategy": "Two inks on paper — near-black for everything, iron-oxide red used only for what is cuttable today, the way a ledger keeps one red pen. Red is never decorative and never used twice on a line.",
+    "glow_policy": "None. There is no glow anywhere on this site. Paper does not glow."
+  },
+  "typography": {
+    "display_voice": "Old-style reading serif at large size — authority from the letterforms, not from weight or contrast. Explicitly not a high-contrast display serif, which is the generated default.",
+    "body_voice": "The same serif at reading size, set long and generous.",
+    "technical_voice": "Monospace for every date, quantity, week number and column in the record — the numbers are the content, so they get their own voice and they align.",
+    "families_or_categories": ["old-style variable serif (Newsreader)", "monospace (IBM Plex Mono)"],
+    "scale": "Modest. The record table's own type is nearly the same size as body text, because a ledger does not shout its rows.",
+    "line_length": "62–72 characters for prose; the record is tabular and ignores measure.",
+    "variable_font_strategy": "Two families only, self-hosted, subset, weights trimmed to what is used. No third family."
+  },
+  "spacing_and_shape": {
+    "spacing_scale": [4, 8, 12, 16, 24, 36, 56, 88, 136],
+    "section_rhythm": "Deliberately unequal. The record is tight against its heading; the registers are separated by a full exhale. Any two adjacent sections sharing a vertical padding value is a defect.",
+    "radii": ["0"],
+    "border_language": "Horizontal rules only, hairline, in rule-grey. No boxes, no panels, no cards, no rounded corners anywhere. Vertical separation comes from rules and space."
+  },
+  "material": {
+    "surface_language": "Paper. One continuous sheet — the page does not stack surfaces at different elevations.",
+    "light": "Flat and even, as on a printed page under a window. There is no light source in this design.",
+    "depth": "None. Everything sits on the same plane. Depth is expressed by ink weight, not by shadow.",
+    "texture": "A very faint paper tooth at low opacity, never behind body text.",
+    "transparency_policy": "None. No translucency, no backdrop blur, anywhere.",
+    "shadow_policy": "No shadows. Not on hover, not on focus, not on anything."
+  },
+  "imagery": {
+    "photography": "None, by decision, until the room is running and the owner supplies real photographs. The composition has no photographic slots, so nothing reads as missing. When real photographs exist they enter as a separate plate section, not as a hero.",
+    "illustration": "Hand-authored SVG in the manner of an agricultural bulletin figure: the AutoPot cutaway, the living-soil column, the soil food web. Line work only, ink on paper, labelled and captioned like a figure. Drawings declare themselves as drawings and never imply they depict this specific room.",
+    "icons": "Almost none. Where a mark is needed it is typographic — a dagger, a rule, a bullet.",
+    "three_d": null,
+    "maps": "A text address and one link out. No embedded interactive map on the front page and no map-shaped placeholder ever.",
+    "data_visualization": "The record table is the data visualization and it is a table, because the reader's job is to look up a row. No timelines, no bars, no Gantt-shaped rows, no charts of things that are not quantities.",
+    "asset_provenance_rule": "No generated photographic imagery, ever. No stock photograph of someone else's grow presented as this farm. Every drawing is authored in-repo and every photograph is the owner's own."
+  },
+  "motion": {
+    "purpose": ["confirm an action", "show that a row changed"],
+    "tempo": "Almost none. Under 150ms where it exists.",
+    "grammar": {
+      "link": "underline thickens on hover",
+      "focus": "solid ink outline, no fade",
+      "row_change": "no animation — the date stamp carries the change"
+    },
+    "scroll_policy": "Standard scrolling only. No scroll-driven animation, no pinning, no parallax, no reveal-on-scroll. Content is present in the document from the first paint.",
+    "pointer_policy": "No element responds to cursor position. Nothing tilts, follows, or glows under the pointer.",
+    "sound_policy": "None.",
+    "reduced_motion": "There is nothing to reduce. The page is identical with prefers-reduced-motion set, which is the point."
+  },
+  "responsive": {
+    "mobile_composition": "The record first, full width, rules running edge to edge with a 16px gutter. The masthead compresses to one line. Nothing is hidden behind a disclosure that matters.",
+    "desktop_expansion": "A narrow index margin appears at the left carrying the register names and the date; the record body widens but the prose measure does not. Desktop is not the mobile layout stretched.",
+    "content_extremes": [
+      "no crops cuttable at all — the honest empty state, which will be the state at launch",
+      "one crop only",
+      "every crop cuttable at once",
+      "a crop name far longer than the column",
+      "a note of three sentences",
+      "the room not yet running",
+      "200% browser zoom"
+    ],
+    "input_modes": ["keyboard", "touch", "pointer", "screen reader"],
+    "zoom_and_reflow": "The record reflows to stacked rows before it scrolls horizontally. At 200% zoom and 320px width there is no horizontal page scroll."
+  },
+  "render": {
+    "baseline_tier": "T0",
+    "maximum_tier": "T1",
+    "activation_reason": "The entire experience is text, rules and a small number of inline SVG figures. There is no case for motion, canvas or GPU work, and reaching for one would contradict the direction.",
+    "budgets": {
+      "javascript": "No client JavaScript on any content route. Any island must be justified in writing first.",
+      "fonts": "Two self-hosted families, subset, under 90KB total",
+      "images": "No raster images on content routes until the owner supplies photographs",
+      "lcp": "Under 1.5s on throttled mobile — the LCP element is text"
+    },
+    "degradation_order": ["remove the paper tooth texture", "drop to system serif"],
+    "fallback": "The page is already its own fallback. With CSS disabled it is a readable document."
+  },
+  "accessibility": {
+    "contrast": "WCAG 2.2 AA minimum. Near-black on warm paper clears AAA for body text; the iron red is verified against paper for both normal and large text before use.",
+    "semantic_equivalent": "The record is a real HTML table with a caption and scope attributes. Every figure has a text description of what it shows. Nothing is communicated by color alone — cuttable rows are marked in words as well as in red.",
+    "motion_control": "Not applicable by design; there is no nonessential motion to stop.",
+    "focus_and_input": "Solid two-pixel ink outline with offset, visible on paper, never removed. Full keyboard operation. Touch targets at least 44px.",
+    "transparency_fallback": null
+  },
+  "anti_patterns": [
+    "uniform vertical padding across sections — the single loudest machine tell",
+    "any dark background",
+    "gradient or chrome fill on text",
+    "uppercase letter-spaced micro-labels as section eyebrows",
+    "cards, panels, boxes, rounded corners, or borders that enclose on four sides",
+    "glass, blur, glow, or drop shadow of any kind",
+    "a hero image slot, or any layout shaped for a photograph that does not exist",
+    "dashed placeholder rectangles or 'coming soon' boxes",
+    "timeline, Gantt or progress-bar treatments of non-quantities",
+    "an invented signature motif that cannot be explained in one sentence about the business",
+    "rendered copy that names a file, framework or variable",
+    "publishing any crop the owner has not confirmed growing",
+    "scroll-driven animation or reveal-on-scroll",
+    "centering everything"
+  ],
+  "reference_sources": [
+    {
+      "source": "Printed agricultural extension bulletins and seed catalogues",
+      "take": [
+        "ruled record tables as the dominant element",
+        "figure-and-caption discipline for drawings",
+        "wide outer margin",
+        "two-ink economy"
+      ],
+      "avoid": [
+        "period pastiche or fake aging",
+        "decorative woodcut clip art",
+        "imitating any specific publication's masthead or trade dress"
+      ]
+    },
+    {
+      "source": "Owner's supplied IronRoots brand artwork",
+      "take": ["the wordmark lockup", "the established-2024 line", "the stated pillars", "iron-oxide red"],
+      "avoid": ["reproducing the artwork as a hero image", "inventing additional marks in its style"]
+    }
+  ]
+}

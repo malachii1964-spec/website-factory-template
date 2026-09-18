@@ -1,26 +1,32 @@
 import type { Metadata } from "next";
-import { Archivo, Bodoni_Moda } from "next/font/google";
-import { RootTrunk } from "@/components/root";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { IBM_Plex_Mono, Newsreader } from "next/font/google";
+import { Colophon } from "@/components/site-footer";
+import { Masthead } from "@/components/site-header";
 import { FARM } from "@/lib/farm";
 import "./globals.css";
 
 /*
-  Two families, four weights of real range, self-hosted by next/font.
-  Bodoni Moda is the engraved plate — heavy stems, razor hairlines, which is
-  the beveled metal of the wordmark. Archivo is the industrial counterweight
-  and the brand board's own letterspaced caps.
+  Two families, self-hosted by next/font.
+
+  Newsreader is an old-style reading serif with optical sizing — authority from
+  the letterforms rather than from weight or stroke contrast. It is deliberately
+  not Playfair, Cormorant or Bodoni: high-contrast display serifs are the face a
+  model reaches for when no direction has been chosen, and one of them was on the
+  build this replaced.
+
+  Plex Mono carries every date, quantity and column in the record. The numbers
+  are the content here, so they get their own voice and they align.
 */
-const bodoni = Bodoni_Moda({
-  variable: "--font-bodoni",
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
   subsets: ["latin"],
-  weight: ["500", "600"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const archivo = Archivo({
-  variable: "--font-archivo",
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
@@ -29,11 +35,11 @@ const archivo = Archivo({
 export const metadata: Metadata = {
   metadataBase: new URL("https://lakeerieironroots.com"),
   title: {
-    default: `${FARM.name} — Organic fruit and vegetables, ${FARM.county} NY`,
+    default: `${FARM.name} — Organic growing, ${FARM.county} NY`,
     template: `%s — ${FARM.name}`,
   },
   description:
-    "An organic fruit and vegetable farm on the Lake Erie plain in Chautauqua County, New York. See what is ready at the stand today.",
+    "An organic farm in Westfield, Chautauqua County, New York. Living soil indoors and outdoors, all year round. Read the record of what is growing.",
   openGraph: {
     type: "website",
     siteName: FARM.name,
@@ -46,34 +52,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${bodoni.variable} ${archivo.variable} h-full antialiased`}
+      className={`${newsreader.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <a
           href="#main"
-          className="label sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:bg-shale focus:px-4 focus:py-3"
+          className="fig sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:bg-paper focus:px-4 focus:py-3 focus:outline focus:outline-2 focus:outline-ink"
         >
           Skip to content
         </a>
-        <SiteHeader />
-        {/*
-          The trunk lives here, once, spanning the whole document — not in each
-          page and not pinned to the viewport. Sections grow their own branches
-          off it (see components/root.tsx).
-        */}
-        <main id="main" className="descent relative flex-1">
-          <div
-            aria-hidden="true"
-            data-root-line
-            className="pointer-events-none absolute inset-y-0 inset-x-0"
-          >
-            <div className="relative mx-auto h-full w-full max-w-6xl">
-              <RootTrunk />
-            </div>
-          </div>
+        <Masthead />
+        <main id="main" className="flex-1">
           {children}
         </main>
-        <SiteFooter />
+        <Colophon />
       </body>
     </html>
   );

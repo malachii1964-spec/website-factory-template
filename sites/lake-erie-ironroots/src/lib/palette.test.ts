@@ -1,163 +1,119 @@
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 /**
- * Contrast is a design decision that rots silently. Somebody nudges a grey a
- * shade darker because it "looks better" and small text quietly drops under
- * AA for everyone who is not looking at it on a calibrated monitor in a dark
- * room.
+ * Contrast, checked against the stylesheet rather than against a copy of the
+ * palette kept in the test. If a token is edited in globals.css this reads the
+ * new value and fails there, instead of passing against a stale duplicate.
  *
- * These tests read the real tokens out of globals.css rather than repeating
- * the hex values here, so there is exactly one source of truth and the test
- * cannot drift away from what the site actually ships.
+ * The art direction puts two inks on paper and allows exactly one accent. These
+ * tests exist so that "one accent" cannot quietly become "an accent that is
+ * unreadable at body size", which is the usual way a warm brand red ends up
+ * failing AA on a warm background.
  */
 
-const CSS = readFileSync(
-  resolve(import.meta.dirname, "../app/globals.css"),
-  "utf8",
-);
+const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
 
 function token(name: string): string {
-  const m = CSS.match(new RegExp(`--color-${name}:\\s*(#[0-9a-fA-F]{6})`));
+  const m = css.match(new RegExp(`--color-${name}:\\s*(#[0-9a-fA-F]{6})`));
   if (!m) throw new Error(`--color-${name} is not defined in globals.css`);
   return m[1];
 }
 
-function srgbToLinear(c: number): number {
-  const s = c / 255;
-  return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+function relativeLuminance(hex: string): number {
+  const v = [1, 3, 5].map((i) => {
+    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
 }
 
-function luminance(hex: string): number {
-  const n = parseInt(hex.slice(1), 16);
-  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-  return (
-    0.2126 * srgbToLinear(r) +
-    0.7152 * srgbToLinear(g) +
-    0.0722 * srgbToLinear(b)
-  );
+function contrast(a: string, b: string): number {
+  const [x, y] = [relativeLuminance(a), relativeLuminance(b)];
+  return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
 }
 
-/** Composite `fg` at `alpha` over `bg`, the way the browser does. */
-function mix(fg: string, bg: string, alpha: number): string {
-  const parse = (h: string) => {
-    const n = parseInt(h.slice(1), 16);
-    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-  };
-  const [fr, fg_, fb] = parse(fg);
-  const [br, bg_, bb] = parse(bg);
-  const c = (f: number, b: number) => Math.round(f * alpha + b * (1 - alpha));
-  return `#${[c(fr, br), c(fg_, bg_), c(fb, bb)]
-    .map((v) => v.toString(16).padStart(2, "0"))
-    .join("")}`;
-}
+const PAPER = ["paper", "paper-2"] as const;
 
-export function contrast(a: string, b: string): number {
-  const [x, y] = [luminance(a), luminance(b)];
-  const [hi, lo] = x > y ? [x, y] : [y, x];
-  return (hi + 0.05) / (lo + 0.05);
-}
-
-const AA_NORMAL = 4.5;
-const AA_LARGE = 3;
-
-describe("contrast math", () => {
-  it("matches the known reference values", () => {
-    expect(contrast("#FFFFFF", "#000000")).toBeCloseTo(21, 1);
-    expect(contrast("#777777", "#FFFFFF")).toBeCloseTo(4.48, 1);
-  });
-});
-
-describe("dark ground — every text colour used on --pier", () => {
-  const pier = () => token("pier");
-
-  it("passes AA for body text", () => {
-    expect(contrast(token("iron"), pier())).toBeGreaterThanOrEqual(AA_NORMAL);
-  });
-
-  it("passes AA for the gold labels", () => {
-    expect(contrast(token("gold"), pier())).toBeGreaterThanOrEqual(AA_NORMAL);
-  });
-
-  it("passes AA for parchment headings", () => {
-    expect(contrast(token("parchment"), pier())).toBeGreaterThanOrEqual(
-      AA_NORMAL,
-    );
-  });
-
-  it("passes AA for the ember accent", () => {
-    // --ember carries meaning ("ready now"), so it has to be readable as text
-    // and not only as a decorative fill.
-    expect(contrast(token("ember"), pier())).toBeGreaterThanOrEqual(AA_NORMAL);
-  });
-
-  it("passes AA for lit gold on the raised shale surface", () => {
-    expect(contrast(token("gold-lit"), token("shale"))).toBeGreaterThanOrEqual(
-      AA_NORMAL,
-    );
-  });
-});
-
-describe("the ember button", () => {
-  it("keeps its label readable against the ember fill", () => {
-    expect(contrast(token("pier"), token("ember"))).toBeGreaterThanOrEqual(
-      AA_LARGE,
-    );
-  });
-});
-
-describe("parchment band — the one inverted section", () => {
-  const parchment = () => token("parchment");
-
-  it("passes AA for its body text", () => {
-    expect(contrast("#4A3B29", parchment())).toBeGreaterThanOrEqual(AA_NORMAL);
-  });
-
-  it("passes AA for its headings", () => {
-    expect(contrast("#2A2118", parchment())).toBeGreaterThanOrEqual(AA_NORMAL);
-  });
-
-  it("passes AA for its gold labels", () => {
-    // Plain --gold is too light on parchment, which is why the band uses a
-    // darker burnished tone. This test is what stops someone "simplifying" it
-    // back to the shared token.
-    expect(contrast("#8A5F18", parchment())).toBeGreaterThanOrEqual(AA_NORMAL);
-    expect(contrast(token("gold"), parchment())).toBeLessThan(AA_NORMAL);
-  });
-});
-
-describe("token hygiene", () => {
-  it("defines every colour the design plan names", () => {
-    for (const name of [
-      "pier",
-      "shale",
-      "iron",
-      "gold",
-      "gold-lit",
-      "ember",
-      "ironroot",
-      "parchment",
-    ]) {
-      expect(() => token(name)).not.toThrow();
+describe("text on paper", () => {
+  it("clears AAA for body text in both inks, on both paper tones", () => {
+    for (const bg of PAPER) {
+      for (const fg of ["ink", "ink-2"]) {
+        const ratio = contrast(token(fg), token(bg));
+        expect(ratio, `${fg} on ${bg} = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(7);
+      }
     }
   });
 
-  it("keeps a ready bar clearly separated from an off-season bar", () => {
-    /*
-      The pair that matters on the Season Rule is not --ember against --gold.
-      It is --ember against what an off-season bar actually renders as: gold
-      mixed 34% into --pier. Comparing the raw tokens says 1.23 and looks
-      alarming; comparing what is actually on screen is the real test.
+  it("clears AA for the one accent, which is used at body size in the record", () => {
+    for (const bg of PAPER) {
+      const ratio = contrast(token("iron"), token(bg));
+      expect(ratio, `iron on ${bg} = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+});
 
-      The drawing must not rely on colour alone either. It does not: each row
-      carries visually-hidden text naming the crop's window and whether it is
-      ready today. An earlier version of this comment claimed an "ember dot"
-      in the chart that was never there — a comment justifying a weak
-      assertion by describing a mitigation that did not exist.
-    */
-    const ready = token("ember");
-    const offSeason = mix(token("gold"), token("pier"), 0.34);
-    expect(contrast(ready, offSeason)).toBeGreaterThan(2);
+describe("the palette stays two inks and one accent", () => {
+  it("defines no colour outside the agreed set", () => {
+    const defined = [...css.matchAll(/--color-([a-z0-9-]+):/g)].map((m) => m[1]);
+    expect(new Set(defined)).toEqual(
+      new Set(["paper", "paper-2", "ink", "ink-2", "iron", "rule", "rule-hair"]),
+    );
+  });
+
+  it("has no dark background token", () => {
+    // The direction forbids a dark surface anywhere. A near-black background
+    // token is how that decision would get quietly reversed.
+    for (const name of ["paper", "paper-2"]) {
+      expect(relativeLuminance(token(name))).toBeGreaterThan(0.6);
+    }
+  });
+});
+
+describe("the stylesheet honours the direction's anti-patterns", () => {
+  /*
+    These are cheap string checks, not a rendering test, and they only catch the
+    obvious reintroduction. That is worth having: every one of them names
+    something that was on the build the owner rejected.
+  */
+  const forbidden: [string, RegExp][] = [
+    ["a backdrop blur", /backdrop-filter/],
+    ["a gradient fill on text", /(?:-webkit-)?background-clip:\s*text/],
+    ["scroll-driven animation", /animation-timeline/],
+    ["smooth scrolling", /scroll-behavior:\s*smooth/],
+  ];
+
+  for (const [what, pattern] of forbidden) {
+    it(`does not reintroduce ${what}`, () => {
+      expect(css).not.toMatch(pattern);
+    });
+  }
+
+  /*
+    These two read the declared VALUE rather than pattern-matching the property.
+
+    The first version tested `/border-radius:\s*(?!0)/` and failed against
+    `border-radius: 0`, because `\s*` is free to match zero characters: the
+    engine backtracks to the position right after the colon, where the next
+    character is a space rather than "0", and the lookahead passes. A negative
+    lookahead behind a variable-width match does not mean what it looks like it
+    means. Reading the value avoids the whole class of mistake.
+  */
+  function values(property: string): string[] {
+    return [...css.matchAll(new RegExp(`(?:^|[;{\\s])${property}:([^;}]*)`, "g"))].map(
+      (m) => m[1].trim(),
+    );
+  }
+
+  it("declares no non-zero corner radius", () => {
+    for (const v of values("border-radius")) {
+      expect(v, `border-radius: ${v}`).toMatch(/^0[a-z%]*$/);
+    }
+  });
+
+  it("declares no drop shadow", () => {
+    for (const v of values("box-shadow")) {
+      expect(v, `box-shadow: ${v}`).toBe("none");
+    }
   });
 });

@@ -1,293 +1,324 @@
 /**
- * Rendered verification. Run against `next build && next start`.
+ * Rendered verification — measure the page, do not assert about the source.
  *
- *   node scripts/verify-rendered.mjs http://localhost:3000
+ * Usage:
+ *   npm run build && npx next start -p 4800
+ *   node scripts/verify-rendered.mjs http://localhost:4800
  *
- * The unit tests cover arithmetic. This covers the things arithmetic cannot
- * see, and each check exists because something actually shipped broken:
+ * This exists because the defects that actually shipped on this project were
+ * all invisible in source and obvious in a browser: a heading painted the same
+ * colour as its background by an unlayered CSS rule, SVG labels clipped
+ * mid-word by a viewBox one size too small, a print stylesheet that hid the
+ * printed sheet's own masthead, and a signature element that rendered zero
+ * paths below 768px. Every check below measures the rendered result.
  *
- *  - the Season Rule's today-marker was drawn 100px right of where its own
- *    numbers said, because a margin on an absolutely positioned element is
- *    added to the used `left` rather than shrinking the box
- *  - the Root Line rendered zero visible paths below 768px
- *  - a sticky header at 95% opacity let body text bleed through it
- *  - a heading turned invisible on the light band when a Tailwind utility lost
- *    to an unlayered class
+ * It also enforces the art direction's anti-patterns against the DOM rather
+ * than the stylesheet, so a rounded corner or a drop shadow arriving through a
+ * Tailwind utility is caught too.
  */
+
 import { chromium } from "playwright";
 import { existsSync } from "node:fs";
 
-/*
-  This container pins a Chromium build at a known path; a normal machine does
-  not have it. Use the pinned one when it is there and otherwise let Playwright
-  resolve its own browser, so the same script runs here and on the owner's
-  laptop. If neither exists Playwright says so clearly, and the fix is one
-  command: npx playwright install chromium
-*/
+const BASE = process.argv[2] ?? "http://localhost:4800";
 const PINNED = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
 const launchOptions = existsSync(PINNED) ? { executablePath: PINNED } : {};
 
-
-const BASE = process.argv[2] ?? "http://localhost:3000";
-
 let failures = 0;
-const check = (ok, label, detail = "") => {
-  if (!ok) failures++;
+let checks = 0;
+
+function report(ok, label, detail) {
+  checks += 1;
+  if (!ok) failures += 1;
   console.log(`  ${ok ? "PASS" : "FAIL"}  ${label}${detail ? ` — ${detail}` : ""}`);
-};
+}
+
+function note(text) {
+  console.log(`  note  ${text}`);
+}
+
+/* ------------------------------------------------------------ contrast --- */
+
+function luminance([r, g, b]) {
+  const v = [r, g, b].map((c) => {
+    const s = c / 255;
+    return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+}
+
+function contrast(a, b) {
+  const [x, y] = [luminance(a), luminance(b)];
+  return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+}
+
+function parseRgb(s) {
+  const m = s.match(/-?[\d.]+/g);
+  return m ? [Number(m[0]), Number(m[1]), Number(m[2])] : null;
+}
+
+/* --------------------------------------------------------------- suite --- */
+
+const ROUTES = ["/", "/visit", "/sign", "/nope"];
+const WIDTHS = [320, 375, 768, 1280, 1920];
 
 const browser = await chromium.launch(launchOptions);
 
-async function open(path, viewport) {
-  const ctx = await browser.newContext({ viewport, isMobile: viewport.width < 500 });
-  const page = await ctx.newPage();
-  const errors = [];
-  page.on("pageerror", (e) => errors.push(String(e)));
-  const res = await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
-  return { ctx, page, errors, status: res?.status() };
-}
+/* 1. Layout: nothing may overflow horizontally at any width we support. */
+for (const width of WIDTHS) {
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
+  console.log(`\n@${width}px`);
+  for (const route of ROUTES) {
+    const errors = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto(BASE + route, { waitUntil: "networkidle" });
 
-/* ------------------------------------------------ the Season Rule marker -- */
-
-for (const width of [1440, 375]) {
-  const { ctx, page } = await open("/", { width, height: 900 });
-  console.log(`\nSeason Rule geometry @${width}px`);
-
-  const geo = await page.evaluate(() => {
-    const rows = [...document.querySelectorAll("figure li")];
-    const marker = [...document.querySelectorAll("figure div")].find(
-      (d) => getComputedStyle(d).backgroundColor === "rgb(226, 112, 42)" &&
-             d.getBoundingClientRect().height > 50,
+    const over = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
-    if (!rows.length || !marker) return null;
-    // The track is the growing span in any row.
-    const track = rows[0].querySelector(":scope > span:nth-child(2)").getBoundingClientRect();
-    const m = marker.getBoundingClientRect();
-    const lit = rows
-      .map((r) => {
-        const bar = r.querySelector(":scope > span:nth-child(2) > span");
-        const cs = bar && getComputedStyle(bar);
-        return cs && cs.backgroundColor === "rgb(226, 112, 42)"
-          ? { name: r.textContent.split(" — ")[0], ...bar.getBoundingClientRect().toJSON() }
-          : null;
-      })
-      .filter(Boolean);
-    return { track: track.toJSON(), marker: m.toJSON(), lit };
-  });
-
-  if (!geo) {
-    check(false, "found the chart");
-  } else {
-    check(
-      geo.marker.left >= geo.track.left - 1 &&
-        geo.marker.right <= geo.track.right + 1,
-      "today-marker sits inside the track",
-      `marker ${Math.round(geo.marker.left)} vs track ${Math.round(geo.track.left)}–${Math.round(geo.track.right)}`,
-    );
-    // Every bar lit as "ready today" must actually contain the marker.
-    const straddles = geo.lit.filter(
-      (b) => b.left - 1 <= geo.marker.left && b.right + 1 >= geo.marker.left,
-    );
-    check(
-      straddles.length === geo.lit.length,
-      "every ember bar contains the today-marker",
-      `${straddles.length}/${geo.lit.length}`,
-    );
-    check(geo.lit.length > 0, "something is lit as ready", `${geo.lit.length} crops`);
+    report(over <= 0, `${route} no horizontal overflow`, `${over}px`);
+    report(errors.length === 0, `${route} no uncaught page errors`, `${errors.length}`);
   }
-  await ctx.close();
+  await page.close();
 }
 
-/* ------------------------------------------------------- the Root Line --- */
-
-const window_innerHeightGuess = 812;
-for (const [label, width] of [["desktop", 1440], ["mobile", 375]]) {
-  const { ctx, page } = await open("/", { width, height: 812 });
-  const vis = await page.evaluate(() => {
-    const onScreen = (el) => {
-      const r = el.getBoundingClientRect();
-      return r.width > 0 && r.height > 0 && r.right > 0 && r.left < window.innerWidth;
-    };
-    const trunkSvg = document.querySelector("main svg[viewBox='0 0 16 1000'] path");
-    const branches = [...document.querySelectorAll(".root-branch")];
-    return {
-      trunk: trunkSvg ? onScreen(trunkSvg) : false,
-      trunkHeight: trunkSvg ? Math.round(trunkSvg.getBoundingClientRect().height) : 0,
-      branches: branches.length,
-      branchesVisible: branches.filter(onScreen).length,
-      docHeight: document.documentElement.scrollHeight,
-    };
-  });
-  console.log(`\nRoot Line @${label}`);
-  check(vis.trunk, "the trunk renders", `height ${vis.trunkHeight} of doc ${vis.docHeight}`);
-  // The trunk must span the document, not one viewport — that was the whole
-  // point of moving it out of `position: fixed`.
-  check(
-    vis.trunkHeight > window_innerHeightGuess * 1.5 || vis.trunkHeight > 2000,
-    "the trunk spans the document, not a viewport",
-    `${vis.trunkHeight}px`,
-  );
-  if (width >= 768) {
-    check(vis.branchesVisible > 0, "branches render on desktop", `${vis.branchesVisible}/${vis.branches}`);
-  }
-  await ctx.close();
-}
-
-/* ------------------------------------- chrome, overflow and page errors --- */
-
-for (const path of ["/", "/visit", "/nope"]) {
-  for (const width of [375, 1440]) {
-    const { ctx, page, errors, status } = await open(path, { width, height: 812 });
-    const out = await page.evaluate(() => {
-      const header = document.querySelector("header");
-      const cs = header && getComputedStyle(header);
-      const bg = cs?.backgroundColor ?? "";
-      const alpha = bg.startsWith("rgba") ? Number(bg.split(",")[3]) : 1;
-      // Anything painting transparent text must not also be transparent-filled.
-      const invisible = [...document.querySelectorAll("h1,h2,h3")].filter((h) => {
-        const s = getComputedStyle(h);
-        return s.color === "rgba(0, 0, 0, 0)" && s.backgroundImage === "none";
-      }).length;
-      return {
-        docWidth: document.documentElement.scrollWidth,
-        vw: window.innerWidth,
-        headerAlpha: alpha,
-        invisible,
-      };
-    });
-    console.log(`\n${path} @${width}px (HTTP ${status})`);
-    check(out.docWidth <= out.vw, "no horizontal overflow", `${out.docWidth} vs ${out.vw}`);
-    check(out.headerAlpha === 1, "header is fully opaque", `alpha ${out.headerAlpha}`);
-    check(out.invisible === 0, "no heading painted invisible", `${out.invisible} found`);
-    check(
-      errors.length === 0,
-      "no uncaught page errors",
-      errors.join(" | ") || "clean",
-    );
-    await ctx.close();
-  }
-}
-
-/* ------------------------------------------- the degradation paths -------- */
-/*
-  The component comments and the design plan both promise that the root
-  degrades to a FINISHED DRAWING rather than to nothing. Four of the five
-  worst findings in this project's code review were places where prose
-  asserted behaviour the code did not have, so these are measured.
-*/
+/* 2. Nothing is painted invisible against its own background. */
 {
-  const ctx = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  console.log("\ntext is actually legible");
+  for (const route of ROUTES) {
+    await page.goto(BASE + route, { waitUntil: "networkidle" });
+    const worst = await page.evaluate(() => {
+      const bgOf = (el) => {
+        let n = el;
+        while (n) {
+          const c = getComputedStyle(n).backgroundColor;
+          if (c && c !== "rgba(0, 0, 0, 0)" && c !== "transparent") return c;
+          n = n.parentElement;
+        }
+        return getComputedStyle(document.body).backgroundColor;
+      };
+      const out = [];
+      for (const el of document.querySelectorAll("h1,h2,h3,h4,p,td,th,li,a,dt,dd,figcaption")) {
+        if (!el.textContent.trim()) continue;
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
+        const cs = getComputedStyle(el);
+        if (cs.visibility === "hidden" || cs.opacity === "0") continue;
+        out.push({
+          color: cs.color,
+          bg: bgOf(el),
+          size: parseFloat(cs.fontSize),
+          weight: cs.fontWeight,
+          text: el.textContent.trim().slice(0, 40),
+        });
+      }
+      return out;
+    });
+
+    let low = null;
+    for (const item of worst) {
+      const fg = parseRgb(item.color);
+      const bg = parseRgb(item.bg);
+      if (!fg || !bg) continue;
+      const ratio = contrast(fg, bg);
+      // WCAG large text is 18.66px bold or 24px regular.
+      const large = item.size >= 24 || (item.size >= 18.66 && Number(item.weight) >= 700);
+      const required = large ? 3 : 4.5;
+      if (ratio < required && (!low || ratio < low.ratio)) {
+        low = { ...item, ratio, required };
+      }
+    }
+    report(
+      low === null,
+      `${route} every run of text clears AA`,
+      low ? `${low.ratio.toFixed(2)} vs ${low.required} on "${low.text}"` : "none below",
+    );
+  }
+  await page.close();
+}
+
+/* 3. SVG figure labels stay inside their own viewBox. */
+{
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  console.log("\nfigures");
+  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  const clipped = await page.evaluate(() => {
+    const bad = [];
+    for (const svg of document.querySelectorAll("figure svg")) {
+      const vb = svg.viewBox.baseVal;
+      for (const t of svg.querySelectorAll("text")) {
+        const b = t.getBBox();
+        if (b.x + b.width > vb.width - 1 || b.y + b.height > vb.height - 1 || b.x < 0) {
+          bad.push(`${t.textContent} ends at ${(b.x + b.width).toFixed(0)} of ${vb.width}`);
+        }
+      }
+    }
+    return bad;
+  });
+  report(clipped.length === 0, "no figure label is clipped", clipped.join("; ") || "all inside");
+
+  const described = await page.evaluate(() => {
+    const figs = [...document.querySelectorAll("figure svg")];
+    return {
+      total: figs.length,
+      labelled: figs.filter((s) => (s.getAttribute("aria-label") ?? "").length > 40).length,
+      captioned: [...document.querySelectorAll("figure")].filter((f) =>
+        f.querySelector("figcaption"),
+      ).length,
+    };
+  });
+  report(
+    described.total > 0 && described.labelled === described.total,
+    "every figure has a text description",
+    `${described.labelled}/${described.total}`,
+  );
+  report(
+    described.captioned === described.total,
+    "every figure has a caption",
+    `${described.captioned}/${described.total}`,
+  );
+  await page.close();
+}
+
+/* 4. The record is a real table, not a grid of divs pretending to be one. */
+{
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  console.log("\nthe record");
+  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  const t = await page.evaluate(() => {
+    const tables = [...document.querySelectorAll("table")];
+    return {
+      count: tables.length,
+      withCaption: tables.filter((x) => x.querySelector("caption")).length,
+      scoped: tables.every((x) =>
+        [...x.querySelectorAll("th")].every((h) => h.hasAttribute("scope")),
+      ),
+      rows: tables.reduce((n, x) => n + x.querySelectorAll("tbody tr").length, 0),
+    };
+  });
+  report(t.count >= 2, "both registers render as tables", `${t.count}`);
+  report(t.withCaption === t.count, "every table has a caption", `${t.withCaption}/${t.count}`);
+  report(t.scoped, "every table header carries scope");
+  report(t.rows > 0, "the register is not empty", `${t.rows} rows`);
+  await page.close();
+}
+
+/* 5. The art direction's anti-patterns, measured on the rendered DOM. */
+{
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  console.log("\nart direction");
+  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  const found = await page.evaluate(() => {
+    const hits = { radius: [], shadow: [], blur: [], darkBg: [] };
+    const lum = ([r, g, b]) => {
+      const v = [r, g, b].map((c) => {
+        const s = c / 255;
+        return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+    };
+    for (const el of document.querySelectorAll("body *")) {
+      const cs = getComputedStyle(el);
+      const name = el.tagName.toLowerCase() + (el.className ? `.${String(el.className).split(" ")[0]}` : "");
+      if (cs.borderRadius && !/^0px( 0px)*$/.test(cs.borderRadius)) hits.radius.push(`${name} ${cs.borderRadius}`);
+      if (cs.boxShadow && cs.boxShadow !== "none") hits.shadow.push(`${name} ${cs.boxShadow}`);
+      if (cs.backdropFilter && cs.backdropFilter !== "none") hits.blur.push(name);
+      const m = cs.backgroundColor.match(/-?[\d.]+/g);
+      if (m && Number(m[3] ?? 1) > 0.5) {
+        const el_lum = lum([Number(m[0]), Number(m[1]), Number(m[2])]);
+        const r = el.getBoundingClientRect();
+        if (el_lum < 0.3 && r.width * r.height > 20000) {
+          hits.darkBg.push(`${name} area ${Math.round(r.width * r.height)}`);
+        }
+      }
+    }
+    return hits;
+  });
+  report(found.radius.length === 0, "no rounded corners", found.radius.slice(0, 3).join("; ") || "none");
+  report(found.shadow.length === 0, "no drop shadows", found.shadow.slice(0, 3).join("; ") || "none");
+  report(found.blur.length === 0, "no backdrop blur", found.blur.slice(0, 3).join("; ") || "none");
+  report(found.darkBg.length === 0, "no large dark surface", found.darkBg.slice(0, 3).join("; ") || "none");
+  await page.close();
+}
+
+/* 6. Reduced motion: the page must be identical, because nothing animates. */
+{
+  const page = await browser.newPage({
+    viewport: { width: 1280, height: 900 },
     reducedMotion: "reduce",
   });
-  const page = await ctx.newPage();
-  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
-  const rm = await page.evaluate(() => {
-    const paths = [...document.querySelectorAll(".root-branch-path")];
-    return {
-      count: paths.length,
-      animated: paths.filter((p) => getComputedStyle(p).animationName !== "none").length,
-      undrawn: paths.filter((p) => parseFloat(getComputedStyle(p).strokeDashoffset) > 0.01).length,
-    };
-  });
   console.log("\nprefers-reduced-motion: reduce");
-  check(rm.count > 0, "branches are present", `${rm.count} paths`);
-  check(rm.animated === 0, "nothing animates", `${rm.animated} animated`);
-  check(rm.undrawn === 0, "every branch is fully drawn, not blank", `${rm.undrawn} undrawn`);
-  await ctx.close();
+  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  const moving = await page.evaluate(() => {
+    let n = 0;
+    for (const el of document.querySelectorAll("body *")) {
+      const cs = getComputedStyle(el);
+      if (cs.animationName !== "none" && cs.animationDuration !== "0s") n += 1;
+      if (el.getAnimations && el.getAnimations().length > 0) n += 1;
+    }
+    return n;
+  });
+  report(moving === 0, "nothing animates", `${moving} animated`);
+  await page.close();
 }
 
+/* 7. Keyboard focus is visible and was not removed. */
 {
-  // A browser with no view-timeline support falls through to the base rule.
-  // Assert that rule exists OUTSIDE the @supports block, which is the only
-  // thing making the no-support path a drawing rather than an empty rail.
-  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-  const page = await ctx.newPage();
-  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
-  const href = await page.evaluate(
-    () => document.querySelector('link[rel="stylesheet"]')?.getAttribute("href") ?? "",
-  );
-  const css = href ? await (await fetch(`${BASE}${href}`)).text() : "";
-  const supportsAt = css.indexOf("@supports (animation-timeline");
-  const baseAt = css.indexOf(".root-branch-path{");
-  console.log("\nno view-timeline support");
-  check(css.length > 0, "stylesheet is reachable", href);
-  check(baseAt >= 0, "the base .root-branch-path rule exists");
-  check(
-    baseAt >= 0 && (supportsAt < 0 || baseAt < supportsAt),
-    "the fully-drawn base rule sits outside @supports",
-    `base @${baseAt}, supports @${supportsAt}`,
-  );
-  await ctx.close();
-}
-
-/* ------------------------------------------------- the printable sign ----- */
-/*
-  The sign is a printed object, so what matters is what the PRINT stylesheet
-  produces — not what the screen shows. A bare `header, footer { display:none }`
-  in the print block hid the sign's own header and footer, and it printed as an
-  unbranded list of vegetables. Caught by looking at the paper; pinned here.
-*/
-{
-  const ctx = await browser.newContext({ viewport: { width: 1100, height: 1000 } });
-  const page = await ctx.newPage();
-  await page.goto(`${BASE}/sign`, { waitUntil: "networkidle" });
-  await page.emulateMedia({ media: "print" });
-  const sign = await page.evaluate(() => {
-    const vis = (sel) => {
-      const el = document.querySelector(sel);
-      if (!el) return false;
-      const s = getComputedStyle(el);
-      return s.display !== "none" && s.visibility !== "hidden";
-    };
-    const first = document.querySelector(".sign-list li");
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  console.log("\nkeyboard focus");
+  await page.goto(BASE + "/", { waitUntil: "networkidle" });
+  await page.keyboard.press("Tab");
+  const focus = await page.evaluate(() => {
+    const el = document.activeElement;
+    if (!el || el === document.body) return null;
+    const cs = getComputedStyle(el);
     return {
-      wordmark: vis(".sign-wordmark"),
-      head: vis(".sign-head"),
-      foot: vis(".sign-foot"),
-      date: document.querySelector(".sign-date")?.textContent ?? "",
-      items: document.querySelectorAll(".sign-list li").length,
-      itemPt: first ? parseFloat(getComputedStyle(first).fontSize) : 0,
-      bg: getComputedStyle(document.querySelector(".sign")).backgroundColor,
-      chromeHidden: !vis("body > header") && !vis("body > footer"),
+      tag: el.tagName.toLowerCase(),
+      width: cs.outlineWidth,
+      style: cs.outlineStyle,
+      color: cs.outlineColor,
     };
   });
-  console.log("\n/sign, print stylesheet");
-  check(sign.wordmark && sign.head, "the farm name prints on the sign");
-  check(sign.foot, "the sign's own footer prints");
-  check(sign.chromeHidden, "site nav and footer do NOT print");
-  check(sign.bg === "rgb(255, 255, 255)", "sign prints on white, not on the dark palette", sign.bg);
-  check(sign.itemPt > 30, "crop names are big enough to read across a table", `${sign.itemPt}px`);
-  check(sign.date.length > 0, "the sign is dated", sign.date);
-  await ctx.close();
+  report(focus !== null, "tab moves focus into the page", focus?.tag ?? "nothing focused");
+  report(
+    focus !== null && parseFloat(focus.width) >= 2 && focus.style !== "none",
+    "the focus ring is drawn",
+    focus ? `${focus.style} ${focus.width}` : "n/a",
+  );
+  await page.close();
 }
 
-/* -------------------------------------- placeholder data is not published -- */
-
+/* 8. The printable sheet keeps its own masthead when printing. */
 {
-  const { ctx, page } = await open("/", { width: 1440, height: 900 });
-  const html = await page.content();
-  console.log("\nWhat the site publishes about the business");
-  const ld = await page.evaluate(
-    () => document.querySelector('script[type="application/ld+json"]')?.textContent ?? "",
-  );
-  // Confirmed facts must actually reach the page and the crawler.
-  check(html.includes("154 North Portage St"), "the real street address is published");
-  check(ld.includes("154 North Portage St"), "the real address reaches structured data");
-  check(/"foundingDate":"2024"/.test(ld), "founding year is 2024, with no invented day", ld.match(/"foundingDate":"[^"]*"/)?.[0]);
-  // Unconfirmed facts must not.
-  check(html.includes("tel:+1-716-753-0404"), "the real phone is a live tap-to-call link");
-  check(/"telephone":"\+1-716-753-0404"/.test(ld), "the real phone reaches structured data");
-  check(ld.includes("malachii1964@gmail.com"), "the real email reaches structured data");
-  // Unconfirmed facts must still not publish.
-  check(!html.includes("0000 Route 20"), "no placeholder street anywhere");
-  check(!html.includes("000-0000"), "no placeholder phone anywhere");
-  check(!html.includes("hello@lakeerieironroots.com"), "no placeholder email anywhere");
-  check(!ld.includes("GeoCoordinates"), "no guessed coordinates in structured data");
-  check(!html.includes("certified-organic"), "no unsubstantiated certification claim");
-  await ctx.close();
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  console.log("\nprint");
+  await page.goto(BASE + "/sign", { waitUntil: "networkidle" });
+  await page.emulateMedia({ media: "print" });
+  const printed = await page.evaluate(() => {
+    const visible = (el) => {
+      if (!el) return false;
+      const cs = getComputedStyle(el);
+      return cs.display !== "none" && cs.visibility !== "hidden";
+    };
+    const h1 = document.querySelector("main h1, main header h1");
+    return {
+      ownMasthead: visible(document.querySelector("main header")),
+      wordmark: h1 ? h1.textContent.trim() : null,
+      siteHeaderHidden: !visible(document.querySelector("body > header")),
+      instructionHidden: !visible(document.querySelector(".print\\:hidden")),
+    };
+  });
+  report(printed.ownMasthead, "the sheet keeps its own masthead", printed.wordmark ?? "missing");
+  report(printed.siteHeaderHidden, "the site navigation is dropped from the printout");
+  report(printed.instructionHidden, "the on-screen print instruction is dropped");
+  await page.emulateMedia({ media: "screen" });
+  await page.close();
 }
 
 await browser.close();
-console.log(`\n${failures === 0 ? "ALL CHECKS PASSED" : `${failures} CHECK(S) FAILED`}`);
+
+console.log(
+  `\n${failures === 0 ? "ALL CHECKS PASSED" : `${failures} FAILED`} — ${checks} checks`,
+);
 process.exit(failures === 0 ? 0 : 1);

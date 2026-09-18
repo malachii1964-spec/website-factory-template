@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FarmJsonLd } from "@/components/json-ld";
-import { RootTrunk } from "@/components/root";
 import { humanTime } from "@/components/site-footer";
+import { farmToday } from "@/lib/clock";
+import { cuttingOn, roomNotRunning } from "@/lib/crops";
 import {
   FARM,
   formatDays,
@@ -12,28 +13,24 @@ import {
   hasRealEmail,
   hasRealPhone,
 } from "@/lib/farm";
-import { farmToday } from "@/lib/clock";
-import { frostLine, readyOn } from "@/lib/season";
+import { frostLine } from "@/lib/season";
 
-// See the note on src/app/page.tsx — same five-minute window, same caveat.
+// See the note on src/app/page.tsx — same five-minute window, same reasoning.
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Visit the stand",
-  description: `Hours, directions and what is ready at ${FARM.name} in ${FARM.address.locality}, ${FARM.state}.`,
+  title: "Visit",
+  description: `Hours, directions and how to reach ${FARM.name} in ${FARM.address.locality}, ${FARM.state}.`,
 };
-
-const SHELL = "mx-auto w-full max-w-6xl pr-5 pl-9 md:pr-8 md:pl-28";
 
 export default function VisitPage() {
   const today = farmToday();
-  const ready = readyOn(today);
+  const cutting = cuttingOn(today);
+  const building = roomNotRunning();
   /*
-    Per-field, not all-or-nothing.
-
-    These were gated on one combined flag, so the day the owner supplied a real
-    street address the map still stayed hidden because the phone number was
-    not in yet. Each fact publishes as soon as it is true.
+    Per-field, not all-or-nothing. These were gated on one combined flag, so the
+    day the owner supplied a real street address the map still stayed hidden
+    because the phone number was not in yet.
   */
   const address = hasRealAddress();
   const phone = hasRealPhone();
@@ -43,159 +40,141 @@ export default function VisitPage() {
   return (
     <>
       <FarmJsonLd />
-      <section className={`${SHELL} py-16 md:py-24`}>
-        <p className="label">Visit</p>
-        <h1 className="display mt-5 text-4xl md:text-6xl">
-          Come to the stand
+
+      <section className="sheet band-record">
+        <p className="fig text-ink-2">Visit</p>
+        <h1 className="display mt-4 max-w-[18ch] text-4xl text-ink md:text-6xl">
+          Come to the farm.
         </h1>
-        <p className="prose-farm mt-6 text-base md:text-lg">
-          Everything is picked here and sold here. There is no warehouse and no
-          second location — what is on the table this morning is what came out
-          of the field this morning.
+        <p className="prose-farm mt-5 text-lg">
+          Everything is grown here and sold here. There is no warehouse and no
+          second location — what is on the table is what came off the bench or
+          out of the ground.
         </p>
-        <p className="label mt-8 text-ember">{frostLine(today)}</p>
       </section>
 
-      <section className="relative z-40 bg-parchment text-[#3A2E20]">
-        {/* The root continues through the daylight band. */}
-        <div className="pointer-events-none absolute inset-y-0 inset-x-0">
-          <div className="relative mx-auto h-full w-full max-w-6xl">
-            <RootTrunk tone="light" />
-          </div>
-        </div>
-        <div className={`${SHELL} py-16 md:py-24`}>
-          <div className="grid gap-12 md:grid-cols-2 md:gap-16">
-            {/* ---------------------------------------------------- hours */}
-            <div className="min-w-0">
-              <h3 className="label text-[#8A5F18]">Hours</h3>
-              <dl className="mt-5">
-                {FARM.hours.map((h) => (
-                  <div
-                    key={h.days.join()}
-                    className="flex justify-between gap-6 border-b border-[#2A2118]/15 py-3"
-                  >
-                    <dt className="text-[#2A2118]">{formatDays(h.days)}</dt>
-                    <dd className="tabular-nums text-[#4A3B29]">
-                      {humanTime(h.opens)} &ndash; {humanTime(h.closes)}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-              <p className="mt-5 text-sm text-[#4A3B29]">
-                Open {FARM.openSeason.from} through {FARM.openSeason.to}. We
-                close for the winter once the last of the squash is sold.
-              </p>
-
-              <h3 className="label mt-12 text-[#8A5F18]">Get in touch</h3>
-              {phone || email ? (
-                <div className="mt-5 space-y-3">
-                  {phone && (<a
-                    href={`tel:${FARM.phone}`}
-                    className="block text-lg text-[#2A2118] underline decoration-[#8A5F18] underline-offset-4"
-                  >
-                    {formattedPhone()}
-                  </a>)}
-                  {email && (<a
-                    href={`mailto:${FARM.email}`}
-                    className="block text-[#4A3B29] underline decoration-[#8A5F18] underline-offset-4"
-                  >
-                    {FARM.email}
-                  </a>)}
-                  <p className="text-sm text-[#4A3B29]">
-                    Calling is faster than emailing. We are usually in the field
-                    and the phone is in a pocket.
-                  </p>
+      <section className="sheet rule-section">
+        <div className="grid gap-12 pt-10 md:grid-cols-2 md:gap-16">
+          {/* ------------------------------------------------------ hours -- */}
+          <div className="min-w-0">
+            <h2 className="display text-2xl text-ink">Hours</h2>
+            <dl className="mt-4">
+              {FARM.hours.map((h) => (
+                <div key={h.days.join()} className="rule-row flex justify-between gap-6 py-3">
+                  <dt className="text-ink">{formatDays(h.days)}</dt>
+                  <dd className="fig text-ink-2">
+                    {humanTime(h.opens)} &ndash; {humanTime(h.closes)}
+                  </dd>
                 </div>
-              ) : (
-                /*
-                  One line of customer-facing copy, in a normal paragraph.
+              ))}
+            </dl>
+            <p className="mt-4 text-sm text-ink-2">
+              {FARM.yearRound
+                ? "Open all year. The indoor bench runs through the winter, so there is no closed season."
+                : "Seasonal hours."}
+            </p>
 
-                  What used to be here was a tinted box telling a farm customer
-                  that the number "is set in one file — src/lib/farm.ts". That
-                  is the build narrating its own scaffolding to a stranger
-                  looking for a phone number, on the one page whose job is
-                  "how do I reach you". Nothing rendered may ever name a source
-                  path.
-                */
-                <p className="mt-5 text-[#4A3B29]">
-                  The phone number goes up here before opening day.
+            <h2 className="display mt-14 text-2xl text-ink">Reach us</h2>
+            {phone || email ? (
+              <div className="mt-4 space-y-2">
+                {phone && (
+                  <a href={`tel:${FARM.phone}`} className="link block text-lg">
+                    {formattedPhone()}
+                  </a>
+                )}
+                {email && (
+                  <a href={`mailto:${FARM.email}`} className="link block">
+                    {FARM.email}
+                  </a>
+                )}
+                <p className="text-sm text-ink-2">
+                  Calling is faster than emailing. We are usually in the room and
+                  the phone is in a pocket.
                 </p>
-              )}
-            </div>
+              </div>
+            ) : (
+              /*
+                One line of customer-facing copy, in an ordinary paragraph. What
+                used to be here was a tinted box telling a farm customer that the
+                number "is set in one file — src/lib/farm.ts". Nothing rendered
+                may ever name a source path.
+              */
+              <p className="mt-4 text-ink-2">
+                The phone number goes up here before opening day.
+              </p>
+            )}
+          </div>
 
-            {/* ------------------------------------------------------ map */}
-            <div className="min-w-0">
-              <h3 className="label text-[#8A5F18]">Where</h3>
-              {address ? (
-                <>
-                  <address className="mt-5 text-lg not-italic text-[#2A2118]">
-                    {FARM.address.street}
-                    <br />
-                    {FARM.address.locality}, {FARM.address.region}{" "}
-                    {FARM.address.postalCode}
-                  </address>
+          {/* -------------------------------------------------------- where */}
+          <div className="min-w-0">
+            <h2 className="display text-2xl text-ink">Where</h2>
+            {address ? (
+              <>
+                <address className="mt-4 text-lg not-italic text-ink">
+                  {FARM.address.street}
+                  <br />
+                  {FARM.address.locality}, {FARM.address.region}{" "}
+                  {FARM.address.postalCode}
+                </address>
+                <p className="mt-5">
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-5 inline-block border border-[#8A5F18] px-5 py-3 text-sm tracking-wide text-[#2A2118] uppercase transition-colors hover:bg-[#2A2118] hover:text-parchment"
+                    className="link"
                   >
                     Open in maps
                   </a>
-                  {/* Lazy and below the address on purpose: the text is the
-                      answer, the map is the convenience. */}
-                  <iframe
-                    title={`Map to ${FARM.name}`}
-                    loading="lazy"
-                    className="mt-6 aspect-[4/3] w-full max-w-full border border-[#2A2118]/20"
-                    src={`https://maps.google.com/maps?q=${mapQuery}&z=15&output=embed`}
-                  />
-                </>
-              ) : (
-                /*
-                  No dashed rectangle reserving space for a map. A dashed box
-                  with centred grey text explaining that content will exist
-                  later is the most recognisable generated-UI shape there is,
-                  and it made the top of this page two placeholders side by
-                  side. One honest line instead.
-                */
-                <p className="mt-5 text-lg text-[#2A2118]">
-                  {FARM.address.locality} area, {FARM.county}. The exact address
-                  goes up before opening day.
                 </p>
-              )}
-            </div>
+                <p className="mt-6 max-w-[34ch] text-sm text-ink-2">
+                  North Portage runs south off Main Street in {FARM.address.locality}.
+                </p>
+              </>
+            ) : (
+              /*
+                No dashed rectangle reserving space for a map. A dashed box with
+                centred grey text explaining that content will exist later is the
+                most recognisable generated-UI shape there is.
+              */
+              <p className="mt-4 text-lg text-ink">
+                {FARM.address.locality} area, {FARM.county}. The exact address
+                goes up before opening day.
+              </p>
+            )}
           </div>
         </div>
       </section>
 
-      {/* -------------------------------------------------- ready recap -- */}
-      <section className={`${SHELL} py-16 md:py-24`}>
-        <h2 className="display text-2xl md:text-4xl">
-          {ready.length > 0
-            ? "On the table today"
-            : "Nothing on the table today"}
+      {/* ---------------------------------------------------- what is on -- */}
+      <section className="sheet band-note rule-section">
+        <h2 className="display text-3xl text-ink md:text-4xl">
+          {building
+            ? "Nothing is cutting yet."
+            : cutting.length > 0
+              ? "On the table today"
+              : "Nothing is cutting today."}
         </h2>
-        {ready.length > 0 ? (
-          <ul className="mt-8 flex list-none flex-wrap gap-x-6 gap-y-3 p-0">
-            {ready.map((c) => (
-              <li key={c.id} className="text-parchment/85">
+        {cutting.length > 0 ? (
+          <ul className="mt-6 flex list-none flex-wrap gap-x-8 gap-y-2 p-0">
+            {cutting.map((c) => (
+              <li key={c.id} className="display text-2xl text-iron">
                 {c.name}
               </li>
             ))}
           </ul>
         ) : (
-          <p className="prose-farm mt-6">
-            We are out of season. Asparagus is first back, usually the first week
-            of May.
+          <p className="prose-farm mt-5">
+            {building
+              ? "The room is still being built. The register shows what is going in and how often it will be cut."
+              : "Call before driving out — what is cuttable changes week to week."}
           </p>
         )}
-        <Link
-          href="/#ready"
-          className="label mt-10 inline-block text-gold transition-colors hover:text-gold-lit"
-        >
-          See the whole season &rarr;
-        </Link>
+        <p className="fig mt-8 text-ink-2">Outdoors &middot; {frostLine(today)}</p>
+        <p className="mt-8">
+          <Link href="/" className="link text-lg">
+            Read the whole register
+          </Link>
+        </p>
       </section>
     </>
   );
