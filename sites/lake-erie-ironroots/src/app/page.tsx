@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { AutoPotFigure, SoilColumnFigure } from "@/components/figures";
+import { Hero } from "@/components/hero";
 import { FarmJsonLd } from "@/components/json-ld";
+import { Divider, PillarGlyph } from "@/components/ornament";
 import { RegisterTable } from "@/components/record";
 import { farmToday } from "@/lib/clock";
 import { cuttingOn, roomNotRunning } from "@/lib/crops";
@@ -8,7 +9,7 @@ import { FARM, PILLARS } from "@/lib/farm";
 import { frostLine } from "@/lib/season";
 
 /*
-  Revalidated every five minutes. The page's only time-dependent content is the
+  Revalidated every five minutes. The only time-dependent content is the
   dateline and the outdoor frost reading, both of which change once a day — the
   five-minute window is about the boundary being crossed promptly, not about the
   content being volatile.
@@ -31,101 +32,111 @@ export default function Home() {
     <>
       <FarmJsonLd />
 
-      {/* ------------------------------------------------------- the lead -- */}
-      <section className="sheet band-record">
-        <p className="fig text-ink-2">{dateline}</p>
+      <Hero />
 
-        {building ? (
-          <>
-            <h1 className="display mt-4 max-w-[20ch] text-4xl text-ink md:text-6xl">
-              Nothing is cutting yet.
-            </h1>
-            <p className="prose-farm mt-5 text-lg">
-              The room is being built. Rather than put up a page that implies
-              otherwise, here is the register as it stands — what is going in,
-              where it will grow, and how often it will be cut. It will fill in
-              as the benches come online.
-            </p>
-          </>
-        ) : (
-          <>
-            <h1 className="display mt-4 max-w-[22ch] text-4xl text-ink md:text-6xl">
-              {cutting.length === 1
-                ? `${cutting[0].name} is cutting today.`
-                : "Cutting today."}
-            </h1>
-            {cutting.length > 1 && (
-              <ul className="mt-5 flex list-none flex-wrap gap-x-6 gap-y-1 p-0">
-                {cutting.map((c) => (
-                  <li key={c.id} className="display text-2xl text-iron">
-                    {c.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </>
-        )}
-      </section>
+      {/*
+        Everything below rises over the sticky hero. It carries its own opaque
+        ground and its own stacking context so the scene is covered cleanly
+        rather than showing through.
+      */}
+      <div className="relative z-20 bg-void">
+        {/* ------------------------------------------------- the five ---- */}
+        <section className="sheet band-open" aria-labelledby="pillars">
+          <h2 id="pillars" className="sr-only">
+            What we hold to
+          </h2>
+          <ul className="grid list-none grid-cols-1 gap-x-8 gap-y-12 p-0 sm:grid-cols-2 lg:grid-cols-5 lg:gap-x-6">
+            {PILLARS.map((p) => (
+              <li key={p.id} className="flex flex-col items-start">
+                <span className="text-gold/75">
+                  <PillarGlyph id={p.id} />
+                </span>
+                <h3 className="cut mt-5 text-gild">{p.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-brass">{p.body}</p>
+              </li>
+            ))}
+          </ul>
+          <Divider className="mt-16 text-gold/60 md:mt-24" />
+        </section>
 
-      {/* -------------------------------------------------- the registers -- */}
-      <section className="sheet">
-        <RegisterTable register="bench" date={today} heading="The bench" />
-        <RegisterTable register="ground" date={today} heading="The ground" />
-        <p className="fig mt-6 text-ink-2">
-          Outdoors &middot; {frostLine(today)}
-        </p>
-      </section>
+        {/* ---------------------------------------------------- the lead -- */}
+        <section id="register" className="sheet band-work scroll-mt-24">
+          <p className="cut text-stone">{dateline}</p>
 
-      {/* -------------------------------------------------- how it is done -- */}
-      <section className="sheet band-note rule-section">
-        <h2 className="display max-w-[24ch] text-3xl text-ink md:text-4xl">
-          Living soil, inside engineered hardware.
-        </h2>
-        <p className="prose-farm mt-5">
-          Two things are true at once here. The soil is alive and slow and does
-          its own work — fungi, bacteria and worms turning amendments into
-          something a root can take up. The hardware around it is exact:
-          gravity-fed trays, a float valve, a known volume of water. One is
-          ancient and one was machined, and the point of the room is that neither
-          has to compromise.
-        </p>
+          {building ? (
+            <>
+              <h2 className="display mt-6 max-w-[16ch] text-4xl text-gild md:text-6xl lg:text-7xl">
+                Nothing is cutting yet
+              </h2>
+              <p className="prose-farm mt-7 text-lg">
+                The room is being built. Rather than put up a page that implies
+                otherwise, here is the register as it stands — what is going in,
+                where it grows, and how often it will be cut. It fills in as the
+                benches come online.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="display mt-6 max-w-[18ch] text-4xl text-gild md:text-6xl lg:text-7xl">
+                {cutting.length === 1
+                  ? `${cutting[0].name} is cutting today`
+                  : "Cutting today"}
+              </h2>
+              {cutting.length > 1 && (
+                <ul className="mt-8 flex list-none flex-wrap gap-x-10 gap-y-2 p-0">
+                  {cutting.map((c) => (
+                    <li key={c.id} className="display text-2xl text-ember md:text-3xl">
+                      {c.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
 
-        <div className="mt-14 grid gap-14 md:grid-cols-2 md:gap-10">
-          <AutoPotFigure />
-          <SoilColumnFigure />
-        </div>
+          <div className="mt-16 md:mt-24">
+            <RegisterTable register="bench" date={today} heading="The bench" />
+            <RegisterTable register="ground" date={today} heading="The ground" />
+          </div>
 
-        <h3 className="display mt-20 text-2xl text-ink">What we hold to</h3>
-        <ol className="mt-5 list-none p-0">
-          {PILLARS.map((p, i) => (
-            <li key={p.id} className="rule-row flex gap-5 py-5 md:gap-8">
-              <span className="fig shrink-0 pt-1 text-ink-2">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div className="min-w-0">
-                <h4 className="display text-xl text-ink">{p.title}</h4>
-                <p className="mt-1 max-w-[52ch] text-ink-2">{p.body}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
+          <p className="cut mt-10 text-stone">Outdoors &middot; {frostLine(today)}</p>
+        </section>
 
-      {/* -------------------------------------------------------- closing -- */}
-      <section className="sheet band-close rule-section">
-        <h2 className="display text-3xl text-ink md:text-4xl">
-          Come and get it.
-        </h2>
-        <p className="prose-farm mt-4">
-          Everything is grown at {FARM.address.street} and sold from there. There
-          is no second location.
-        </p>
-        <p className="mt-7">
-          <Link href="/visit" className="link text-lg">
-            Hours, directions and how to reach us
-          </Link>
-        </p>
-      </section>
+        {/* -------------------------------------------------- the method -- */}
+        <section className="sheet band-tell border-t rule-hair">
+          <h2 className="display max-w-[20ch] text-3xl text-gild md:text-5xl">
+            Living soil, inside engineered hardware
+          </h2>
+          <p className="prose-farm mt-7 text-lg">
+            Two things are true at once here. The soil is alive and slow and does
+            its own work — fungi, bacteria and worms turning amendments into
+            something a root can take up. The hardware around it is exact:
+            gravity-fed trays, a float valve, a known volume of water. One is
+            ancient, one was machined, and the point of the room is that neither
+            has to give way to the other.
+          </p>
+          <p className="mt-9">
+            <Link href="/visit" className="link text-lg">
+              Come and see it
+            </Link>
+          </p>
+        </section>
+
+        {/* -------------------------------------------------------- close -- */}
+        <section className="sheet band-close border-t rule-hair">
+          <Divider className="mb-14 text-gold/50" />
+          <h2 className="display text-3xl text-gild md:text-5xl">Come and get it</h2>
+          <p className="prose-farm mt-6">
+            Everything is grown at {FARM.address.street} in {FARM.address.locality}{" "}
+            and sold from there. There is no second location.
+          </p>
+          <p className="mt-9">
+            <Link href="/visit" className="link text-lg">
+              Hours, directions and how to reach us
+            </Link>
+          </p>
+        </section>
+      </div>
     </>
   );
 }

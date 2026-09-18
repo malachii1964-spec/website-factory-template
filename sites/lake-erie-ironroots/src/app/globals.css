@@ -1,211 +1,235 @@
 @import "tailwindcss";
 
 /*
-  Lake Erie IronRoots — the ledger.
+  Lake Erie IronRoots.
 
-  Art direction is locked in .malachii/visual-dna.json and this file implements
-  it. Read that first; it lists fourteen anti-patterns, and several of them are
-  things this file could trivially reintroduce.
+  THE ARTWORK IS THE SPECIFICATION. Every colour below was sampled out of
+  public/brand/ironroots-artwork.webp — the owner's brand plate — rather than
+  chosen. The storm, the wet breakwall, the sun on the water, the forged emblem
+  and the lit root system are the whole vocabulary. Nothing here is invented.
 
-  The short version: ink on paper. Two inks — near-black for everything, and one
-  iron-oxide red that means exactly one thing, "cutting now", the way a ledger
-  keeps a single red pen. No dark surfaces. No glow, glass, blur or shadow. No
-  boxes — separation is rules and space. No gradients on text.
+    void    #060504   the plate's own base, bottom edge
+    rock    #150e09   black breakwall stone
+    forge   #241a15   the emblem's dark hammered metal
+    stone   #8a6a4f   wet pier stone, lifted to hold a hairline
+    brass   #a89273   the mid gold of the letterforms
+    ember   #cc7a42   sunset burn on the water
+    gold    #e6ccb1   lit edge of the emblem
+    gild    #f9edd9   the highlight on the wordmark
+    glow    #fff2c2   the root light, and the sun's core
 
-  This replaced a dark palette with a gold accent, which is the default premium
-  aesthetic a model reaches for when no direction has been decided. It looked
-  competent and it read as machine-made on sight.
+  Mid-tones were lifted until they clear 4.5:1 on the base — the sampled values
+  all landed at about 4.0, which is close enough to look fine and fail anyone
+  reading on a phone outdoors. src/lib/palette.test.ts holds that line.
+
+  The accent rule: ember means one thing, "cutting now". Gold is structure and
+  ornament. Glow is reserved for the single signature moment, the way the roots
+  are the only lit thing in the plate.
 */
 @theme {
-  --color-paper: #f4f1ea;
-  --color-paper-2: #eae5da;
-  --color-ink: #1b1916;
-  --color-ink-2: #4b4439;
-  /* The red. Iron oxide — the "iron" in IronRoots, and the only accent. */
-  --color-iron: #9e3b1d;
-  --color-rule: #b5aa95;
-  --color-rule-hair: #d3cbba;
+  --color-void: #060504;
+  --color-rock: #150e09;
+  --color-forge: #241a15;
+  --color-stone: #8a6a4f;
+  --color-brass: #a89273;
+  --color-ember: #cc7a42;
+  --color-gold: #e6ccb1;
+  --color-gild: #f9edd9;
+  --color-glow: #fff2c2;
 
-  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: var(--font-cinzel), "Trajan Pro", Georgia, serif;
+  --font-body: var(--font-spectral), Georgia, "Times New Roman", serif;
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html {
-  background: var(--color-paper);
+  background: var(--color-void);
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-display);
+  background: var(--color-void);
+  color: var(--color-brass);
+  font-family: var(--font-body);
   font-size: 1.0625rem;
-  line-height: 1.6;
-  /*
-    Paper tooth. One repeating gradient at very low contrast, no image request.
-    It keeps the large flat fields from reading as #FFF plastic. It is the first
-    thing dropped in the degradation order and it never sits behind body text at
-    a strength that could affect legibility.
-  */
-  background-image: repeating-linear-gradient(
-      0deg,
-      rgba(27, 25, 22, 0.014) 0 1px,
-      transparent 1px 3px
-    ),
-    repeating-linear-gradient(90deg, rgba(27, 25, 22, 0.01) 0 1px, transparent 1px 4px);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
 }
-
-/*
-  No smooth scrolling. There is no scroll-driven anything on this site, and an
-  anchor that animates its way down the page is motion the direction does not
-  want. Removing it also removes a reduced-motion special case.
-*/
 
 @layer components {
   /*
-    Type voices. These live in a layer so a Tailwind utility on the element
-    still wins — an earlier build defined .display unlayered, which silently
-    beat every text-colour utility and produced an invisible heading.
+    Inscribed capitals, matching the wordmark's own letterforms. The plate's
+    wordmark is a bevelled Roman capital; setting headings in anything else
+    would make the logo look pasted on.
+
+    These live in a layer so a Tailwind utility on the element still wins — an
+    earlier build defined .display unlayered, which silently beat every text
+    colour utility and produced an invisible heading.
   */
   .display {
     font-family: var(--font-display);
-    font-weight: 500;
-    font-optical-sizing: auto;
-    letter-spacing: -0.015em;
-    line-height: 1.08;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.06;
     text-wrap: balance;
   }
 
-  /* Every date, quantity, week and column in the record. The numbers align. */
-  .fig {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
+  /*
+    The plate's own small type: wide-tracked capitals. Used for overlines,
+    labels, the standing column, and every number in the register.
+  */
+  .cut {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 0.6875rem;
+    /*
+      Wide tracking is the plate's own voice in small type, but at 0.34em three
+      of these columns would not fit a 320px screen — the register overflowed by
+      13px. The tracking opens up once there is room for it.
+    */
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     font-variant-numeric: tabular-nums;
-    letter-spacing: 0.01em;
+  }
+  @media (min-width: 26rem) {
+    .cut { letter-spacing: 0.28em; }
+  }
+  @media (min-width: 48rem) {
+    .cut { letter-spacing: 0.34em; }
   }
 
   .prose-farm {
-    max-width: 34rem;
-    color: var(--color-ink-2);
+    max-width: 36rem;
+    color: var(--color-brass);
     text-wrap: pretty;
   }
 
-  /*
-    The page's outer margin, as on a bound sheet. One definition so the masthead,
-    the record and the colophon cannot drift out of alignment with each other.
-  */
   .sheet {
     width: 100%;
-    max-width: 62rem;
+    max-width: 74rem;
     margin-inline: auto;
-    padding-inline: 1rem;
+    padding-inline: 1.25rem;
   }
   @media (min-width: 48rem) {
-    .sheet {
-      padding-inline: 2.5rem;
-    }
+    .sheet { padding-inline: 3rem; }
   }
   @media (min-width: 72rem) {
-    .sheet {
-      padding-inline: 4rem;
-    }
+    .sheet { padding-inline: 5rem; }
   }
 
   /*
-    Section rhythm — deliberately unequal.
+    Section rhythm — deliberately unequal, and named for what each band does.
 
-    Identical vertical padding on every section is the single most reliable
-    signature of generated layout, and the rejected build had exactly that
-    (py-16 md:py-24, everywhere). These four are different from each other on
-    purpose and are named for what they do, so reaching for a raw py-* on a
-    section is visibly the wrong move.
+    Identical vertical padding on every section is the most reliable signature
+    of generated layout. Reaching for a raw py-* on a section is visibly the
+    wrong move here.
   */
-  .band-masthead { padding-block: 2.25rem 1.5rem; }
-  .band-record   { padding-block: 0.5rem 3.5rem; }
-  .band-note     { padding-block: 4.5rem 2rem; }
-  .band-close    { padding-block: 2.75rem 5.5rem; }
+  .band-open  { padding-block: 5rem 3rem; }
+  .band-work  { padding-block: 2rem 6rem; }
+  .band-tell  { padding-block: 7rem 3.5rem; }
+  .band-close { padding-block: 3.5rem 7rem; }
 
   @media (min-width: 48rem) {
-    .band-masthead { padding-block: 3.5rem 2rem; }
-    .band-record   { padding-block: 0.75rem 6rem; }
-    .band-note     { padding-block: 7rem 3rem; }
-    .band-close    { padding-block: 4rem 8.5rem; }
+    .band-open  { padding-block: 9rem 4rem; }
+    .band-work  { padding-block: 2.5rem 10rem; }
+    .band-tell  { padding-block: 12rem 5rem; }
+    .band-close { padding-block: 5rem 11rem; }
   }
 
-  /* Printed-table rules: a heavy one under the head, hairlines between rows. */
-  .rule-head {
-    border-bottom: 1.5px solid var(--color-ink);
-  }
-  .rule-row {
-    border-bottom: 1px solid var(--color-rule-hair);
-  }
-  .rule-section {
-    border-top: 1px solid var(--color-rule);
-  }
+  /* Hairlines, in the plate's own gold, at three weights. */
+  .rule-hair { border-color: color-mix(in srgb, var(--color-stone) 34%, transparent); }
+  .rule-mid  { border-color: color-mix(in srgb, var(--color-stone) 60%, transparent); }
+  .rule-lit  { border-color: color-mix(in srgb, var(--color-gold) 55%, transparent); }
 
-  /* Links are underlined, because this is a document. */
   .link {
-    color: var(--color-ink);
+    color: var(--color-gold);
     text-decoration: underline;
-    text-decoration-color: var(--color-rule);
+    text-decoration-color: color-mix(in srgb, var(--color-stone) 70%, transparent);
     text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    transition: text-decoration-thickness 120ms ease, text-decoration-color 120ms ease;
+    text-underline-offset: 0.28em;
+    transition: color 140ms ease, text-decoration-color 140ms ease;
   }
   .link:hover {
-    text-decoration-thickness: 2px;
-    text-decoration-color: var(--color-iron);
+    color: var(--color-glow);
+    text-decoration-color: var(--color-ember);
+  }
+
+  /*
+    The veil under the hero. The plate's roots run off the bottom edge of the
+    scene, and this dissolves them into the page rather than cutting them with
+    a hard line — the roots continue into the content, which is the whole idea.
+  */
+  .root-veil {
+    /*
+      Two jobs: dissolve the roots into the page, and give the lockup a ground
+      dark enough to read against.
+
+      The wordmark and tagline sit over the lower third of a photograph, and a
+      contrast check that walks up the DOM for a background colour cannot see an
+      image — it finds the body's void and reports a pass. So legibility here is
+      guaranteed by construction rather than measured: by the height the type
+      sits at, the veil is dark enough that gold letters clear AA against it
+      whatever the scene is doing underneath.
+    */
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in srgb, var(--color-void) 22%, transparent) 30%,
+      color-mix(in srgb, var(--color-void) 62%, transparent) 55%,
+      color-mix(in srgb, var(--color-void) 88%, transparent) 74%,
+      var(--color-void) 96%
+    );
+  }
+
+  /* A soft warm lift behind the emblem, matching the plate's own light. */
+  .ember-wash {
+    background: radial-gradient(
+      120% 70% at 50% 82%,
+      color-mix(in srgb, var(--color-ember) 16%, transparent) 0%,
+      transparent 62%
+    );
   }
 }
 
-/*
-  Focus. Solid ink, no fade, never removed. Verified visible on both paper
-  tones and on the red.
-*/
+/* Focus: the plate's lit gold, never removed. */
 :focus-visible {
-  outline: 2px solid var(--color-ink);
+  outline: 2px solid var(--color-glow);
   outline-offset: 3px;
-  border-radius: 0;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-ember) 42%, transparent);
+  color: var(--color-gild);
 }
 
 /*
-  Nothing here animates, so there is no reduced-motion branch to write: the page
-  is byte-identical with the preference set. That is the direction working, not
-  an omission. The one transition on the site is a link underline thickening,
-  which is a state change rather than motion.
+  The only motion on the site is the hero holding its place while the content
+  rises over it, which is layout rather than animation, plus two short colour
+  transitions on hover. There is no scroll-driven animation, no parallax and no
+  reveal-on-scroll, so the page is very nearly identical with reduced motion
+  set. What can be honoured, is.
 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 @media (forced-colors: active) {
-  .rule-head,
-  .rule-row,
-  .rule-section {
-    border-color: CanvasText;
-  }
+  .rule-hair, .rule-mid, .rule-lit { border-color: CanvasText; }
 }
 
 @media print {
-  body {
-    background: #fff;
-    background-image: none;
-    color: #000;
-  }
+  body { background: #fff; color: #000; }
   /*
     Scoped to the page's own header and footer. An earlier version said
-    `header, footer { display: none }` and hid the printed sheet's OWN masthead
-    and colophon, so the thing people actually print came out as an unbranded
-    list of vegetables.
+    `header, footer { display: none }` and hid the printed sheet's OWN masthead,
+    so the thing people actually print came out unbranded.
   */
-  body > header,
-  body > footer {
-    display: none !important;
-  }
-  .band-masthead, .band-record, .band-note, .band-close {
-    padding-block: 0.75rem;
-  }
-  a[href]::after {
-    content: "";
-  }
+  body > header, body > footer { display: none !important; }
+  .band-open, .band-work, .band-tell, .band-close { padding-block: 0.75rem; }
+  a[href]::after { content: ""; }
 }

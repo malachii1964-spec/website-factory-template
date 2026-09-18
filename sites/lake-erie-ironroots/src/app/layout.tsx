@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Newsreader } from "next/font/google";
+import { Cinzel, Spectral } from "next/font/google";
 import { Colophon } from "@/components/site-footer";
 import { Masthead } from "@/components/site-header";
 import { FARM } from "@/lib/farm";
@@ -8,38 +8,35 @@ import "./globals.css";
 /*
   Two families, self-hosted by next/font.
 
-  Newsreader is an old-style reading serif with optical sizing — authority from
-  the letterforms rather than from weight or stroke contrast. It is deliberately
-  not Playfair, Cormorant or Bodoni: high-contrast display serifs are the face a
-  model reaches for when no direction has been chosen, and one of them was on the
-  build this replaced.
-
-  Plex Mono carries every date, quantity and column in the record. The numbers
-  are the content here, so they get their own voice and they align.
+  Cinzel is an inscribed Roman capital, which is what the plate's wordmark is.
+  Headings and small tracked labels are set in it so the logo reads as part of
+  the page rather than pasted onto it. Spectral carries the reading text — a
+  serif with enough weight to hold its own on a near-black ground, where a
+  lighter face would disappear.
 */
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+  weight: ["400", "600"],
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+const spectral = Spectral({
+  variable: "--font-spectral",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["300", "400", "600"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://lakeerieironroots.com"),
   title: {
-    default: `${FARM.name} — Organic growing, ${FARM.county} NY`,
+    default: `${FARM.name} — ${FARM.tagline}`,
     template: `%s — ${FARM.name}`,
   },
   description:
-    "An organic farm in Westfield, Chautauqua County, New York. Living soil indoors and outdoors, all year round. Read the record of what is growing.",
+    "An organic farm in Westfield, Chautauqua County, New York. Living soil indoors and outdoors, all year round. Read the register of what is growing.",
   openGraph: {
     type: "website",
     siteName: FARM.name,
@@ -52,12 +49,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${newsreader.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${cinzel.variable} ${spectral.variable} h-full`}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col bg-void">
         <a
           href="#main"
-          className="fig sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:bg-paper focus:px-4 focus:py-3 focus:outline focus:outline-2 focus:outline-ink"
+          className="cut sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:bg-rock focus:px-4 focus:py-3 focus:text-gild"
         >
           Skip to content
         </a>

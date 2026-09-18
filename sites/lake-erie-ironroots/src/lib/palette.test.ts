@@ -2,14 +2,15 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 /**
- * Contrast, checked against the stylesheet rather than against a copy of the
- * palette kept in the test. If a token is edited in globals.css this reads the
- * new value and fails there, instead of passing against a stale duplicate.
+ * The palette, checked against the stylesheet rather than a copy kept here. If
+ * a token is edited in globals.css this reads the new value and fails there,
+ * instead of passing against a stale duplicate.
  *
- * The art direction puts two inks on paper and allows exactly one accent. These
- * tests exist so that "one accent" cannot quietly become "an accent that is
- * unreadable at body size", which is the usual way a warm brand red ends up
- * failing AA on a warm background.
+ * Every colour is sampled from the owner's brand plate. These tests exist for
+ * one reason: the sampled mid-tones all landed at about 4.0:1 on the base —
+ * close enough to look fine on a good monitor and to fail a customer reading on
+ * a phone in daylight. They were lifted until they cleared AA, and this is what
+ * stops them drifting back down toward the artwork's literal values.
  */
 
 const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
@@ -33,49 +34,60 @@ function contrast(a: string, b: string): number {
   return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
 }
 
-const PAPER = ["paper", "paper-2"] as const;
+/** Both grounds the site ever puts text on. */
+const GROUNDS = ["void", "rock"] as const;
 
-describe("text on paper", () => {
-  it("clears AAA for body text in both inks, on both paper tones", () => {
-    for (const bg of PAPER) {
-      for (const fg of ["ink", "ink-2"]) {
+describe("text on the plate's ground", () => {
+  it("clears AA at body size in every colour used for running text", () => {
+    // brass is the body colour, so it is the one that matters most here.
+    for (const bg of GROUNDS) {
+      for (const fg of ["gild", "gold", "brass", "ember"]) {
+        const ratio = contrast(token(fg), token(bg));
+        expect(ratio, `${fg} on ${bg} = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(4.5);
+      }
+    }
+  });
+
+  it("clears AAA for the two colours headings are set in", () => {
+    for (const bg of GROUNDS) {
+      for (const fg of ["gild", "gold"]) {
         const ratio = contrast(token(fg), token(bg));
         expect(ratio, `${fg} on ${bg} = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(7);
       }
     }
   });
 
-  it("clears AA for the one accent, which is used at body size in the record", () => {
-    for (const bg of PAPER) {
-      const ratio = contrast(token("iron"), token(bg));
-      expect(ratio, `iron on ${bg} = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(4.5);
-    }
+  it("keeps stone below the text threshold, because it is a rule colour", () => {
+    // stone is deliberately dim. This test is here so nobody promotes it to
+    // body text by eye — it is for hairlines and nothing else.
+    expect(contrast(token("stone"), token("void"))).toBeLessThan(4.5);
   });
 });
 
-describe("the palette stays two inks and one accent", () => {
-  it("defines no colour outside the agreed set", () => {
+describe("the palette stays the plate's palette", () => {
+  it("defines exactly the sampled set, and nothing invented", () => {
     const defined = [...css.matchAll(/--color-([a-z0-9-]+):/g)].map((m) => m[1]);
     expect(new Set(defined)).toEqual(
-      new Set(["paper", "paper-2", "ink", "ink-2", "iron", "rule", "rule-hair"]),
+      new Set(["void", "rock", "forge", "stone", "brass", "ember", "gold", "gild", "glow"]),
     );
   });
 
-  it("has no dark background token", () => {
-    // The direction forbids a dark surface anywhere. A near-black background
-    // token is how that decision would get quietly reversed.
-    for (const name of ["paper", "paper-2"]) {
-      expect(relativeLuminance(token(name))).toBeGreaterThan(0.6);
+  it("keeps the grounds genuinely dark, as the plate is", () => {
+    for (const name of GROUNDS) {
+      expect(relativeLuminance(token(name))).toBeLessThan(0.02);
     }
+  });
+
+  it("orders the golds from dim to lit", () => {
+    const l = (n: string) => relativeLuminance(token(n));
+    expect(l("stone")).toBeLessThan(l("brass"));
+    expect(l("brass")).toBeLessThan(l("gold"));
+    expect(l("gold")).toBeLessThan(l("gild"));
+    expect(l("gild")).toBeLessThan(l("glow"));
   });
 });
 
 describe("the stylesheet honours the direction's anti-patterns", () => {
-  /*
-    These are cheap string checks, not a rendering test, and they only catch the
-    obvious reintroduction. That is worth having: every one of them names
-    something that was on the build the owner rejected.
-  */
   const forbidden: [string, RegExp][] = [
     ["a backdrop blur", /backdrop-filter/],
     ["a gradient fill on text", /(?:-webkit-)?background-clip:\s*text/],
@@ -90,14 +102,14 @@ describe("the stylesheet honours the direction's anti-patterns", () => {
   }
 
   /*
-    These two read the declared VALUE rather than pattern-matching the property.
+    These read the declared VALUE rather than pattern-matching the property.
 
-    The first version tested `/border-radius:\s*(?!0)/` and failed against
+    An earlier version tested `/border-radius:\s*(?!0)/` and failed against
     `border-radius: 0`, because `\s*` is free to match zero characters: the
     engine backtracks to the position right after the colon, where the next
     character is a space rather than "0", and the lookahead passes. A negative
     lookahead behind a variable-width match does not mean what it looks like it
-    means. Reading the value avoids the whole class of mistake.
+    means.
   */
   function values(property: string): string[] {
     return [...css.matchAll(new RegExp(`(?:^|[;{\\s])${property}:([^;}]*)`, "g"))].map(
@@ -115,5 +127,9 @@ describe("the stylesheet honours the direction's anti-patterns", () => {
     for (const v of values("box-shadow")) {
       expect(v, `box-shadow: ${v}`).toBe("none");
     }
+  });
+
+  it("honours prefers-reduced-motion", () => {
+    expect(css).toMatch(/prefers-reduced-motion:\s*reduce/);
   });
 });

@@ -47,12 +47,12 @@ export default function SignPage() {
   });
 
   return (
-    <div className="sheet band-record">
+    <div className="sheet band-open">
       {/* Screen-only instruction. The printed sheet does not need it. */}
-      <p className="fig mb-10 text-ink-2 print:hidden">
-        Press <kbd className="text-ink">Ctrl</kbd> +{" "}
-        <kbd className="text-ink">P</kbd> (or{" "}
-        <kbd className="text-ink">Cmd</kbd> + <kbd className="text-ink">P</kbd>)
+      <p className="cut mb-10 text-brass print:hidden">
+        Press <kbd className="text-gild">Ctrl</kbd> +{" "}
+        <kbd className="text-gild">P</kbd> (or{" "}
+        <kbd className="text-gild">Cmd</kbd> + <kbd className="text-gild">P</kbd>)
         to print this. &nbsp;
         <Link href="/" className="link">
           Back to the register
@@ -60,21 +60,21 @@ export default function SignPage() {
       </p>
 
       {/* The sheet's own masthead — kept when printing. */}
-      <header className="rule-head pb-4">
-        <p className="fig text-ink-2">{FARM.overline}</p>
-        <h1 className="display text-5xl text-ink">{FARM.wordmark}</h1>
-        <p className="fig mt-2 text-ink-2">
+      <header className="border-b rule-lit pb-4">
+        <p className="cut text-brass">{FARM.overline}</p>
+        <h1 className="display text-5xl text-gild">{FARM.wordmark}</h1>
+        <p className="cut mt-2 text-brass">
           {FARM.address.street}, {FARM.address.locality} &middot;{" "}
           {establishedLine()}
           {hasRealPhone() && <> &middot; {formattedPhone()}</>}
         </p>
       </header>
 
-      <p className="fig mt-6 text-ink">{dateline}</p>
+      <p className="cut mt-6 text-gild">{dateline}</p>
 
       {building ? (
         <>
-          <h2 className="display mt-6 text-4xl text-ink">
+          <h2 className="display mt-6 text-4xl text-gild">
             Nothing is cutting yet.
           </h2>
           <p className="prose-farm mt-4">
@@ -83,45 +83,45 @@ export default function SignPage() {
         </>
       ) : cutting.length > 0 ? (
         <>
-          <h2 className="display mt-6 text-3xl text-ink">Cutting today</h2>
+          <h2 className="display mt-6 text-3xl text-gild">Cutting today</h2>
           <ul className="mt-4 list-none p-0">
             {cutting.map((c) => (
-              <li key={c.id} className="rule-row py-2">
-                <span className="display text-4xl text-ink">{c.name}</span>
+              <li key={c.id} className="border-b rule-hair py-2">
+                <span className="display text-4xl text-gild">{c.name}</span>
               </li>
             ))}
           </ul>
         </>
       ) : (
-        <h2 className="display mt-6 text-3xl text-ink">
+        <h2 className="display mt-6 text-3xl text-gild">
           Nothing is cutting today.
         </h2>
       )}
 
       {/* The full register, smaller, beneath the headline list. */}
       <section className="mt-12">
-        <h3 className="fig text-ink">On the bench &mdash; indoors, all year</h3>
+        <h3 className="cut text-gild">On the bench &mdash; indoors, all year</h3>
         <ul className="mt-2 list-none p-0">
           {bench.map((e) => (
-            <li key={e.id} className="rule-row flex justify-between gap-6 py-1.5">
-              <span className="text-ink">{e.name}</span>
-              <span className="fig text-ink-2">{STANDING_LABEL[e.standing]}</span>
+            <li key={e.id} className="border-b rule-hair flex justify-between gap-6 py-1.5">
+              <span className="text-gild">{e.name}</span>
+              <span className="cut text-brass">{STANDING_LABEL[e.standing]}</span>
             </li>
           ))}
         </ul>
 
-        <h3 className="fig mt-8 text-ink">In the ground &mdash; outdoors</h3>
+        <h3 className="cut mt-8 text-gild">In the ground &mdash; outdoors</h3>
         <ul className="mt-2 list-none p-0">
           {ground.map((e) => (
-            <li key={e.id} className="rule-row flex justify-between gap-6 py-1.5">
-              <span className="text-ink">{e.name}</span>
-              <span className="fig text-ink-2">{STANDING_LABEL[e.standing]}</span>
+            <li key={e.id} className="border-b rule-hair flex justify-between gap-6 py-1.5">
+              <span className="text-gild">{e.name}</span>
+              <span className="cut text-brass">{STANDING_LABEL[e.standing]}</span>
             </li>
           ))}
         </ul>
       </section>
 
-      <p className="fig mt-10 text-ink-2">{FARM.tagline}</p>
+      <p className="cut mt-10 text-brass">{FARM.tagline}</p>
     </div>
   );
 }

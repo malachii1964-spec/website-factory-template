@@ -33,10 +33,6 @@ function report(ok, label, detail) {
   console.log(`  ${ok ? "PASS" : "FAIL"}  ${label}${detail ? ` — ${detail}` : ""}`);
 }
 
-function note(text) {
-  console.log(`  note  ${text}`);
-}
-
 /* ------------------------------------------------------------ contrast --- */
 
 function luminance([r, g, b]) {
@@ -52,9 +48,29 @@ function contrast(a, b) {
   return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
 }
 
+/*
+  Colours come back from getComputedStyle in whatever space the author wrote —
+  Tailwind 4 emits `oklab(0.86 0.017 0.043 / 0.8)` for an alpha-modified token.
+  Grabbing the first three numbers out of that string yields (0.86, 0.017,
+  0.043), which reads as near-black, and this script duly reported every gold
+  navigation link as failing contrast at 1.03:1. The site was fine; the ruler
+  was broken.
+
+  Rather than hand-roll oklab→sRGB, let the browser convert: assigning to a
+  canvas 2D fillStyle normalises any CSS colour to #rrggbb or rgba(). That
+  happens in-page, in `normaliseColours` below, before anything reaches here.
+*/
 function parseRgb(s) {
+  if (!s) return null;
   const m = s.match(/-?[\d.]+/g);
-  return m ? [Number(m[0]), Number(m[1]), Number(m[2])] : null;
+  if (!m || m.length < 3) return null;
+  return [Number(m[0]), Number(m[1]), Number(m[2])];
+}
+
+/** Flatten a possibly-translucent foreground onto its background. */
+function composite(fg, fgAlpha, bg) {
+  if (fgAlpha >= 1) return fg;
+  return fg.map((c, i) => c * fgAlpha + bg[i] * (1 - fgAlpha));
 }
 
 /* --------------------------------------------------------------- suite --- */
@@ -89,6 +105,20 @@ for (const width of WIDTHS) {
   for (const route of ROUTES) {
     await page.goto(BASE + route, { waitUntil: "networkidle" });
     const worst = await page.evaluate(() => {
+      /*
+        Canvas normalises any CSS colour — oklab, oklch, colour-mix, named — to
+        rgb()/rgba(), which is the only form this script can measure.
+      */
+      const cx = document.createElement("canvas").getContext("2d");
+      const norm = (c) => {
+        try {
+          cx.fillStyle = "#000";
+          cx.fillStyle = c;
+          return cx.fillStyle;
+        } catch {
+          return c;
+        }
+      };
       const bgOf = (el) => {
         let n = el;
         while (n) {
@@ -106,8 +136,8 @@ for (const width of WIDTHS) {
         const cs = getComputedStyle(el);
         if (cs.visibility === "hidden" || cs.opacity === "0") continue;
         out.push({
-          color: cs.color,
-          bg: bgOf(el),
+          color: norm(cs.color),
+          bg: norm(bgOf(el)),
           size: parseFloat(cs.fontSize),
           weight: cs.fontWeight,
           text: el.textContent.trim().slice(0, 40),
@@ -118,9 +148,12 @@ for (const width of WIDTHS) {
 
     let low = null;
     for (const item of worst) {
-      const fg = parseRgb(item.color);
+      const rawFg = parseRgb(item.color);
       const bg = parseRgb(item.bg);
-      if (!fg || !bg) continue;
+      if (!rawFg || !bg) continue;
+      const alphaMatch = item.color.match(/rgba?\([^)]*,\s*([\d.]+)\s*\)/);
+      const alpha = alphaMatch ? Number(alphaMatch[1]) : 1;
+      const fg = composite(rawFg, alpha, bg);
       const ratio = contrast(fg, bg);
       // WCAG large text is 18.66px bold or 24px regular.
       const large = item.size >= 24 || (item.size >= 18.66 && Number(item.weight) >= 700);
@@ -138,46 +171,30 @@ for (const width of WIDTHS) {
   await page.close();
 }
 
-/* 3. SVG figure labels stay inside their own viewBox. */
+/* 3. The plate itself: the hero must actually render and carry a description. */
 {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-  console.log("\nfigures");
+  console.log("\nthe plate");
   await page.goto(BASE + "/", { waitUntil: "networkidle" });
-  const clipped = await page.evaluate(() => {
-    const bad = [];
-    for (const svg of document.querySelectorAll("figure svg")) {
-      const vb = svg.viewBox.baseVal;
-      for (const t of svg.querySelectorAll("text")) {
-        const b = t.getBBox();
-        if (b.x + b.width > vb.width - 1 || b.y + b.height > vb.height - 1 || b.x < 0) {
-          bad.push(`${t.textContent} ends at ${(b.x + b.width).toFixed(0)} of ${vb.width}`);
-        }
-      }
-    }
-    return bad;
-  });
-  report(clipped.length === 0, "no figure label is clipped", clipped.join("; ") || "all inside");
-
-  const described = await page.evaluate(() => {
-    const figs = [...document.querySelectorAll("figure svg")];
+  const plate = await page.evaluate(() => {
+    const scene = document.querySelector('img[src*="hero-scene"]');
+    const mark = document.querySelector('img[src*="wordmark"]');
+    const r = scene ? scene.getBoundingClientRect() : null;
     return {
-      total: figs.length,
-      labelled: figs.filter((s) => (s.getAttribute("aria-label") ?? "").length > 40).length,
-      captioned: [...document.querySelectorAll("figure")].filter((f) =>
-        f.querySelector("figcaption"),
-      ).length,
+      sceneLoaded: Boolean(scene && scene.complete && scene.naturalWidth > 0),
+      sceneAlt: scene ? scene.getAttribute("alt") ?? "" : "",
+      fillsViewport: r ? r.width >= window.innerWidth - 1 && r.height >= window.innerHeight * 0.9 : false,
+      markLoaded: Boolean(mark && mark.complete && mark.naturalWidth > 0),
+      markAlt: mark ? mark.getAttribute("alt") ?? "" : "",
+      markInH1: Boolean(mark && mark.closest("h1")),
     };
   });
-  report(
-    described.total > 0 && described.labelled === described.total,
-    "every figure has a text description",
-    `${described.labelled}/${described.total}`,
-  );
-  report(
-    described.captioned === described.total,
-    "every figure has a caption",
-    `${described.captioned}/${described.total}`,
-  );
+  report(plate.sceneLoaded, "the scene decodes");
+  report(plate.fillsViewport, "the scene fills the viewport, edge to edge");
+  report(plate.sceneAlt.length > 60, "the scene is described for a screen reader", `${plate.sceneAlt.length} chars`);
+  report(plate.markLoaded, "the wordmark decodes");
+  report(plate.markInH1, "the wordmark is the page heading");
+  report(plate.markAlt.length > 0, "the wordmark carries the farm name", plate.markAlt);
   await page.close();
 }
 
@@ -210,7 +227,7 @@ for (const width of WIDTHS) {
   console.log("\nart direction");
   await page.goto(BASE + "/", { waitUntil: "networkidle" });
   const found = await page.evaluate(() => {
-    const hits = { radius: [], shadow: [], blur: [], darkBg: [] };
+    const hits = { radius: [], shadow: [], blur: [], lightBg: [] };
     const lum = ([r, g, b]) => {
       const v = [r, g, b].map((c) => {
         const s = c / 255;
@@ -228,8 +245,8 @@ for (const width of WIDTHS) {
       if (m && Number(m[3] ?? 1) > 0.5) {
         const el_lum = lum([Number(m[0]), Number(m[1]), Number(m[2])]);
         const r = el.getBoundingClientRect();
-        if (el_lum < 0.3 && r.width * r.height > 20000) {
-          hits.darkBg.push(`${name} area ${Math.round(r.width * r.height)}`);
+        if (el_lum > 0.35 && r.width * r.height > 20000) {
+          hits.lightBg.push(`${name} area ${Math.round(r.width * r.height)}`);
         }
       }
     }
@@ -238,7 +255,10 @@ for (const width of WIDTHS) {
   report(found.radius.length === 0, "no rounded corners", found.radius.slice(0, 3).join("; ") || "none");
   report(found.shadow.length === 0, "no drop shadows", found.shadow.slice(0, 3).join("; ") || "none");
   report(found.blur.length === 0, "no backdrop blur", found.blur.slice(0, 3).join("; ") || "none");
-  report(found.darkBg.length === 0, "no large dark surface", found.darkBg.slice(0, 3).join("; ") || "none");
+  // The plate is dark by design, so a dark ground is correct here — what would
+  // be wrong is a LIGHT panel, which is how a stray component-library surface
+  // announces itself on a page like this.
+  report(found.lightBg.length === 0, "no light panel", found.lightBg.slice(0, 3).join("; ") || "none");
   await page.close();
 }
 

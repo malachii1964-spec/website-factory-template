@@ -1,19 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <!--
-    The record, reduced to a favicon: the heavy rule under a table head, then
-    ruled rows, with one row struck in iron red — the site's single accent,
-    which means "cutting now" here exactly as it does on the page.
+    The emblem, reduced until it survives 32 pixels.
 
-    It is the site's own signature element rather than the farm's emblem. The
-    ring-and-roots mark in the owner's brand artwork is their asset and is not
-    approximated; when the real file lands in public/brand it can replace this.
+    The plate's mark is a ring holding a flared stem, a wave crossing it, and a
+    lit root system below. All of that detail turns to mud at favicon size, so
+    this keeps only what reads: the ring, the stem, the wave, three roots — in
+    the plate's gold on its own base colour.
 
-    Paper background is drawn explicitly so the mark does not vanish against a
-    dark browser chrome.
+    The base is drawn explicitly so the mark does not vanish against a dark
+    browser chrome, and the gold is the lit edge value rather than the mid tone,
+    because a favicon is always seen small and slightly dimmed.
   -->
-  <rect width="32" height="32" fill="#F4F1EA"/>
-  <rect x="5" y="8" width="22" height="2.2" fill="#1B1916"/>
-  <rect x="5" y="14" width="22" height="1.2" fill="#1B1916" opacity="0.55"/>
-  <rect x="5" y="19" width="14" height="1.6" fill="#9E3B1D"/>
-  <rect x="5" y="24" width="22" height="1.2" fill="#1B1916" opacity="0.55"/>
+  <rect width="32" height="32" fill="#0b0806"/>
+  <g fill="none" stroke="#e6ccb1" stroke-width="1.5" stroke-linecap="round">
+    <circle cx="16" cy="14.5" r="9.5"/>
+    <path d="M16 5.5 V18"/>
+    <path d="M12.6 5.6 H19.4"/>
+    <path d="M7.6 14.4 C 11 11.4 13 17 16 14.4 C 19 11.8 21 17.4 24.4 14.4"/>
+  </g>
+  <g fill="none" stroke="#fff2c2" stroke-width="1.3" stroke-linecap="round">
+    <path d="M16 18 V27"/>
+    <path d="M16 20.5 C 12.5 22 10.5 24 9.5 27"/>
+    <path d="M16 20.5 C 19.5 22 21.5 24 22.5 27"/>
+  </g>
 </svg>

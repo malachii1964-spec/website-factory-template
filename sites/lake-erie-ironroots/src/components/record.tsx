@@ -39,30 +39,30 @@ function Rows({ entries }: { entries: Entry[] }) {
       {entries.map((e) => {
         const cutting = e.standing === "cutting";
         return (
-          <tr key={e.id} className="rule-row align-baseline">
-            <th scope="row" className="py-3 pr-4 text-left font-normal">
+          <tr key={e.id} className="border-b rule-hair align-baseline">
+            <th scope="row" className="py-5 pr-4 text-left align-top font-normal">
               <span
-                className={`display text-lg ${cutting ? "text-iron" : "text-ink"}`}
+                className={`display text-base tracking-wide ${cutting ? "text-ember" : "text-gild"}`}
               >
                 {e.name}
               </span>
               {e.varieties.length > 0 && (
-                <span className="fig block text-ink-2">
+                <span className="cut mt-1 block text-stone">
                   {e.varieties.join(", ")}
                 </span>
               )}
-              <span className="mt-1 block max-w-[38ch] text-sm text-ink-2">
+              <span className="mt-2 block max-w-[42ch] text-sm leading-relaxed text-brass">
                 {e.note}
               </span>
             </th>
             <td
-              className={`fig py-3 pr-4 whitespace-nowrap ${
-                cutting ? "text-iron" : "text-ink-2"
+              className={`cut py-5 pr-4 ${
+                cutting ? "text-ember" : "text-stone"
               }`}
             >
               {STANDING_LABEL[e.standing]}
             </td>
-            <td className="fig py-3 text-ink-2">
+            <td className="cut py-5 text-brass">
               <Rhythm entry={e} />
             </td>
           </tr>
@@ -85,23 +85,23 @@ export function RegisterTable({
   if (entries.length === 0) return null;
 
   return (
-    <section className="mt-12 first:mt-0">
-      <h2 className="display text-2xl text-ink md:text-3xl">{heading}</h2>
-      <p className="prose-farm mt-2 text-sm">{registerLine(register, date)}</p>
+    <section className="mt-20 first:mt-0">
+      <h2 className="display text-2xl text-gild md:text-3xl">{heading}</h2>
+      <p className="prose-farm mt-3 text-sm">{registerLine(register, date)}</p>
 
-      <table className="mt-5 w-full border-collapse text-left">
+      <table className="mt-7 w-full border-collapse text-left">
         <caption className="sr-only">
           {heading} — what is growing, its standing, and its rhythm.
         </caption>
         <thead>
-          <tr className="rule-head">
-            <th scope="col" className="fig pb-2 pr-4 font-medium text-ink">
+          <tr className="border-b rule-lit">
+            <th scope="col" className="cut pb-3 pr-4 text-gold">
               Crop
             </th>
-            <th scope="col" className="fig pb-2 pr-4 font-medium text-ink">
+            <th scope="col" className="cut pb-3 pr-4 text-gold">
               Standing
             </th>
-            <th scope="col" className="fig pb-2 font-medium text-ink">
+            <th scope="col" className="cut pb-3 text-gold">
               {register === "bench" ? "Rhythm" : "Window"}
             </th>
           </tr>

@@ -41,9 +41,9 @@ export default function VisitPage() {
     <>
       <FarmJsonLd />
 
-      <section className="sheet band-record">
-        <p className="fig text-ink-2">Visit</p>
-        <h1 className="display mt-4 max-w-[18ch] text-4xl text-ink md:text-6xl">
+      <section className="sheet band-open">
+        <p className="cut text-brass">Visit</p>
+        <h1 className="display mt-4 max-w-[18ch] text-4xl text-gild md:text-6xl">
           Come to the farm.
         </h1>
         <p className="prose-farm mt-5 text-lg">
@@ -53,28 +53,28 @@ export default function VisitPage() {
         </p>
       </section>
 
-      <section className="sheet rule-section">
+      <section className="sheet border-t rule-hair">
         <div className="grid gap-12 pt-10 md:grid-cols-2 md:gap-16">
           {/* ------------------------------------------------------ hours -- */}
           <div className="min-w-0">
-            <h2 className="display text-2xl text-ink">Hours</h2>
+            <h2 className="display text-2xl text-gild">Hours</h2>
             <dl className="mt-4">
               {FARM.hours.map((h) => (
-                <div key={h.days.join()} className="rule-row flex justify-between gap-6 py-3">
-                  <dt className="text-ink">{formatDays(h.days)}</dt>
-                  <dd className="fig text-ink-2">
+                <div key={h.days.join()} className="border-b rule-hair flex justify-between gap-6 py-3">
+                  <dt className="text-gild">{formatDays(h.days)}</dt>
+                  <dd className="cut text-brass">
                     {humanTime(h.opens)} &ndash; {humanTime(h.closes)}
                   </dd>
                 </div>
               ))}
             </dl>
-            <p className="mt-4 text-sm text-ink-2">
+            <p className="mt-4 text-sm text-brass">
               {FARM.yearRound
                 ? "Open all year. The indoor bench runs through the winter, so there is no closed season."
                 : "Seasonal hours."}
             </p>
 
-            <h2 className="display mt-14 text-2xl text-ink">Reach us</h2>
+            <h2 className="display mt-14 text-2xl text-gild">Reach us</h2>
             {phone || email ? (
               <div className="mt-4 space-y-2">
                 {phone && (
@@ -87,7 +87,7 @@ export default function VisitPage() {
                     {FARM.email}
                   </a>
                 )}
-                <p className="text-sm text-ink-2">
+                <p className="text-sm text-brass">
                   Calling is faster than emailing. We are usually in the room and
                   the phone is in a pocket.
                 </p>
@@ -99,7 +99,7 @@ export default function VisitPage() {
                 number "is set in one file — src/lib/farm.ts". Nothing rendered
                 may ever name a source path.
               */
-              <p className="mt-4 text-ink-2">
+              <p className="mt-4 text-brass">
                 The phone number goes up here before opening day.
               </p>
             )}
@@ -107,10 +107,10 @@ export default function VisitPage() {
 
           {/* -------------------------------------------------------- where */}
           <div className="min-w-0">
-            <h2 className="display text-2xl text-ink">Where</h2>
+            <h2 className="display text-2xl text-gild">Where</h2>
             {address ? (
               <>
-                <address className="mt-4 text-lg not-italic text-ink">
+                <address className="mt-4 text-lg not-italic text-gild">
                   {FARM.address.street}
                   <br />
                   {FARM.address.locality}, {FARM.address.region}{" "}
@@ -126,7 +126,7 @@ export default function VisitPage() {
                     Open in maps
                   </a>
                 </p>
-                <p className="mt-6 max-w-[34ch] text-sm text-ink-2">
+                <p className="mt-6 max-w-[34ch] text-sm text-brass">
                   North Portage runs south off Main Street in {FARM.address.locality}.
                 </p>
               </>
@@ -136,7 +136,7 @@ export default function VisitPage() {
                 centred grey text explaining that content will exist later is the
                 most recognisable generated-UI shape there is.
               */
-              <p className="mt-4 text-lg text-ink">
+              <p className="mt-4 text-lg text-gild">
                 {FARM.address.locality} area, {FARM.county}. The exact address
                 goes up before opening day.
               </p>
@@ -146,8 +146,8 @@ export default function VisitPage() {
       </section>
 
       {/* ---------------------------------------------------- what is on -- */}
-      <section className="sheet band-note rule-section">
-        <h2 className="display text-3xl text-ink md:text-4xl">
+      <section className="sheet band-tell border-t rule-hair">
+        <h2 className="display text-3xl text-gild md:text-4xl">
           {building
             ? "Nothing is cutting yet."
             : cutting.length > 0
@@ -157,7 +157,7 @@ export default function VisitPage() {
         {cutting.length > 0 ? (
           <ul className="mt-6 flex list-none flex-wrap gap-x-8 gap-y-2 p-0">
             {cutting.map((c) => (
-              <li key={c.id} className="display text-2xl text-iron">
+              <li key={c.id} className="display text-2xl text-ember">
                 {c.name}
               </li>
             ))}
@@ -169,7 +169,7 @@ export default function VisitPage() {
               : "Call before driving out — what is cuttable changes week to week."}
           </p>
         )}
-        <p className="fig mt-8 text-ink-2">Outdoors &middot; {frostLine(today)}</p>
+        <p className="cut mt-8 text-brass">Outdoors &middot; {frostLine(today)}</p>
         <p className="mt-8">
           <Link href="/" className="link text-lg">
             Read the whole register
