@@ -99,6 +99,44 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- HTG SHOP OPEN (2026-09-20, repo lake-erie-cannabis-paid, branch
+  claude/htg-shop, NOT yet merged to main): /shop lists the opening 9
+  products (cost $182.39 -> revenue $435.52 -> $253.13, 58%), chosen on
+  profit-per-pound-shipped, not margin percent — there is no pickup, so
+  every listing carries its own postage; anything sold by the cubic foot
+  or gallon was excluded. Three real fixes found by looking at the page:
+  (a) the banner had NEVER been visible — OsHeader is `fixed top-0 z-40`
+  and the strip rendered in flow above it, so the header covered it on
+  every route; it is now a bar fixed to the bottom of the viewport that
+  renders an invisible inert clone of itself as its own spacer (a guessed
+  height was 63px short at 375px and 8px at 1280px, burying the footer);
+  (b) "Grand Opening SALE" removed — every price is HTG's published
+  retail, so there is no discount and advertising one is a false price
+  claim; it says "Now Open"; (c) /shop overflowed 66px at 375px because
+  the UA stylesheet gives <fieldset> min-inline-size:min-content and
+  `truncate` sets white-space:nowrap, making the longest product name a
+  floor — min-w-0 fixes it. Also removed the local-pickup promise (does
+  not exist) and documented SHOP_ORDER_TO/SHOP_ORDER_FROM in .env.example
+  (the route already read them; a fresh deploy would have accepted an
+  order and silently failed to deliver it). 100 tests, all gates green,
+  verified in Chromium at 375 and 1280.
+  ** OWNER ACTIONS: (a) merge claude/htg-shop — nothing is on main, so
+  the shop is not live; (b) set SHOP_ORDER_TO in Vercel; (c) paste the 6
+  real HTG SKUs still marked LOOKUP (EcoPlus Eco Air 8, Chlorine
+  Snatcher, FloraFlex Matrix Pad, 10in carbon block, 10in sediment,
+  AgroMax 250 GPH). **
+  DEAD END, do not retry: OCR of HTG product-grid screenshots cannot
+  produce quotable prices. Tesseract reads a 4-column grid left-to-right
+  across all columns, so "Retail:" from column 1 pairs with "Your Price:"
+  from column 3 — 23% of extracted pairs are provably impossible (96% off
+  a mechanical timer) and the plausible-looking rest cannot be
+  distinguished from the scrambled ones. This is also the cause of the
+  earlier Flexitank-at-42-cents and Rockwool-elbow-at-95% readings. The
+  working path is pasted page text (DOM order preserves name->price
+  pairing) or a CSV export from the B2B account. Separately: tesseract
+  under `xargs -P` in this container DEADLOCKS on OpenMP — 8 workers
+  produced 16 files in 11 minutes then hung for 27 with zero children.
+  `OMP_THREAD_LIMIT=1` fixes it: all 195 images OCR'd in 30 seconds.
 - CACHE + COMMERCE (2026-09-05): Cloudflare showed 10.63% cache hit
   across 50k requests / 5.7k uniques in 30 days — ~45k origin hits that
   should be edge-served. Root cause is two-part: routes must BE static,
