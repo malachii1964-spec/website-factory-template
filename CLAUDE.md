@@ -69,11 +69,46 @@ fix it first. Do not comment out or skip tests to make them pass.
 - When genuinely unsure between two approaches with real tradeoffs, present both briefly
   and let the human choose. Otherwise decide and note the decision below.
 
+### Truth protocol — label every material claim in content and copy
+Before shipping any page that contains factual claims, label each one:
+- `VERIFIED` — directly supported by evidence you can cite
+- `USER_PROVIDED` — stated by the owner; not independently verified
+- `INFERENCE` — reasoned from evidence; explicitly labeled as such
+- `UNKNOWN` — unresolved; must not ship without resolution or disclaimer
+- `SIMULATED` — demo/placeholder data; must be visibly identified on the page
+- `PROHIBITED` — not publishable under current evidence or authority
+
+Never invent: testimonials, customer counts, ratings, prices, service areas,
+partnerships, awards, health outcomes, compliance status, or performance results.
+Repetition or confident phrasing does not turn inference into fact.
+A page containing UNKNOWN or PROHIBITED claims is not done — fix or remove them.
+
 ## Rule 5 — Adversarial review (after gates pass, before the next feature)
 Dispatch the `reviewer` subagent on every completed feature. Address every critical
 and high finding before moving on; log medium findings in Known Issues.
 Note: the quality gates in Rule 3 are ALSO enforced by a Stop hook — if it blocks
 you, fix the failures; do not try to work around it.
+
+### Quality Floor — 7 dimensions (used by the reviewer and design-critic)
+True Quality = the **lowest** score across all seven, NOT the average.
+A 9/9/9/9/9/9/2 is a 2. Fix the floor, not the ceiling.
+
+| # | Dimension | Core question |
+|---|-----------|---------------|
+| 1 | **Accuracy** | Is it factually and logically correct? No fabricated claims? |
+| 2 | **Verification** | Were material claims checked or explicitly labeled (see Truth Protocol)? |
+| 3 | **Completeness** | Does it fully satisfy the locked feature scope? |
+| 4 | **Intent Alignment** | Does it solve the real problem, not a nearby easier one? |
+| 5 | **Execution Readiness** | Can it be used immediately — no broken paths, missing states, or TODOs? |
+| 6 | **Structure** | Is hierarchy clear? Most important thing first? |
+| 7 | **Edge Cases** | Are risks, failure modes, empty states, and bad input handled? |
+
+Scoring anchors: 9–10 survives hostile expert review unchanged · 7–8 usable with minor gaps stated ·
+5–6 needs real work · 3–4 fundamentally misses the objective · 1–2 harmful if shipped.
+
+The reviewer's report must call out the **Critical Vulnerability** (the one thing that
+would most embarrass or harm the owner if discovered) and make a binary Ship / Don't Ship
+call with the single condition that would flip it.
 
 ## Rule 6 — Design
 design.md is law: Part 1 is the human's taste, Part 2 applies to every build.
