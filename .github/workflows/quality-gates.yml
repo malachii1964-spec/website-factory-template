@@ -1,0 +1,45 @@
+name: Quality Gates
+# Runs all gates on GitHub's servers, outside the AI entirely.
+# The agent that wrote the code has no way to skip this.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Skip if not yet scaffolded
+        id: check
+        run: |
+          if [ -f package.json ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; else echo "ready=false" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/setup-node@v4
+        if: steps.check.outputs.ready == 'true'
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        if: steps.check.outputs.ready == 'true'
+        run: npm ci
+
+      - name: Typecheck
+        if: steps.check.outputs.ready == 'true'
+        run: npx tsc --noEmit
+
+      - name: Lint
+        if: steps.check.outputs.ready == 'true'
+        run: npm run lint --if-present
+
+      - name: Test
+        if: steps.check.outputs.ready == 'true'
+        run: npm test --if-present -- --run
+
+      - name: Build
+        if: steps.check.outputs.ready == 'true'
+        run: npm run build --if-present
