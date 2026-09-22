@@ -59,6 +59,9 @@ After every feature, in order:
    flow, including one failure case (bad input, empty state, network error)
 Never report "done" or move to the next feature with a failing gate. If a gate fails,
 fix it first. Do not comment out or skip tests to make them pass.
+Before any "done" claim, run the `factory-gates` skill — it checks execution evidence,
+scope, drift, claims, secrets, and reversibility, and produces a COMPLETE/PARTIAL/FAILED/
+BLOCKED verdict. "Mostly done" is not a verdict.
 
 ## Rule 4 — Workflow discipline
 - One feature at a time. Small, separate commits per logical change with clear messages.
@@ -84,8 +87,10 @@ Repetition or confident phrasing does not turn inference into fact.
 A page containing UNKNOWN or PROHIBITED claims is not done — fix or remove them.
 
 ## Rule 5 — Adversarial review (after gates pass, before the next feature)
-Dispatch the `reviewer` subagent on every completed feature. Address every critical
-and high finding before moving on; log medium findings in Known Issues.
+Dispatch the `challenger` skill on every completed feature. The challenger must be a
+different session or context from the one that built it — producer cannot grade their own
+judgment criteria (returns `not_evaluated`, never `pass`). Address every critical and
+high finding before moving on; log medium findings in Known Issues.
 Note: the quality gates in Rule 3 are ALSO enforced by a Stop hook — if it blocks
 you, fix the failures; do not try to work around it.
 

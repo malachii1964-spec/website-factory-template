@@ -96,6 +96,25 @@ Run in this order; stop and report if an early one fails badly.
 - Are data visualizations real and decision-supporting?
 - Is "futuristic" a coherent material language, or a pile of neon clichés?
 
+## Twin-tab test
+
+Open the page next to three live competitors. Cover every logo. Ask someone who did not
+build it:
+
+1. Can you point at ours in three seconds?
+2. What is the one-second silhouette?
+3. Swap the logo — could this be any of the others?
+
+If they cannot pick it out in three seconds, distinctiveness fails. Polish does not substitute.
+
+## Degradation test
+
+Disable JavaScript. Enable `prefers-reduced-motion`. Block WebGL. Throttle to slow 4G.
+
+Can the primary job still be completed? If the CTA lives inside a canvas, or the value
+proposition only exists in an animation, the design fails regardless of how it looks at full
+fidelity.
+
 ## Signature visual rule
 
 One signature moment should be load-bearing and memorable; surrounding task areas stay
