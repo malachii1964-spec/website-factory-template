@@ -9,7 +9,9 @@ Run this. Every gate. No skipping because it "obviously passed."
 
 ## G0 — Did you run it?
 
-Not "should pass." Not "looks right." Ran it, this session, and saw output.
+**Iron Law: NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE.**
+
+If you have not run the command in this session and read the actual output, you cannot claim it passes. "Should pass" and "looks right" are not evidence.
 
 ```bash
 tsc --noEmit
@@ -100,6 +102,16 @@ promoting to production.
 **Production verify:** after deploy, open the live URL in a private browser window, test
 every critical form and CTA, confirm visuals match the approved preview. Local success
 proves nothing to a real visitor.
+
+## Release stage — what you can honestly claim
+
+| Stage | What it means | Evidence required |
+|---|---|---|
+| `BUILD_ARTIFACT` | Source compiles, structural checks pass | tsc + lint + build green, secrets clean |
+| `LAUNCH_CANDIDATE` | Build + preview verified + tests pass, remaining limits disclosed | Preview URL opened, critical paths exercised, test suite green |
+| `PRODUCTION_VERIFIED` | Deployed + verified on the live URL | Live URL confirmed, critical forms/CTAs tested in a private browser |
+
+Never claim a higher stage than the evidence supports. "Deployed" means a real visitor can access it and critical paths work — not "pushed to a branch."
 
 ---
 
