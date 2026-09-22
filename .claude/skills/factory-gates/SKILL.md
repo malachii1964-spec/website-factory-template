@@ -85,6 +85,13 @@ is good.
 
 ## G7 — Deploy gates (only when shipping to a real domain)
 
+**Before pushing:**
+- `git remote -v` confirms the correct repo; current branch is the intended deploy target
+- Working tree is clean; local commit is what you think it is
+- All links and routes verified against REAL files — zero guessed paths
+- No lorem ipsum, placeholder images, or fabricated testimonials/stats (placeholders labeled if intentionally pending)
+- Tap targets ≥ 44px; no horizontal scroll at 375px
+
 **Preview first.** Production is never the first target. Verify the preview URL fully
 (forms, critical paths, responsive at 375px and 1440px, reduced-motion respected) before
 promoting to production.
@@ -101,7 +108,9 @@ promoting to production.
 
 **Production verify:** after deploy, open the live URL in a private browser window, test
 every critical form and CTA, confirm visuals match the approved preview. Local success
-proves nothing to a real visitor.
+proves nothing to a real visitor. Monitor again after 24 hours.
+
+**On any production failure:** rollback first, debug second. Never debug on a broken live site.
 
 ## Release stage — what you can honestly claim
 

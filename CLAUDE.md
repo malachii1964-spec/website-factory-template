@@ -82,6 +82,19 @@ BLOCKED verdict. "Mostly done" is not a verdict.
 - When genuinely unsure between two approaches with real tradeoffs, present both briefly
   and let the human choose. Otherwise decide and note the decision below.
 
+### Task classification — name the type before starting
+Every request is one of five types. Name it before doing anything.
+- `ANSWER` — explain, summarize, or analyze (no file changes; produce text)
+- `CREATE` — build something new (new file, new feature, new site)
+- `DECIDE` — evaluate options and recommend; owner makes the call on ambiguous tradeoffs
+- `FIX` — repair a broken behavior (run systematic-debugging; root cause before fix)
+- `EXECUTE` — apply a confirmed decision (do the thing, run the gate, ship it)
+
+Wrong classification wastes hours: treating a `FIX` as a `CREATE` skips root-cause
+investigation; treating a `DECIDE` as an `EXECUTE` removes the owner from a call that
+is theirs to make. When the type is genuinely unclear, name it as the closest type and
+state the assumption in one line.
+
 ### Autonomy gating — run the `autonomy-gating` skill before any external side effect
 Before any action that touches state outside the local repo (push, PR, email, DNS,
 db:push, production deploy, merge), classify it by level and confirm authorization.
