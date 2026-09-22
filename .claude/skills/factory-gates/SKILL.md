@@ -81,6 +81,26 @@ Either this can be undone and you can state how, or it cannot and you said so be
 it. Irreversible work done without that declaration is a process failure even if the result
 is good.
 
+## G7 — Deploy gates (only when shipping to a real domain)
+
+**Preview first.** Production is never the first target. Verify the preview URL fully
+(forms, critical paths, responsive at 375px and 1440px, reduced-motion respected) before
+promoting to production.
+
+**DNS go-live sequence for domains** (order matters — each step gates the next):
+1. Resold/aged domain? Audit and DELETE all inherited DNS records — including a stranger's
+   DMARC, SPF, MX — before writing anything new. Foreign records will silently intercept
+   or reject your email.
+2. Wait for DNS propagation to the active zone.
+3. Configure email routing with a catch-all.
+4. Attach the site (A/CNAME to the host).
+5. Configure the sending service (SPF, DKIM).
+6. Write DMARC **last** — only after SPF/DKIM are verified passing.
+
+**Production verify:** after deploy, open the live URL in a private browser window, test
+every critical form and CTA, confirm visuals match the approved preview. Local success
+proves nothing to a real visitor.
+
 ---
 
 ## Verdict

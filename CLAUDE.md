@@ -15,12 +15,22 @@ ask ONLY its ASK items plus anything genuinely missing. If custom, ask:
 2. The 3 things a user must be able to do (this defines scope — nothing else gets built)
 3. Content ready or placeholder? (paste any real copy/branding)
 4. Data to store? (none / simple / user accounts needed)
-5. Look and feel: one reference site or adjective, or "designer's choice"
+5. Look and feel: one reference site or adjective, or "designer's choice";
+   OR: what physical sensation should the page evoke in the first 3 seconds?
+   If the site were a physical material, what is it made of?
 6. Which capabilities does this site need? (checklist: send emails / take payments /
    user accounts / file uploads / editable content (CMS) / analytics / AI features /
    scheduled jobs — each maps to a default service in Rule 2; name a specific
    provider to override any default)
 7. Anything explicitly OUT of scope?
+
+**Interview rule: the owner answers creative questions. The system decides technical ones.**
+Never ask the owner which framework, database, hosting, motion library, render tier,
+email provider, or testing stack to use — infer and propose from the brief. Ask a
+technical question only when the choice changes cost, ownership, or risk to the owner.
+If inputs are missing: assume the most reasonable version, state the assumption in one
+line, and build.
+
 Then restate the plan in 5 bullets, state your assumptions, and proceed. Do not wait for
 approval unless something is ambiguous enough to waste hours if wrong.
 
@@ -71,6 +81,26 @@ BLOCKED verdict. "Mostly done" is not a verdict.
 - Secrets go in .env.local (gitignored), never in code. Validate all user input with Zod.
 - When genuinely unsure between two approaches with real tradeoffs, present both briefly
   and let the human choose. Otherwise decide and note the decision below.
+
+### Autonomy gating — run the `autonomy-gating` skill before any external side effect
+Before any action that touches state outside the local repo (push, PR, email, DNS,
+db:push, production deploy, merge), classify it by level and confirm authorization.
+A3 and above require explicit approval for that specific action, that specific scope.
+"Go ahead" on a plan authorizes the next step only, not every step in the plan.
+
+### Subagent spawning gate — all four must be true before spawning a subagent
+1. Single-agent success on this work class is genuinely poor (not just inconvenient)
+2. The subtask shares minimal state with ongoing work
+3. Coordination cost is demonstrably beaten by measured gains
+4. A tighter prompt, better retrieval, or stronger verification CANNOT achieve the same
+If any condition fails, do the work inline. Prefer shared structured state (project state
+files, design DNA, validation reports) over agent-to-agent chat.
+
+### Context rot — one place per rule, zero duplicates
+Any rule, table, or protocol that appears in more than one file is a maintenance
+liability: when one copy is edited the others drift. When you add a rule to one place,
+remove it from the others and replace with a reference. The single authoritative location
+for autonomy levels is `.claude/skills/autonomy-gating/SKILL.md`.
 
 ### Truth protocol — label every material claim in content and copy
 Before shipping any page that contains factual claims, label each one:
