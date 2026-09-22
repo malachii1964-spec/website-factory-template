@@ -1,0 +1,77 @@
+{
+  "schema": "malachii.website-build-packet.v1",
+  "objective": "Build an evidence-grounded, accessible, fast, secure informational website reference artifact.",
+  "executionState": "source_build",
+  "releaseStage": "BUILD_ARTIFACT",
+  "site": {
+    "class": "marketing",
+    "indexable": true,
+    "primaryAudience": [
+      "prospective customers"
+    ],
+    "primaryConversion": "contact"
+  },
+  "research": {
+    "freshEvidenceRequired": true,
+    "packetRefs": [
+      "evidence/standards-research-packet.json"
+    ]
+  },
+  "artifacts": [
+    "assets/reference-site/index.html",
+    "assets/reference-site/styles.css"
+  ],
+  "verification": {
+    "build": {
+      "status": "PASS",
+      "evidenceLevel": "structurally_checked"
+    },
+    "staticAudit": {
+      "status": "PASS",
+      "evidenceLevel": "structurally_checked"
+    },
+    "accessibility": {
+      "status": "PASS",
+      "target": "WCAG_2.2_AA",
+      "evidenceLevel": "structurally_checked",
+      "claim": "structural readiness only"
+    },
+    "performance": {
+      "status": "PASS",
+      "evidenceLevel": "designed",
+      "fieldMeasured": false,
+      "targets": {
+        "lcpSeconds": 2.5,
+        "inpMilliseconds": 200,
+        "cls": 0.1
+      },
+      "claim": "targets defined; no field performance claim"
+    },
+    "seo": {
+      "status": "PASS",
+      "evidenceLevel": "structurally_checked",
+      "claim": "structural Search Essentials readiness only"
+    },
+    "security": {
+      "status": "PASS",
+      "baseline": "OWASP_ASVS_5.0",
+      "evidenceLevel": "structurally_checked",
+      "claim": "structural baseline only; not ASVS certification"
+    }
+  },
+  "quality": {
+    "accuracy": 9,
+    "verification": 9,
+    "completeness": 9,
+    "intentAlignment": 9,
+    "executionReadiness": 9,
+    "structure": 9,
+    "edgeCases": 9,
+    "floor": 9
+  },
+  "limitations": [
+    "No field Core Web Vitals evidence is claimed.",
+    "No complete WCAG or ASVS certification is claimed.",
+    "Reference artifact is not deployed."
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malachii.local/schemas/website-build-packet.schema.json",
+  "title": "MALACHII Website Build Packet",
+  "type": "object",
+  "required": ["schema", "objective", "executionState", "releaseStage", "site", "research", "artifacts", "verification", "quality", "limitations"],
+  "properties": {
+    "schema": {"const": "malachii.website-build-packet.v1"},
+    "objective": {"type": "string", "minLength": 1},
+    "executionState": {"enum": ["spec_only", "source_build", "preview_verified", "deployed_verified"]},
+    "releaseStage": {"enum": ["BUILD_ARTIFACT", "LAUNCH_CANDIDATE", "PRODUCTION_VERIFIED", "NOT_RELEASE_QUALIFIED"]},
+    "site": {
+      "type": "object",
+      "required": ["class", "indexable", "primaryAudience", "primaryConversion"],
+      "properties": {
+        "class": {"type": "string"},
+        "indexable": {"type": "boolean"},
+        "primaryAudience": {"type": "array", "items": {"type": "string"}},
+        "primaryConversion": {"type": "string"}
+      }
+    },
+    "research": {
+      "type": "object",
+      "required": ["freshEvidenceRequired", "packetRefs"],
+      "properties": {
+        "freshEvidenceRequired": {"type": "boolean"},
+        "packetRefs": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "artifacts": {"type": "array", "items": {"type": "string"}},
+    "verification": {"type": "object"},
+    "quality": {
+      "type": "object",
+      "required": ["accuracy", "verification", "completeness", "intentAlignment", "executionReadiness", "structure", "edgeCases", "floor"],
+      "properties": {
+        "accuracy": {"type": "number", "minimum": 1, "maximum": 10},
+        "verification": {"type": "number", "minimum": 1, "maximum": 10},
+        "completeness": {"type": "number", "minimum": 1, "maximum": 10},
+        "intentAlignment": {"type": "number", "minimum": 1, "maximum": 10},
+        "executionReadiness": {"type": "number", "minimum": 1, "maximum": 10},
+        "structure": {"type": "number", "minimum": 1, "maximum": 10},
+        "edgeCases": {"type": "number", "minimum": 1, "maximum": 10},
+        "floor": {"type": "number", "minimum": 1, "maximum": 10}
+      }
+    },
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

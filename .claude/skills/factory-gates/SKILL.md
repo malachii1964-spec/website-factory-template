@@ -122,6 +122,11 @@ proves nothing to a real visitor. Monitor again after 24 hours.
 
 Never claim a higher stage than the evidence supports. "Deployed" means a real visitor can access it and critical paths work — not "pushed to a branch."
 
+## G8 — Production release go/no-go (use `RELEASE_GATE.md` template)
+
+For any production deploy, complete `.claude/skills/factory-gates/RELEASE_GATE.md` before A3 action.
+Fill in every row of the evidence table. A blank row is a blocker.
+
 ---
 
 ## Verdict
