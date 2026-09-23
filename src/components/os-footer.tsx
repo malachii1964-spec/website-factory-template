@@ -1,45 +1,48 @@
 import Link from "next/link";
 
-const NAV_COLS: { heading: string; links: { label: string; href: string }[] }[] =
-  [
-    {
-      heading: "Grow",
-      links: [
-        { label: "Start Here", href: "/start" },
-        { label: "Knowledge OS", href: "/guides" },
-        { label: "Build My Grow", href: "/build-my-grow" },
-        { label: "Grow Like the Greats", href: "/grow-like-the-greats" },
-      ],
-    },
-    {
-      heading: "Genetics",
-      links: [
-        { label: "Strains", href: "/strains" },
-        { label: "Strain Finder", href: "/strain-finder" },
-        { label: "Terpenes", href: "/terpenes" },
-        { label: "Seeds & Breeders", href: "/seeds" },
+const NAV_COLS: {
+  heading: string;
+  links: { label: string; href: string }[];
+}[] = [
+  {
+    heading: "Grow",
+    links: [
+      { label: "Start Here", href: "/start" },
+      { label: "Community Feed", href: "/community/feed" },
+      { label: "Knowledge OS", href: "/guides" },
+      { label: "Build My Grow", href: "/build-my-grow" },
+      { label: "Grow Like the Greats", href: "/grow-like-the-greats" },
+    ],
+  },
+  {
+    heading: "Genetics",
+    links: [
+      { label: "Strains", href: "/strains" },
+      { label: "Strain Finder", href: "/strain-finder" },
+      { label: "Terpenes", href: "/terpenes" },
+      { label: "Seeds & Breeders", href: "/seeds" },
       { label: "Limited Drops", href: "/drops" },
-      ],
-    },
-    {
-      heading: "Tools",
-      links: [
-        { label: "Grow Tools", href: "/tools" },
-        { label: "Visual Diagnose", href: "/diagnose" },
-        { label: "AI Plant Doctor", href: "/plant-doctor" },
-        { label: "Soil Lab", href: "/frostybuds-soil" },
-      ],
-    },
-    {
-      heading: "More",
-      links: [
-        { label: "Recipes", href: "/recipes" },
-        { label: "Gear Index", href: "/gear" },
-        { label: "Local NY", href: "/local-ny" },
-        { label: "Medical Card", href: "/medical-card" },
-      ],
-    },
-  ];
+    ],
+  },
+  {
+    heading: "Tools",
+    links: [
+      { label: "Grow Tools", href: "/tools" },
+      { label: "Visual Diagnose", href: "/diagnose" },
+      { label: "AI Plant Doctor", href: "/plant-doctor" },
+      { label: "Soil Lab", href: "/frostybuds-soil" },
+    ],
+  },
+  {
+    heading: "More",
+    links: [
+      { label: "Recipes", href: "/recipes" },
+      { label: "Gear Index", href: "/gear" },
+      { label: "Local NY", href: "/local-ny" },
+      { label: "Medical Card", href: "/medical-card" },
+    ],
+  },
+];
 
 export function OsFooter() {
   return (

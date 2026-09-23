@@ -182,6 +182,40 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- COMMUNITY PHASE 1 (2026-09-23, branch claude/badass-website-5293xe):
+  Social platform started. Owner interview locked: standalone brand
+  (NAME STILL TBD), mounted at /community on this same app for now and
+  moved to a subdomain with a shared login later; free at launch; 21+
+  self-attestation; auto-publish + AI flagging + report button. North
+  star is "Facebook + YouTube + X for cannabis"; Phase 1 is only the
+  core loop: grow-update posts (caption, stage, strain, photo/video
+  links) -> Latest + Following feeds -> strain passport, derived on read
+  from posts and never stored. NEW tables social_profile, follow, post,
+  post_media, post_report (separate from grow/grow_event_done). Handles
+  are auto-generated on first visit and editable at /community/settings.
+  3 distinct reports auto-hide a post (post_report PK is (post, reporter),
+  so one user cannot report the same post twice). Verified against the
+  real dev DB inside actual request scope: signup, gating, profile
+  creation, post plus curated strain match (Wedding Cake ->
+  wedding-cake), following feed, 3-report auto-hide, and the empty-post
+  and signed-out failures. Also screenshotted at 375 and 1280. 150 tests.
+  ** OWNER ACTIONS: (a) run `npm run db:push` in prod or /community
+  shows "being switched on"; (b) optional SIGHTENGINE_API_USER/SECRET
+  for automated photo screening (without them, moderation relies on
+  reports only); (c) pick the platform name. **
+  NOT BUILT YET: real file uploads (media is paste-a-link until an
+  UploadThing key can be verified end to end), subdomain + Better Auth
+  crossSubDomainCookies, likes/comments, DMs, video feed, admin review
+  queue for hidden posts (right now they can only be restored in SQL).
+  Environment notes: (1) the Playwright MCP server must launch with
+  `--browser chromium --executable-path /opt/pw-browsers/chromium`
+  (.mcp.json is fixed now, but that only takes effect after the session
+  restarts). The workaround used this session was to drive the
+  playwright-core already in the npx cache directly. (2) scripts/dev-db.mjs
+  hand-maintains its own DDL, and grow/grow_event_done are STILL missing
+  from it, so /grows cannot be exercised in local dev. (3) Killing
+  `next dev` does not kill the dev-db sidecar, and a stale sidecar keeps
+  port 5522 with the OLD DDL, so kill it by PID before restarting.
 - HTG SHOP OPEN (2026-09-20, repo lake-erie-cannabis-paid, branch
   claude/htg-shop, NOT yet merged to main): /shop lists the opening 9
   products (cost $182.39 -> revenue $435.52 -> $253.13, 58%), chosen on
