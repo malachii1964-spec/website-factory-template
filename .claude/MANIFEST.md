@@ -156,7 +156,7 @@ Skips if no `package.json` (template-only repos).
 | Design | **SUPERIOR** — visual-dna, design-critic, design system, 3D/WebGPU, immersive |
 | Security | **SUPERIOR** — threat model, truth protocol, claims integrity, cannabis compliance |
 | Persistent memory | **PARITY** — CLAUDE.md + PROJECT_STATE.md + HANDOFF.md + CLAUDE_HISTORY.md |
-| Browser automation | **PARTIAL** — WebSearch/WebFetch available; full computer use not available in Claude Code |
+| Browser automation | **SUPERIOR** — Playwright MCP (`@playwright/mcp`) wired via `.mcp.json`; native navigate/click/fill/screenshot tools; Chromium pre-installed in remote containers |
 | Realtime/websockets | **PARTIAL** — not yet needed; Inngest available |
 | 24/7 autonomous operation | **PARITY** — Claude Code Remotes + Routines |
 | Multi-agent coordination | **PARITY** — subagent spawning gate + parallel builds |
