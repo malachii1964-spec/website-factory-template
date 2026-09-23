@@ -80,6 +80,46 @@ create table if not exists "bookmark" (
   "created_at" timestamp not null default now(),
   primary key ("user_id", "guide_slug")
 );
+create table if not exists "social_profile" (
+  "user_id" text primary key references "user"("id") on delete cascade,
+  "handle" text not null unique,
+  "bio" text,
+  "location" text,
+  "banner_url" text,
+  "created_at" timestamp not null default now(),
+  "updated_at" timestamp not null default now()
+);
+create table if not exists "follow" (
+  "follower_id" text not null references "user"("id") on delete cascade,
+  "following_id" text not null references "user"("id") on delete cascade,
+  "created_at" timestamp not null default now(),
+  primary key ("follower_id", "following_id")
+);
+create table if not exists "post" (
+  "id" text primary key,
+  "user_id" text not null references "user"("id") on delete cascade,
+  "body" text,
+  "stage" text,
+  "strain_name" text,
+  "strain_slug" text,
+  "moderation_status" text not null default 'visible',
+  "created_at" timestamp not null default now()
+);
+create table if not exists "post_media" (
+  "id" text primary key,
+  "post_id" text not null references "post"("id") on delete cascade,
+  "kind" text not null,
+  "url" text not null,
+  "position" integer not null default 0,
+  "created_at" timestamp not null default now()
+);
+create table if not exists "post_report" (
+  "post_id" text not null references "post"("id") on delete cascade,
+  "reporter_id" text not null references "user"("id") on delete cascade,
+  "reason" text not null,
+  "created_at" timestamp not null default now(),
+  primary key ("post_id", "reporter_id")
+);
 `;
 
 fs.mkdirSync(dataDir, { recursive: true });

@@ -108,3 +108,82 @@ export const growEventDone = pgTable(
   },
   (t) => [primaryKey({ columns: [t.growId, t.eventId] })],
 );
+
+// --- Community (Phase 1: grow-update feed + strain passport) ---
+// Deliberately separate from `grow`/`grow_event_done` above (the "Grow Like
+// the Greats" method-schedule tracker) — this is a free-form social feed,
+// not a schedule. A post may exist with no linked grow journal at all.
+
+export const socialProfile = pgTable("social_profile", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  handle: text("handle").notNull().unique(),
+  bio: text("bio"),
+  location: text("location"),
+  bannerUrl: text("banner_url"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const follow = pgTable(
+  "follow",
+  {
+    followerId: text("follower_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    followingId: text("following_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.followerId, t.followingId] })],
+);
+
+/**
+ * A grow-update post. `stage` is a StageId from stages.ts (nullable — not
+ * every post is stage-specific). `strainSlug` links to a curated STRAINS
+ * entry when the tagged strain has one; `strainName` is always the display
+ * text (curated or free text) so tagging works for strains outside the
+ * curated set too.
+ */
+export const post = pgTable("post", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  body: text("body"),
+  stage: text("stage"),
+  strainName: text("strain_name"),
+  strainSlug: text("strain_slug"),
+  /** "visible" | "hidden_pending_review" | "removed" — see moderation.ts. */
+  moderationStatus: text("moderation_status").notNull().default("visible"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const postMedia = pgTable("post_media", {
+  id: text("id").primaryKey(),
+  postId: text("post_id")
+    .notNull()
+    .references(() => post.id, { onDelete: "cascade" }),
+  kind: text("kind").notNull(), // "photo" | "video"
+  url: text("url").notNull(),
+  position: integer("position").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+/** One report per (post, reporter) — a user can't inflate the count by reporting twice. */
+export const postReport = pgTable(
+  "post_report",
+  {
+    postId: text("post_id")
+      .notNull()
+      .references(() => post.id, { onDelete: "cascade" }),
+    reporterId: text("reporter_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    reason: text("reason").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.postId, t.reporterId] })],
+);

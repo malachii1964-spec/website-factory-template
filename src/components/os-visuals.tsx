@@ -342,3 +342,51 @@ export function RecipeGlyph({ className = "" }: { className?: string }) {
     </svg>
   );
 }
+
+/** Growers connected in a network — for the Community module card. */
+export function NetworkGlyph({ className = "" }: { className?: string }) {
+  const nodes = [
+    { x: 60, y: 22, r: 6, c: "var(--gold)" },
+    { x: 30, y: 46, r: 4.5, c: "var(--magenta)" },
+    { x: 90, y: 46, r: 4.5, c: "var(--cyan)" },
+    { x: 42, y: 78, r: 4, c: "var(--lime)" },
+    { x: 78, y: 78, r: 4, c: "var(--violet)" },
+    { x: 60, y: 58, r: 3, c: "var(--frost)" },
+  ];
+  const edges: [number, number][] = [
+    [0, 1],
+    [0, 2],
+    [0, 5],
+    [1, 5],
+    [2, 5],
+    [1, 3],
+    [2, 4],
+    [5, 3],
+    [5, 4],
+  ];
+  return (
+    <svg viewBox="0 0 120 100" className={className} aria-hidden>
+      <defs>
+        <radialGradient id="networkGlow" cx="50%" cy="30%" r="60%">
+          <stop offset="0%" stopColor="var(--gold)" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="var(--gold)" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <circle cx="60" cy="45" r="48" fill="url(#networkGlow)" />
+      <g stroke="var(--frost)" strokeOpacity="0.25" strokeWidth="1">
+        {edges.map(([a, b], i) => (
+          <line
+            key={i}
+            x1={nodes[a].x}
+            y1={nodes[a].y}
+            x2={nodes[b].x}
+            y2={nodes[b].y}
+          />
+        ))}
+      </g>
+      {nodes.map((n, i) => (
+        <circle key={i} cx={n.x} cy={n.y} r={n.r} fill={n.c} opacity="0.9" />
+      ))}
+    </svg>
+  );
+}

@@ -19,6 +19,7 @@ import {
   TerpeneGlyph,
   SeedGlyph,
   RecipeGlyph,
+  NetworkGlyph,
 } from "@/components/os-visuals";
 import { STRAINS } from "@/lib/strains";
 import { getAllGuides } from "@/lib/guides";
@@ -40,6 +41,13 @@ export const metadata: Metadata = {
 };
 
 const MODULES = [
+  {
+    name: "Community",
+    body: "Post your grow — photos, video, updates — and follow growers around the world. Every strain you post builds your own strain passport.",
+    cta: "Join the feed",
+    href: "/community/feed",
+    visual: NetworkGlyph,
+  },
   {
     name: "Knowledge OS",
     body: "Explore the cannabis knowledge universe — topics, guides, and research in one map.",
@@ -179,9 +187,24 @@ export default function HomePage() {
   const doctorOnline = Boolean(process.env.ANTHROPIC_API_KEY);
 
   const stats = [
-    { icon: "leaf" as const, n: `${guides.length}`, l: "Field guides", s: "Growing weekly" },
-    { icon: "gem" as const, n: `${STRAINS.length}`, l: "Strain profiles", s: "Deep grow data" },
-    { icon: "path" as const, n: `${memberCount}`, l: "Member deep-dives", s: "Free to unlock" },
+    {
+      icon: "leaf" as const,
+      n: `${guides.length}`,
+      l: "Field guides",
+      s: "Growing weekly",
+    },
+    {
+      icon: "gem" as const,
+      n: `${STRAINS.length}`,
+      l: "Strain profiles",
+      s: "Deep grow data",
+    },
+    {
+      icon: "path" as const,
+      n: `${memberCount}`,
+      l: "Member deep-dives",
+      s: "Free to unlock",
+    },
     { icon: "ny" as const, n: "WNY", l: "Focused", s: "Buffalo → Niagara" },
   ];
 
@@ -216,7 +239,10 @@ export default function HomePage() {
         {/* ─────────────────────────── HERO ─────────────────────────── */}
         <section className="relative min-h-[92vh] overflow-hidden bg-void">
           {/* living banner — the real Lake Erie Cannabis art, slowly drifting */}
-          <div className="hero-drift pointer-events-none absolute inset-0" aria-hidden>
+          <div
+            className="hero-drift pointer-events-none absolute inset-0"
+            aria-hidden
+          >
             <Image
               src="/lake-erie-hero.webp"
               alt=""
@@ -227,10 +253,19 @@ export default function HomePage() {
             />
           </div>
           {/* drifting smoke over the water */}
-          <div className="smoke smoke-a pointer-events-none absolute inset-0" aria-hidden />
-          <div className="smoke smoke-b pointer-events-none absolute inset-0" aria-hidden />
+          <div
+            className="smoke smoke-a pointer-events-none absolute inset-0"
+            aria-hidden
+          />
+          <div
+            className="smoke smoke-b pointer-events-none absolute inset-0"
+            aria-hidden
+          />
           {/* rippling shimmer along the water line */}
-          <div className="water-shimmer pointer-events-none absolute inset-x-0 bottom-0 h-2/5" aria-hidden />
+          <div
+            className="water-shimmer pointer-events-none absolute inset-x-0 bottom-0 h-2/5"
+            aria-hidden
+          />
           {/* legibility scrims (top nav + bottom CTAs) */}
           <div
             aria-hidden
@@ -315,7 +350,6 @@ export default function HomePage() {
               ))}
             </dl>
           </div>
-
         </section>
 
         {/* ──────────────────── MODULE CARDS ──────────────────── */}

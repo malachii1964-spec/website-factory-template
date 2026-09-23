@@ -11,6 +11,7 @@ const NAV_GROUPS: NavGroup[] = [
     heading: "Get Growing",
     links: [
       { label: "Start Here", href: "/start" },
+      { label: "Community Feed", href: "/community/feed" },
       { label: "Knowledge OS", href: "/guides" },
       { label: "Grow Like the Greats", href: "/grow-like-the-greats" },
       { label: "Build My Grow", href: "/build-my-grow" },
