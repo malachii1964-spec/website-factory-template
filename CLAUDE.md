@@ -182,6 +182,18 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- SHOP LIVE (2026-10-16): claude/htg-shop fast-forwarded into
+  lake-erie-cannabis-paid main (24e059b); Vercel production deploy READY
+  and aliased to lakeeriecannabis.com; /shop verified 200 with all 9
+  products. SHOP_ORDER_TO + RESEND_API_KEY were already set in Vercel.
+  Still open: 6 SKUs marked LOOKUP (shown only in the owner's order email).
+  ** TRUNK WARNING: production = repo lake-erie-cannabis-paid (Vercel
+  project of the same name). This factory branch holds a DIVERGED copy
+  of the LEC app — grows, drops, community, analytics, MDX + min-w-0
+  fixes exist here only; Stripe membership + Fast Buds codes exist there
+  only (42/16/38 files only-dev/only-prod/both-edited). Port features
+  into the production repo; do not develop LEC here. ANTHROPIC_API_KEY
+  and MEDICAL_INTAKE_TO are NOT set on the production project. **
 - COMMUNITY PHASE 1 (2026-09-23, branch claude/badass-website-5293xe):
   Social platform started. Owner interview locked: standalone brand
   (NAME STILL TBD), mounted at /community on this same app for now and
