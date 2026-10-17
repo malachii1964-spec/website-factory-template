@@ -182,6 +182,16 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- FIXES PORTED TO PROD (2026-10-17, lake-erie-cannabis-paid main 35d5ebc):
+  (1) two guides that were 500ing live (confirmed: trimming-wet-vs-dry
+  returned 500) — "<50%" in MDX tables; reworded + test that fails on any
+  bare "<digit" in a guide body. (2) Vercel Analytics + Speed Insights.
+  (3) min-w-0 on 6 flex rows + strain-directory grid cards (was 405px at
+  375); layout-guards.test.ts ported. All 9 key routes measured 375px
+  wide; 103 tests; deploy READY; fixed guide verified 200 live.
+  ** OWNER: enable Analytics + Speed Insights in the Vercel project
+  (Analytics tab -> Enable) or no data is collected. ** Remaining
+  dev-only features to port: grow journals, /drops, community.
 - FREE MEMBERSHIP LIVE (2026-10-17): owner decision "keep it free, the
   entire thing". Reverted the $4/mo Stripe paywall in lake-erie-cannabis-
   paid (5d4207e) — the paid join page was also the ONLY signup path, so new
