@@ -182,6 +182,18 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- FREE MEMBERSHIP LIVE (2026-10-17): owner decision "keep it free, the
+  entire thing". Reverted the $4/mo Stripe paywall in lake-erie-cannabis-
+  paid (5d4207e) — the paid join page was also the ONLY signup path, so new
+  visitors could not join without paying. Free join restored; any account
+  unlocks every members-only guide (verified locally: signed-out sees
+  teaser, free account sees full text) and live /join verified. Billing
+  routes removed (404). `subscription` table kept in schema so db:push
+  never drops paid-period records. Decision logged: no Stripe on the
+  cannabis site (Stripe restricted-business list bars cannabis-related
+  businesses). ** OWNER: cancel any active Stripe subscriptions + delete
+  the webhook endpoint in the Stripe dashboard; STRIPE_* env vars in
+  Vercel can be removed. **
 - SHOP LIVE (2026-10-16): claude/htg-shop fast-forwarded into
   lake-erie-cannabis-paid main (24e059b); Vercel production deploy READY
   and aliased to lakeeriecannabis.com; /shop verified 200 with all 9
