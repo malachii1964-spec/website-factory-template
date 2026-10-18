@@ -182,6 +182,32 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- DROP 01 PAGE ON REVIEW BRANCH (2026-10-18, lake-erie-cannabis-paid
+  claude/obsidian-splash f95fc16, NOT merged; serves on new.* once DNS
+  exists). Owner said "go, defaults": /drop "The Smoke Collection" design
+  preview, built to the section order the owner pointed at (hero, proof,
+  lineup, colorways, how it works, questions, closing CTA). Data =
+  owner's catalog explorer (24 styles x 113 palettes, src/data/
+  drop-catalog.json); 52 concept renders matched to style+colorway by
+  image comparison, taken from the 87-page PDF at 944px (lossless there)
+  or the explorer's 768px JPEGs. All 52 proofread: brand name spelled
+  right on every render (the owner's AI mockup misspelled it on 4 of 6
+  pieces, which is why that image is not used). SIGNATURE: picking a
+  colorway turns the page's smoke into that colorway's smoke inks
+  (smoke-field.ts setColors). Truth rules held: renders labeled concept
+  render; untried colorways show a color study + placement, never a
+  recolored photo; no "voted", no "shop", counts computed from data.
+  JSX GOTCHA (cost a debug loop): multi-line text right after a {value}
+  that contains an HTML entity like &apos; loses its leading space in
+  this compiler ("113colorways"). Use ’ or a template string instead.
+  Hidden sr-only radios inside an overflow box need position:relative on
+  the box or they stretch the page ~1300px below the footer.
+  Verified on a production build: LCP 0.35s / 0.60s throttled mobile,
+  CLS 0, hero 72-101KB, first-load JS 161.9KB vs /guides 159.8KB (lazy
+  loading the browser saved only 2KB, so not kept). factory-gates verdict
+  PARTIAL: independent design/challenger review not run (needs another
+  session). OWNER: Cloudflare CNAME new -> 89db103d49793cba.vercel-dns-
+  017.com (grey cloud) still missing as of this entry.
 - OBSIDIAN SPLASH ON REVIEW SUBDOMAIN (2026-10-18, repo lake-erie-cannabis-
   paid, branch claude/obsidian-splash 066a102, NOT merged; www untouched,
   prod still dpl_DrG3z8 = main 35d5ebc). The 21+ box is replaced by a
