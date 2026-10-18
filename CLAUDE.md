@@ -182,6 +182,22 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- PROD AUDIT (2026-10-18, lake-erie-cannabis-paid main 35d5ebc, verified
+  in code/build/Vercel): (1) 0 of 153 guide pages and not even /guides
+  are prerendered in prod; the static/prerender work exists only in this
+  factory copy, so every guide is rendered per request and Cloudflare
+  cannot cache it. (2) No password reset, no email verification. (3) No
+  rate limiting or bot check on auth, shop-order, medical-intake or
+  plant-doctor APIs; Plant Doctor is members-only but signup is free, so
+  turning on ANTHROPIC_API_KEY without a per-user cap is an open bill.
+  Model id in code is "claude-sonnet-5" (check it before enabling).
+  (4) No CI workflows, no error monitoring, no security headers of our
+  own. (5) Preview deployments use the PRODUCTION DATABASE_URL, so
+  sign-ups/orders on new.* land in the real member DB. (6) Schema changes
+  go through db:push (no drizzle/ migrations dir). (7) STRIPE_* env vars
+  still set in Vercel prod+preview though Stripe was removed; ANTHROPIC_
+  API_KEY and MEDICAL_INTAKE_TO absent. Medical intake collects contact
+  details only (name/email/phone).
 - DROP 01 PAGE ON REVIEW BRANCH (2026-10-18, lake-erie-cannabis-paid
   claude/obsidian-splash f95fc16, NOT merged; serves on new.* once DNS
   exists). Owner said "go, defaults": /drop "The Smoke Collection" design
