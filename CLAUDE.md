@@ -182,6 +182,39 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- OBSIDIAN SPLASH ON REVIEW SUBDOMAIN (2026-10-18, repo lake-erie-cannabis-
+  paid, branch claude/obsidian-splash 066a102, NOT merged; www untouched,
+  prod still dpl_DrG3z8 = main 35d5ebc). The 21+ box is replaced by a
+  splash gate: crystal leaf above the lake, 2D-canvas smoke rising off the
+  water, then "LAKE ERIE CANNABIS" + "I'm 21+ — Enter" / "I'm not" (same
+  thcms_age_ok cookie). Files: splash-gate.tsx, smoke-field.ts (pure maths,
+  tested). Owner chose A (photo leaf) over their own Three.js "Living
+  Crystal" splash file (low-poly leaf, brought the bubbles back, Arial).
+  OWNER RULE: the image must not change except the edit. The leaf is a
+  lossless WebP crop (x=646 w=682, 0 differing pixels) of the PNG embedded
+  in that splash file — cleaner than the catalog's lossy webp — served raw
+  from /public/splash, NEVER through next/image (it re-encodes). ~1MB,
+  accepted for that rule. Smoke sits behind the photo, not over it.
+  new.lakeeriecannabis.com added in Vercel, bound to the branch. It is
+  PUBLIC (ssoProtection = all_except_custom_domains), so: X-Robots-Tag
+  noindex for that host only (next.config headers, host match), and Better
+  Auth trusts it (auth-origins.ts) or every login there is "Invalid
+  origin". Verified on dev: noindex only on new.*, sign-up 200 from new.*,
+  403 from an untrusted origin. 110 tests, build green.
+  ** OWNER ACTIONS: (a) Cloudflare DNS: CNAME new ->
+  89db103d49793cba.vercel-dns-017.com, DNS only (grey cloud); (b) review
+  on new.*, then explicit "go" to merge into main for www. **
+  DNS FACTS: lakeeriecannabis.com nameservers are Cloudflare; www is
+  proxied through Cloudflare (A = CF IPs), Vercel verifies via http-01.
+  BACKUPS: claude/backup-pre-splash-2026-10-18 (= main 35d5ebc);
+  claude/design-obsidian-splash holds every owner upload (catalog explorer,
+  87-page clothing catalog PDF sha256 fba4cea6...d5f259, print catalog,
+  merch brief, cinematic splash). This environment cannot push git TAGS
+  (proxy 403) — back up with claude/* branches instead.
+  PARKED: merch store brief (24 styles x 113 palettes). The 147MB
+  Lake_Erie_Cannabis_Claude_Handoff.zip it depends on was never received,
+  and it is blocked on the owner's clothing payment path (IronRoots LLC
+  checkout vs cannabis-friendly processor; Stripe is out).
 - FIXES PORTED TO PROD (2026-10-17, lake-erie-cannabis-paid main 35d5ebc):
   (1) two guides that were 500ing live (confirmed: trimming-wet-vs-dry
   returned 500) — "<50%" in MDX tables; reworded + test that fails on any
