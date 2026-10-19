@@ -182,6 +182,14 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- LEAF LOWERED, LIVE (2026-10-19, main 3a5e00f, dpl_3jSjaCp9Mkhw6MKcYRx
+  iA7zU3RQk). Owner: "the main leaf is too high" -> mockup shown -> "go,
+  do both". Wide screens (min-width 861 + landscape): .scene-frame sized
+  by --u = (100cqh - --scene-top - 30px)/790 so scene rows 10..800 (whole
+  leaf + dish) fit; --scene-top = 24px front door, header+24px home; leaf
+  at 62% across; edges masked into the dark. Phones: home scene starts
+  under the menu bar again. Image files untouched. 56 placement checks
+  at 8 sizes, 16 front-door + 17 band checks; live CSS confirmed on www.
 - NEW LOOK IS LIVE ON WWW (2026-10-19). Owner: "go live". main fast-
   forwarded 35d5ebc -> 668c238 (everything on claude/obsidian-splash:
   splash, new look site-wide, flash fix, list pages, prebuilt guides,
