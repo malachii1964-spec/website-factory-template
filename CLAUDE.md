@@ -182,6 +182,32 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- WHOLE SITE REDONE IN THE NEW LOOK (2026-10-19, lake-erie-cannabis-paid
+  claude/obsidian-splash 32cfee8, NOT merged; deploy dpl_UsWxyBwek5iNYK8
+  ptKrpoXREe8dY READY). Owner: "everything from the old site is going…
+  redoing the entire face of the whole website" + "it can never look like
+  AI made it". Defaults taken: crystal leaf = logo; name stays Lake Erie
+  Cannabis; the one scene is the only imagery. Design plan "obsidian &
+  crystal" is written at the top of globals.css (palette sampled from the
+  scene: obsidian/basalt/slate/mist, ONE mint accent, amethyst rare,
+  quartz warnings, moss for sativa; Michroma short display lines only,
+  Albert Sans for all reading incl. long titles, Plex Mono for real data;
+  Fraunces REMOVED, so still 3 families). Old token names are aliased to
+  the new palette; retired classes (glass, iris-border, btn-iris,
+  iris-text, aurora, starfield, god-rays) are neutralized in
+  @layer components. Shared pieces: site-nav.ts (one nav map), Wordmark,
+  PageHero (left-aligned, width-matched to body), GuideRow, .chip,
+  .surface, .btn-mint/.btn-stone, .tabs, .field, strain specimen table.
+  Home opens on the same crystal scene (useCrystalScene hook shared with
+  the splash; wakes on SPLASH_CLOSED). Lists not card walls: guides,
+  strains, strain directory, gear, related reading. Fixed along the way:
+  phone overflow on Diagnose/Build My Grow, sticky filter panels covering
+  phone screens, mobile TOC button sitting on the shop bar, "What to take
+  from Mr.", inputs with no background. 132 tests, tsc, lint, build, 16
+  splash/home flow checks, zero overflow on 29 routes at 375 and 768.
+  NOT DONE: independent design-critic/challenger review (needs another
+  session); reference pages (recipes, seeds, greats, local-ny, medical,
+  soil) still use stone card grids; account page only checked in code.
 - SPLASH REBUILT FROM OWNER'S "GANJA MULTIVERSE" MOCKUP (2026-10-19,
   lake-erie-cannabis-paid claude/obsidian-splash 254bf18, NOT merged;
   deploy dpl_BpVcmNqsA8Fojrbx5tNRGHTgP6mr READY). Owner: "make it look
