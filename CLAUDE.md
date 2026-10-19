@@ -182,6 +182,23 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- A B C D BUILT ON REVIEW (2026-10-19, lake-erie-cannabis-paid
+  claude/obsidian-splash 30f6e52, NOT merged; preview dpl_73tqvWVBTZC1y8J
+  UrwZPXKPV9WCN READY on new.*). Owner: "go A B C D" after mockups.
+  (A) src/lib/cdn-cache.ts: CDN-Cache-Control "public, max-age=300" on 24
+  static routes + 107 open guides via next.config headers; members guides,
+  /account /join /login /plant-doctor /api never (cdn-cache.test.ts);
+  verified locally and on the preview deploy. docs/cloudflare-caching.md
+  Rule 2 now "bypass cache if not". OWNER: add the Cloudflare rules after
+  merge. (B) home = 6 chapters, ChapterStrip wraps SceneBand (views dish,
+  crystal, rings, leaf, rocks, door), numbered rows; strip pause hidden.
+  (C) strains: filter panel not sticky; .strain-bar (search, active chips
+  from strain-filters.ts, count, Edit filters) sticky >=1024px; PageHero
+  shade prop, strains uses "wide". (D) DropNotify on /drop hero ->
+  /api/drop-waitlist -> Resend contacts.create (SDK 6.17 segments API;
+  optional DROP_WAITLIST_SEGMENT_ID); no key = "not open yet"; NOT yet
+  verified end to end (key only in Vercel; owner to test on new.*).
+  159 tests, tsc, lint, build, browser checks 1868/768/390, 0 errors.
 - DROP 01 PRODUCT MATRIX (2026-10-19, scratchpad only, not in any repo).
   Built from the owner's NEW Catalog Explorer (uploads/d8955982-..., its
   catalog-data JSON): 24 products, 113 palettes (107 P + 6 families
