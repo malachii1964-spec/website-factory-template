@@ -182,6 +182,32 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- FRONT DOOR LOOK ON EVERY PAGE (2026-10-19, lake-erie-cannabis-paid
+  claude/obsidian-splash 668c238, NOT merged; deploy dpl_HXohUJSjEsYGnXV
+  P2YUPm11eswy9 READY, live on new.*). Owner: "That landing page must
+  completely define the look throughout the rest of the entire website"
+  (inside pages had the palette/type but were flat black). Every inside
+  page opens in SceneHero/SceneBand: the SAME scene.webp (cached by the
+  front door) framed per section via VIEWS + viewStyle() in splash-
+  scene.ts (door, leaf, dish, rings, rocks, crystal; .band-frame CSS
+  places it with container units, no JS). Guides by stage (STAGE_VIEW in
+  guides/[slug]); join/login use "door" (form on the dark rock, leaf
+  right). Mist rises in each band, ripples where the dish shows; motion
+  stops off screen (IntersectionObserver); ONE pause choice site-wide
+  (localStorage lec:motion); reduced motion = still photo. Header open
+  over the scene at the top, solid on scroll. btn-mint/btn-stone ARE the
+  front door's Enter/I'm-not buttons (Michroma caps; .btn-sm). SceneTitle
+  = silver line + glowing mint line. Footer rock strip tried and REMOVED
+  (doubled the dish on short pages). /splash/* immutable 1 year; WebGL
+  contexts released on leave. Verified: 145 tests, tsc, lint, build, 31
+  routes x 375/768/1440 no overflow/errors, 16 front-door + 17 band
+  checks, live fetch on new.*. LCP throttled phone: 0.33-0.38 s warm;
+  ~6 s cold on slow 4G (same as the front door, 6.4 s) - over the 2.5 s
+  budget for visitors whose cache dropped the scene; fix would need a
+  preview image = owner's call (image rule). Gate verdict PARTIAL:
+  independent design-critic/challenger not run. Drop 01 page untouched.
+  TESTING GOTCHA: a 90-page sweep trips Better Auth's rate limit (429 on
+  get-session) for later browser checks from the same IP; not a bug.
 - FLASH FIXED + REFERENCE PAGES + FASTER GUIDES (2026-10-19, lake-erie-
   cannabis-paid claude/obsidian-splash a3c4a9c, NOT merged; deploy
   dpl_8yCraVQ71RtumW7A21g2sn5q1Lv3 READY). Owner: "do all 3, fix the
