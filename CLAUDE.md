@@ -182,6 +182,24 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- MEDICAL PAGE ON REVIEW (2026-10-19, lake-erie-cannabis-paid
+  claude/obsidian-splash 450bb7d, NOT merged; preview dpl_6Re4mnxAS8DWjH
+  zXVxkrzwJvqnhZ READY, on new.*). Owner: "go" after mockup. /medical-card
+  rebuilt on the crystal scene WITH the tincture (public/splash/medical-
+  scene.webp = scene.webp + bottle pixels from the original; phones reuse
+  scene-narrow, 38 px differ); CrystalHero now shared by home + medical.
+  Form = Dr. Sasse's own site fields; "How did you hear about us?" fixed to
+  Lake Erie Cannabis server-side; referral number LEC-yymmdd-XXXX; optional
+  MEDICAL_INTAKE_CC. Office: 276 W Main St, Fredonia NY 14063, (716)
+  473-0345 (owner-confirmed; his site text still says 112). Home gets 4th
+  door. 147 tests, tsc, lint, build, browser checks at 1868/768/390.
+  ** OWNER: MEDICAL_INTAKE_TO (his form's inbox) unset, so the form shows
+  "call the office"; no *_FROM set in Vercel, so mail goes from
+  onboarding@resend.dev, which Resend only delivers to the account owner:
+  verify lakeeriecannabis.com in Resend + set MEDICAL_INTAKE_FROM before
+  his office can receive anything. Price line / "cheapest in NY" held until
+  real prices are given (truth rule). Sasse to confirm same-day,
+  telehealth, since 1997, walk-ins, discounts. **
 - PAUSED 2026-10-19: owner is on the job search first ("we will come
   back to Lake Erie Cannabis"). Site is live and healthy. Parked, each
   needing an explicit go: (a) home page "chapters" redesign below the
