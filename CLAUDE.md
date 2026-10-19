@@ -182,6 +182,19 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- PAUSED 2026-10-19: owner is on the job search first ("we will come
+  back to Lake Erie Cannabis"). Site is live and healthy. Parked, each
+  needing an explicit go: (a) home page "chapters" redesign below the
+  opening scene, owner wants the front-door look carried through and
+  the lists to stop reading flat; mockup first per the owner rule;
+  (b) Cloudflare caching fix: Vercel strips s-maxage, so prebuilt pages
+  reach Cloudflare as max-age=0. Fix = CDN-Cache-Control on prebuilt
+  routes (never on the 46 members guides) + corrected dashboard rules;
+  docs/cloudflare-caching.md as written will NOT raise the 12.6% hit
+  rate; (c) strains page filter box slides over the list on scroll;
+  (d) the Strains title sits over the bright leaf (move to a calmer
+  view if asked). Latest Cloudflare 30-day: 93,050 requests, 9,560
+  visitors (+86%/+68%), 12.6% cached.
 - LEAF LOWERED, LIVE (2026-10-19, main 3a5e00f, dpl_3jSjaCp9Mkhw6MKcYRx
   iA7zU3RQk). Owner: "the main leaf is too high" -> mockup shown -> "go,
   do both". Wide screens (min-width 861 + landscape): .scene-frame sized
