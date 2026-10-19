@@ -182,6 +182,25 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- SPLASH REBUILT FROM OWNER'S "GANJA MULTIVERSE" MOCKUP (2026-10-19,
+  lake-erie-cannabis-paid claude/obsidian-splash 254bf18, NOT merged;
+  deploy dpl_BpVcmNqsA8Fojrbx5tNRGHTgP6mr READY). Owner: "make it look
+  more like this, but remove the thc tincture, want smoke coming up from
+  the slow moving ripples in the water". Tincture + baked mockup text/
+  buttons erased with LaMa (big-lama.pt from github Sanster/models; torch
+  from pypi, ~5.6GB; HF and download.pytorch.org are BLOCKED here). 0
+  pixels changed outside the masks; lossless WebP public/splash/scene.webp
+  (1672x941, 1.24MB) + scene-narrow.webp (column x=480..1270, 703KB, phones
+  <=640px). leaf.webp removed. Words kept "Lake Erie Cannabis" (mockup's
+  "The Ganja Multiverse" NOT used, ask owner), Michroma display face added
+  (4th family, preload:false, splash only). Ripples = tiny WebGL pass over
+  only the dish (src/lib/water-ripples.ts, POOL ellipse in splash-scene.ts)
+  bending the photo's own reflections; mist-colored smoke rises off the
+  water (smoke-field gained Origin.depth + lifeScale). Reduced motion = no
+  ripple pass; no WebGL = still photo. Verified: 132 tests, tsc, lint,
+  build, 15 browser flow checks, 5 screen sizes. Splash JS +1.9KB gz.
+  STILL OPEN: old-homepage flash before the splash (0.6-1.4s on phones,
+  same on www) - offered fix, owner has not said go.
 - PROD AUDIT (2026-10-18, lake-erie-cannabis-paid main 35d5ebc, verified
   in code/build/Vercel): (1) 0 of 153 guide pages and not even /guides
   are prerendered in prod; the static/prerender work exists only in this
