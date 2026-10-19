@@ -182,6 +182,18 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- DROP 01 PRODUCT MATRIX (2026-10-19, scratchpad only, not in any repo).
+  Built from the owner's NEW Catalog Explorer (uploads/d8955982-..., its
+  catalog-data JSON): 24 products, 113 palettes (107 P + 6 families
+  F01-F06), 600 recipes (6 families x 10 motifs x 10 treatments, all fit
+  all 24), product option_ids = 113 each. Workbook: Summary, Products
+  (yellow cost/price inputs), Size Runs (PROPOSAL; explorer
+  supplier_size_chart is null), Colorways, Design Families, Smoke
+  Treatments, Design Recipes, Style-Color Matrix (17,112 rows) + SKU CSV
+  (98,394). Columns mirror the explorer's concept export (concept_id,
+  palette_id, recipe_id, supplier_variant_id, price_minor_units,
+  sellable=FALSE). 34,408 formulas, 0 errors. Generator:
+  scratchpad/drop-matrix/build_matrix.py <catalog-data.json> <outdir>.
 - MEDICAL PAGE ON REVIEW (2026-10-19, lake-erie-cannabis-paid
   claude/obsidian-splash 450bb7d, NOT merged; preview dpl_6Re4mnxAS8DWjH
   zXVxkrzwJvqnhZ READY, on new.*). Owner: "go" after mockup. /medical-card
