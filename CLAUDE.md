@@ -182,6 +182,20 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- NEW LOOK IS LIVE ON WWW (2026-10-19). Owner: "go live". main fast-
+  forwarded 35d5ebc -> 668c238 (everything on claude/obsidian-splash:
+  splash, new look site-wide, flash fix, list pages, prebuilt guides,
+  Drop 01, scene on every page). Production dpl_2UszFkc3GGynbD7bqApcy27W
+  wmdj READY. Release gate: CONDITIONAL GO (open: independent design
+  review; cold-cache LCP ~6 s slow 4G). Verified on www after deploy:
+  /, /guides, open + members guide (members text absent signed-out,
+  private no-store), /join, /shop, 404, robots.txt allows / and NO
+  X-Robots-Tag on www; 0 runtime errors in the first hour. ROLLBACK:
+  promote dpl_DrG3z8XKBj2uFuZ2edoGPuHwu1Qa (35d5ebc) or reset main to
+  claude/backup-pre-splash-2026-10-18. new.* still points at the branch
+  (same code now). Entries below that say "NOT merged" are now merged.
+  ** OWNER: Cloudflare cache rules (docs/cloudflare-caching.md) now pay
+  off; enable Vercel Analytics; remove STRIPE_* env vars. **
 - FRONT DOOR LOOK ON EVERY PAGE (2026-10-19, lake-erie-cannabis-paid
   claude/obsidian-splash 668c238, NOT merged; deploy dpl_HXohUJSjEsYGnXV
   P2YUPm11eswy9 READY, live on new.*). Owner: "That landing page must
