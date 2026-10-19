@@ -737,6 +737,12 @@ At the end of every working session:
   10 Vitest tests, next build, Playwright E2E (signup→unlock→bookmark→signout
   →bad-login→deep-link), Lighthouse mobile 97 perf / 95 a11y, JS 147KB gz.
 ### Decisions made (do not relitigate)
+- OWNER RULE (2026-10-19, Lake Erie Cannabis): "look and share your
+  thoughts always before a change". For any edit to the site: look at
+  it at the owner's screen size, explain what is wrong and the fix, show
+  a before/after mockup (local CSS injection, nothing committed), and
+  WAIT for the owner's go before touching code or the live site.
+  Owner's desktop viewport is about 1868x935 (Firefox, 1920x1080 screen).
 - Stack: Next 16 App Router + Tailwind 4; MDX in-repo instead of Sanity
   (simple site, no CMS bill); Better Auth + Drizzle; Neon Postgres in prod.
 - Dev DB: embedded PGlite behind a socket sidecar (scripts/dev-db.mjs),
