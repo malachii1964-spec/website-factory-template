@@ -182,6 +182,30 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- FLASH FIXED + REFERENCE PAGES + FASTER GUIDES (2026-10-19, lake-erie-
+  cannabis-paid claude/obsidian-splash a3c4a9c, NOT merged; deploy
+  dpl_8yCraVQ71RtumW7A21g2sn5q1Lv3 READY). Owner: "do all 3, fix the
+  flash first". (1) FLASH: root layout prints .splash-cover (z-49, same
+  ground as the splash) in the HTML; AGE_CHECK_SCRIPT in <head> sets
+  html[data-age-ok] from the cookie before paint so returning visitors
+  never see it; Enter sets it too; <noscript> hides it; CSS steps it
+  aside after 8 s if app JS never loads. src/lib/age-gate.ts holds the
+  cookie name + script (tests). <html suppressHydrationWarning>.
+  Measured slow 4G + 4x CPU, 390px: page frames before the splash
+  ~1.4 s -> none; returning visitors paint immediately. (2) Recipes,
+  Seeds, Greats index, Local NY, Medical Card, Soil Lab rebuilt as
+  lists/.fact-row/.rules (no card grids, no per-item rainbow). Found and
+  fixed selected states my class codemod had flattened (Diagnose symptom,
+  Strain Finder top match, Soil Lab style, directory filter). callName()
+  shared in growers.ts. (3) /guides static (GuideBrowser filters in the
+  browser, URL is the state) + 107 open guides prerendered (s-maxage);
+  46 members guides stay private/no-store and none of their text is in
+  signed-out HTML. BookmarkButton resolves its own session; toggling no
+  longer revalidates the guide page. docs/cloudflare-caching.md (prod
+  repo) = the dashboard half, OWNER ACTION, safe to add before merge.
+  142 tests, tsc, lint, build, 16 front-door checks, 8 guide-filter
+  checks. NOTE: the shop bar is baked into static pages at build time,
+  so after the shop end date a redeploy/purge is needed to drop it.
 - WHOLE SITE REDONE IN THE NEW LOOK (2026-10-19, lake-erie-cannabis-paid
   claude/obsidian-splash 32cfee8, NOT merged; deploy dpl_UsWxyBwek5iNYK8
   ptKrpoXREe8dY READY). Owner: "everything from the old site is going…
