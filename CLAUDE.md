@@ -182,6 +182,30 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- DROP 01 SNEAK PEEK INTRO ON REVIEW (2026-10-20, lake-erie-cannabis-paid
+  claude/obsidian-splash 64282ce, NOT merged to main/www). Owner: "take
+  those specific products ... run smoke through the delivery splash page
+  intro" -> mockup videos -> "go" + "advertise sneak peek". DropIntro
+  (src/components/drop-intro.tsx, data in src/lib/drop-intro.ts + test):
+  after the front door's Enter, on / only, once per browser (localStorage
+  lec:drop01-intro; ?intro forces it): smoke curtain lifts, owner's black
+  Obsidian lineup render (public/drop/drop01-obsidian-lineup.webp) comes
+  through it, "Pick your smoke" Obsidian/Solar/Amethyst/Glacier swaps in
+  the owner's 1254px cap renders and recolors all smoke with each
+  colorway's catalog inks (smoke-field gained density/size options +
+  setColors(colors, now)). Kicker "Sneak peek · Drop 01"; CTA "Get first
+  access" (DropNotify) + See every piece + Enter the site; Skip/Esc;
+  "Design preview · 21+" tag kept (concept renders). Home Drop section
+  gets "Watch the sneak peek" (replays via window event); front-door link
+  "See the Drop 01 sneak peek". Caps load only after 3.5 s or a pick.
+  NOT USED: owner's light lineup image (misspells brand on tee/bag; says
+  "Voted into production"). Verified: 171 tests, tsc, lint, build;
+  browser 1868 + 390: first-visit flow, recolor, empty email refused, Esc,
+  not shown again, replay works, never on /guides, no overflow/errors.
+  STORE STILL NOT REAL: owner has not answered pieces / maker (Printful
+  default) / payment (Shopify under IronRoots default; confirm cannabis-
+  imagery policy with provider) / print files / prices / window.
+  People's Grow voting ON HOLD by owner ("hold on the growers vote").
 - LIVE ON WWW (2026-10-20). Owner: "go live." main fast-forwarded
   3a5e00f -> 41f9242 (medical page, A B C D, People's Grow + story).
   Production dpl_6aXKJvxxprzWUJMhRHBrLRtomyju READY, aliased to www.
