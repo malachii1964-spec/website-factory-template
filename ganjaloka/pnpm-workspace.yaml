@@ -1,0 +1,7 @@
+# Standalone project (deployed with Vercel "Root Directory" = ganjaloka).
+# Having our own workspace file stops pnpm from attaching to the repo root.
+onlyBuiltDependencies:
+  - sharp
+  - supabase
+ignoredBuiltDependencies:
+  - unrs-resolver
