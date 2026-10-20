@@ -206,6 +206,13 @@ At the end of every working session:
   default) / payment (Shopify under IronRoots default; confirm cannabis-
   imagery policy with provider) / print files / prices / window.
   People's Grow voting ON HOLD by owner ("hold on the growers vote").
+  SMOKE TONED DOWN (bb93544): owner "when u click on an image, the smoke
+  rises too thick, make it go with the site". inks = 3 mist + 3 colorway
+  (like the front door's MIST mix), no brightness filter, front haze
+  opacity .6, back lifeScale 3 / density 1.5; picks after the first get
+  .is-swap = 1.8 s wisp peaking at .4 instead of the opening curtain.
+  Owner confirmed spelling must be right: caps + black lineup + intro
+  copy all checked; light lineup image (misspelled) still unused.
 - LIVE ON WWW (2026-10-20). Owner: "go live." main fast-forwarded
   3a5e00f -> 41f9242 (medical page, A B C D, People's Grow + story).
   Production dpl_6aXKJvxxprzWUJMhRHBrLRtomyju READY, aliased to www.
