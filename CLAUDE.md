@@ -182,7 +182,9 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
-- DROP SIGN-UP EMAILS PUSHED TO WWW (2026-10-20, main 10d27a4). Owner:
+- DROP SIGN-UP EMAILS LIVE ON WWW (2026-10-20, main 10d27a4, production
+  dpl_CLR4Bav3meMF2gCii8TLwNQU8r4y READY; 0 runtime errors; route
+  deployed). ROLLBACK: promote dpl_CjQcaKvFQE8bbzUhzSWTcmu6GvnR. Owner:
   "both" then "go live". Each NEW sign-up (addToWaitlist "added" only)
   -> sendSignupEmails(): owner alert to DROP_WAITLIST_NOTIFY_TO ||
   SHOP_ORDER_TO from SHOP_ORDER_FROM || onboarding@resend.dev; subscriber
