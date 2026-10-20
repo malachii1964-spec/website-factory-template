@@ -182,6 +182,18 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- DROP SIGN-UP EMAILS PUSHED TO WWW (2026-10-20, main 10d27a4). Owner:
+  "both" then "go live". Each NEW sign-up (addToWaitlist "added" only)
+  -> sendSignupEmails(): owner alert to DROP_WAITLIST_NOTIFY_TO ||
+  SHOP_ORDER_TO from SHOP_ORDER_FROM || onboarding@resend.dev; subscriber
+  welcome ("You're on the list", dark, lineup image from www, no prices/
+  dates, reply "remove") ONLY when DROP_WAITLIST_FROM is set (verified
+  domain). Neither env var is set yet: alert goes to SHOP_ORDER_TO now;
+  welcome is OFF until owner verifies lakeeriecannabis.com in Resend and
+  DROP_WAITLIST_FROM is set (same step unblocks the medical form). Mail
+  failures never fail the sign-up. 177 tests. Contacts land in Resend
+  Audience -> Contacts (DROP_WAITLIST_SEGMENT_ID unset). Owner to test
+  with their own email on www.
 - SNEAK PEEK LIVE ON WWW (2026-10-20). Owner: "go live". main fast-
   forwarded 41f9242 -> bb93544 (only the 2 sneak-peek commits). Verified
   once the Vercel MCP reconnected: production dpl_CjQcaKvFQE8bbzUhzSWTcm
