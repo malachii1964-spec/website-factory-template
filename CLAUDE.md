@@ -134,3 +134,10 @@ At the end of every working session:
 - Sample previews only cover ~3 products; roll out to the rest.
 - Minor: Turbopack NFT over-trace warning from /api/download local-fs fallback
   (harmless; prod path is DOWNLOAD_STORAGE_URL bucket).
+
+### GANJALOKA (separate app in ganjaloka/, started 2026-10-19)
+- 21+ cannabis social network (profiles, posts, feeds; video phase 2; apps
+  phase 4). Next.js 16 + Supabase + Mux + Expo. Spec in ganjaloka/docs/.
+- Phase 1 web app built; open: React error #441 after the age gate, full e2e
+  re-run, reviewer + design-critic passes. Next proposed feature: Grow Lab.
+- Full status and next steps: ganjaloka/HANDOFF.md.
