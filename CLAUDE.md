@@ -182,6 +182,20 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- THE PEOPLE'S GROW (2026-10-20, lake-erie-cannabis-paid claude/obsidian-
+  splash c80a91b, NOT merged). Owner: "a and b everything til you say you
+  need the story". "Pick one of the greats" = the 6 GROWERS (not strains).
+  (B) shareable announcement artifact https://claude.ai/artifact/1F6Z7AdU
+  PtrExZ3ZAGwog6 (private; ballot is preview only; [DATE] placeholders;
+  dashed story slot). (A) /peoples-grow on the site: CrystalHero, ballot
+  (PeoplesGrowBallot -> /api/peoples-grow GET tally+myVote, POST vote),
+  new table peoples_grow_vote (user_id PK, grower_slug; upsert = change
+  vote), ACTS season map, story hidden until PEOPLES_GROW.story has text,
+  dates null -> "Dates announced soon". Verified on local PGlite: signed-
+  out 401, bad grower 400, 2 members vote, change keeps total at 2, API
+  no-store, browser at 1868 + 390. 166 tests. ** OWNER: send the story +
+  vote/Day 0 dates; approve `db:push` on prod (preview shares the prod
+  DB, so until then voting on new.* says "Voting opens soon"). **
 - A B C D BUILT ON REVIEW (2026-10-19, lake-erie-cannabis-paid
   claude/obsidian-splash 30f6e52, NOT merged; preview dpl_73tqvWVBTZC1y8J
   UrwZPXKPV9WCN READY on new.*). Owner: "go A B C D" after mockups.
