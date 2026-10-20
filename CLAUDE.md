@@ -182,6 +182,16 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- LIVE ON WWW (2026-10-20). Owner: "go live." main fast-forwarded
+  3a5e00f -> 41f9242 (medical page, A B C D, People's Grow + story).
+  Production dpl_6aXKJvxxprzWUJMhRHBrLRtomyju READY, aliased to www.
+  Verified on the production deploy: /peoples-grow 200 with story +
+  "Dates announced soon", /medical-card 200 with Fredonia office + his
+  form, CDN-Cache-Control "public, max-age=300" on both, no X-Robots-Tag,
+  /api/peoples-grow {"ready":false} private no-store (db:push NOT run,
+  not approved), 0 runtime errors in first 15 min. ROLLBACK: promote
+  dpl_3jSjaCp9Mkhw6MKcYRxiA7zU3RQk (3a5e00f). Entries below saying
+  "NOT merged" are now merged.
 - THE PEOPLE'S GROW (2026-10-20, lake-erie-cannabis-paid claude/obsidian-
   splash c80a91b, NOT merged). Owner: "a and b everything til you say you
   need the story". "Pick one of the greats" = the 6 GROWERS (not strains).
