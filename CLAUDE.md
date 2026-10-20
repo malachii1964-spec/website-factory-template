@@ -182,8 +182,16 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
-- DROP 01 SNEAK PEEK INTRO ON REVIEW (2026-10-20, lake-erie-cannabis-paid
-  claude/obsidian-splash 64282ce, NOT merged to main/www). Owner: "take
+- SNEAK PEEK PUSHED TO WWW (2026-10-20). Owner: "go live". main fast-
+  forwarded 41f9242 -> bb93544 (only the 2 sneak-peek commits). NOT
+  VERIFIED ON WWW BY ME: the Vercel MCP disconnected right before the
+  push, and this environment's proxy blocks www/new/vercel.app (403), so
+  the production deploy state and live page are unchecked; owner asked to
+  check www in a private window. Every earlier main push auto-deployed in
+  ~80 s. ROLLBACK: promote dpl_6aXKJvxxprzWUJMhRHBrLRtomyju (41f9242) in
+  Vercel, or reset main to 41f9242.
+- DROP 01 SNEAK PEEK INTRO (2026-10-20, lake-erie-cannabis-paid
+  claude/obsidian-splash 64282ce, now on main via bb93544 above). Owner: "take
   those specific products ... run smoke through the delivery splash page
   intro" -> mockup videos -> "go" + "advertise sneak peek". DropIntro
   (src/components/drop-intro.tsx, data in src/lib/drop-intro.ts + test):
