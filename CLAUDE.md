@@ -182,6 +182,21 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- FULL INVENTORY (2026-10-20, main 10d27a4): scratchpad inventory/
+  Lake_Erie_Cannabis_Site_Inventory.xlsx (scan.py + build_xlsx.py).
+  404 tracked files: 30 page files (~333 URLs: 27 static + 153 guides +
+  147 strains + 6 greats), 6 APIs, 39 components, 38 lib modules, 25 test
+  files / 177 tests, 153 guides (46 members, ~206k words), 147 curated
+  strains (NOT 150) + 117 directory-only, 16 symptoms, 9 shop items, Drop
+  01 24 styles / 113 colorways / 52 renders, 69 images = 22.6 MB, 17
+  factory leftovers (templates/, design-library/). Every component/lib is
+  imported somewhere; every image referenced. HIGH findings: Plant Doctor
+  in main nav but offline on www (no ANTHROPIC_API_KEY in this Vercel
+  project); medical page states unconfirmed facts (Same-day, Telehealth,
+  Since 1997, Walk-ins); medical form can't send (TO/FROM unset). Resend
+  domain lakeeriecannabis.com added via Cloudflare auto-configure
+  (send/rsend CNAME + resend._domainkey TXT, DNS only; Mailgun root MX
+  untouched) - status Pending at last check.
 - DROP SIGN-UP EMAILS LIVE ON WWW (2026-10-20, main 10d27a4, production
   dpl_CLR4Bav3meMF2gCii8TLwNQU8r4y READY; 0 runtime errors; route
   deployed). ROLLBACK: promote dpl_CjQcaKvFQE8bbzUhzSWTcmu6GvnR. Owner:
