@@ -193,8 +193,11 @@ At the end of every working session:
   vote), ACTS season map, story hidden until PEOPLES_GROW.story has text,
   dates null -> "Dates announced soon". Verified on local PGlite: signed-
   out 401, bad grower 400, 2 members vote, change keeps total at 2, API
-  no-store, browser at 1868 + 390. 166 tests. ** OWNER: send the story +
-  vote/Day 0 dates; approve `db:push` on prod (preview shares the prod
+  no-store, browser at 1868 + 390. 166 tests. STORY ADDED (41f9242 +
+  artifact v2): "Still here", 18 paragraphs; one edit "This month marks
+  three years" -> "In October 2026, I marked three years". ** OWNER:
+  confirm recovery date + CRPA credential; give a donate link (story asks
+  for support, none exists); send vote/Day 0 dates; approve `db:push` on prod (preview shares the prod
   DB, so until then voting on new.* says "Voting opens soon"). **
 - A B C D BUILT ON REVIEW (2026-10-19, lake-erie-cannabis-paid
   claude/obsidian-splash 30f6e52, NOT merged; preview dpl_73tqvWVBTZC1y8J
