@@ -182,14 +182,21 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
-- SNEAK PEEK PUSHED TO WWW (2026-10-20). Owner: "go live". main fast-
-  forwarded 41f9242 -> bb93544 (only the 2 sneak-peek commits). NOT
-  VERIFIED ON WWW BY ME: the Vercel MCP disconnected right before the
-  push, and this environment's proxy blocks www/new/vercel.app (403), so
-  the production deploy state and live page are unchecked; owner asked to
-  check www in a private window. Every earlier main push auto-deployed in
-  ~80 s. ROLLBACK: promote dpl_6aXKJvxxprzWUJMhRHBrLRtomyju (41f9242) in
-  Vercel, or reset main to 41f9242.
+- SNEAK PEEK LIVE ON WWW (2026-10-20). Owner: "go live". main fast-
+  forwarded 41f9242 -> bb93544 (only the 2 sneak-peek commits). Verified
+  once the Vercel MCP reconnected: production dpl_CjQcaKvFQE8bbzUhzSWTcm
+  u6GvnR READY on bb93544, live home 200 with "Watch the sneak peek",
+  CDN-Cache-Control set, no X-Robots-Tag, 0 runtime errors in 6 h.
+  ROLLBACK: promote dpl_6aXKJvxxprzWUJMhRHBrLRtomyju (41f9242).
+  "DROP IT FOR REAL" (owner, same day): selling needs owner-only steps.
+  Default plan given: Printful print-on-demand + Shopify under IronRoots
+  LLC; first run = AOP hoodie, AOP tee, AOP bomber (Printful makes all
+  three; snapshot costs ~$41-47 hoodie, ~$50 bomber, ~$23-25 tee + $5-8
+  shipping, to confirm in their account). Cap only as an embroidered
+  version (no Printful all-over cap found); cargos + crossbody later.
+  BLOCKER: the renders are 1254px concept pictures, not print files;
+  hoodie/bomber panels need ~4000px+ art (owner's handoff zip may have it).
+  Owner creates accounts + bank; sends product links; I wire Buy buttons.
 - DROP 01 SNEAK PEEK INTRO (2026-10-20, lake-erie-cannabis-paid
   claude/obsidian-splash 64282ce, now on main via bb93544 above). Owner: "take
   those specific products ... run smoke through the delivery splash page
