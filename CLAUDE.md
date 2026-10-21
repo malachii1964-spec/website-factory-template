@@ -182,6 +182,22 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- SIGN-UP FIX PUSHED TO WWW (2026-10-21, main efcfaa3). Owner tested
+  "Get first access" on www -> bare "Please try again." ROOT CAUSE:
+  Resend contacts.create refused (reason unknown; likely a "Sending
+  access" API key), route answered 502, and CLOUDFLARE REPLACES ANY
+  ORIGIN 502/504 BODY WITH ITS OWN PAGE (non-Enterprise), so the JSON
+  error was lost. Fix: all API routes use 503 instead of 502 (guard test
+  src/lib/api-guards.test.ts); on contacts failure the owner alert still
+  goes out marked "add them by hand" and the visitor gets ok (no welcome
+  sent); Resend error console.error'd without the address. 186 tests.
+  Verified locally (fake key): 400 bad email, 503 + visible message when
+  everything fails. NOT yet verified on www: Vercel MCP disconnected at
+  push time. OWNER: check Resend API key permission (Full access needed
+  for contacts) or Resend Logs ~11:36 EDT 2026-10-20; add Dana's address
+  by hand. Domain may now be Verified (owner's tab said so) - set
+  DROP_WAITLIST_FROM / MEDICAL_INTAKE_FROM on owner's "verified".
+  ROLLBACK: promote dpl_CLR4Bav3meMF2gCii8TLwNQU8r4y (10d27a4).
 - FULL INVENTORY (2026-10-20, main 10d27a4): scratchpad inventory/
   Lake_Erie_Cannabis_Site_Inventory.xlsx (scan.py + build_xlsx.py).
   404 tracked files: 30 page files (~333 URLs: 27 static + 153 guides +
