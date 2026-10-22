@@ -182,6 +182,21 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- MEDICAL FORM ROUTED TO DR. SASSE (2026-10-22, lake-erie-cannabis-paid
+  production). Owner: "got the email address for LEC dr sasse ...
+  lakesidemedicalcare@gmail.com, please MAKE THAT WORK". Vercel env added
+  (production only, so new.* tests never reach the office):
+  MEDICAL_INTAKE_TO = that address; MEDICAL_INTAKE_FROM = "Lake Erie
+  Cannabis <referrals@lakeeriecannabis.com>" (onboarding@resend.dev only
+  delivers to the Resend account owner). No code change; redeployed
+  efcfaa3 as dpl_E8Vyks5fycEVUoNCH1BEH2TwwCwz. ROLLBACK: delete the two
+  env vars + redeploy, or promote dpl_CpSJvqpr5MK6Mjoef7UD5PbdVkzh.
+  DEPENDS ON lakeeriecannabis.com being Verified in Resend (owner's tab
+  said so; DNS lookups blocked here, Resend not checkable without the
+  key). If not verified, sends fail safely: patient sees "call the
+  office at (716) 473-0345". NOT VERIFIED END TO END: a real test would
+  email the doctor's office; left to the owner. MEDICAL_INTAKE_CC unset
+  (owner gets no copy).
 - LAKE ERIE IRONROOTS SITE BUILT LOCALLY (2026-10-22, /home/user/lake-
   erie-ironroots, local git main 41c8ac6, NOT on GitHub or Vercel yet).
   Owner: "copy www.lakeeriecannabis.com and start Lake Erie IronRoots LLC
