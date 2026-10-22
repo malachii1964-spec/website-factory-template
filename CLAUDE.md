@@ -198,8 +198,17 @@ At the end of every working session:
   console errors = /_vercel analytics scripts (exist only on Vercel).
   FOUND: every render (lineup + caps) says "LAKE ERIE CANNABIS" on the
   clothes - owner to say whether the clothing brand stays LEC (made by
-  IronRoots LLC) or needs IronRoots art. ** OWNER: approve creating the
-  GitHub repo + Vercel project (A3); Resend key/inbox/sender; domain. **
+  IronRoots LLC) or needs IronRoots art. Owner said "go" (2026-10-22) to
+  repo + Vercel preview: BLOCKED. GitHub MCP create_repository -> 403
+  "Resource not accessible by integration" (app token cannot create user
+  repos); Vercel MCP file deploy needs every file inlined as base64 (15 MB
+  of renders) - not workable; no Vercel CLI/token here. Backup zip sent to
+  owner (scratchpad ironroots-export/, also a git bundle). ** OWNER:
+  create EMPTY private repo malachii1964-spec/lake-erie-ironroots (no
+  README), give the Claude GitHub app access (claude.ai/connect-github)
+  and the Vercel GitHub app too if it is limited to selected repos; then
+  I add_repo (push), push main 41c8ac6, create the Vercel project linked
+  to it, preview. Resend key/inbox/sender; domain. **
 - SIGN-UP FIX PUSHED TO WWW (2026-10-21, main efcfaa3). Owner tested
   "Get first access" on www -> bare "Please try again." ROOT CAUSE:
   Resend contacts.create refused (reason unknown; likely a "Sending
