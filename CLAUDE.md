@@ -182,6 +182,24 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- LAKE ERIE IRONROOTS SITE BUILT LOCALLY (2026-10-22, /home/user/lake-
+  erie-ironroots, local git main 41c8ac6, NOT on GitHub or Vercel yet).
+  Owner: "copy www.lakeeriecannabis.com and start Lake Erie IronRoots LLC
+  with that architecture, and I will work on the face of it" + "center the
+  clothing line". From LEC main efcfaa3, cut to: / (Drop 01 first), /drop,
+  /about (founder story), /contact (form -> OWNER_INBOX), /legal (company,
+  nothing for sale, 21+, privacy), 404; APIs /api/drop-waitlist +
+  /api/contact. No DB, no accounts; all grow content left behind. Brand in
+  src/lib/brand.ts; mail = RESEND_API_KEY + OWNER_INBOX + MAIL_FROM
+  (src/lib/mail.ts). noindex (header + meta) until SITE_INDEXABLE=true.
+  Verified: tsc, lint, 63 tests, next build (11 routes), browser at 1868 +
+  390: front door, intro, all pages, 0 overflow, contact + sign-up show
+  "not switched on" 503 messages, header CTA -> /drop#first-access; only
+  console errors = /_vercel analytics scripts (exist only on Vercel).
+  FOUND: every render (lineup + caps) says "LAKE ERIE CANNABIS" on the
+  clothes - owner to say whether the clothing brand stays LEC (made by
+  IronRoots LLC) or needs IronRoots art. ** OWNER: approve creating the
+  GitHub repo + Vercel project (A3); Resend key/inbox/sender; domain. **
 - SIGN-UP FIX PUSHED TO WWW (2026-10-21, main efcfaa3). Owner tested
   "Get first access" on www -> bare "Please try again." ROOT CAUSE:
   Resend contacts.create refused (reason unknown; likely a "Sending
