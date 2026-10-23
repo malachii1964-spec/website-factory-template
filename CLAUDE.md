@@ -182,6 +182,29 @@ At the end of every working session:
 
 ## Project Log (keep current — this is the project's memory)
 ### Current state
+- SHOP + REZRUNNER PLANNED, REZRUNNER 3D MOCKUP (2026-10-23). Owner:
+  "defaults" to the 8 questions -> shop.lakeeriecannabis.com = template 4
+  (e-commerce) built from the local IronRoots code, Shopify checkout
+  behind our pages + Printful, seller Lake Erie IronRoots LLC, launch
+  pieces AOP hoodie/tee/bomber + embroidered cap, prices proposed then
+  owner-approved, guest checkout; rezrunner.lakeeriecannabis.com =
+  template 6 (dashboard app), delivery requests, MERCH AND GROW GEAR ONLY,
+  NO CANNABIS (no license; Seneca-territory runs not covered by a state
+  license either), ZIPs 14063/14048, 10am-8pm, email alerts, owner-only
+  dashboard. Owner also wants an "8k" 3D landing in LEC look. Mockup
+  (owner rule: mockup before code) = private artifact
+  https://claude.ai/artifact/7kroURAbBku4nKA9ZpVaSn (source scratchpad
+  rezrunner/rezrunner.html): live three.js night shoreline seen from the
+  lake, mint route + courier light tied to native scroll, statuses
+  New/Accepted/Out for delivery/Delivered light up, mist off the water,
+  crystal pins; preview-only form (ZIP + 21+ checks, RR-yymmdd-XXXX).
+  "8K" = drawn live at the screen's own pixel density (up to 3x, steps
+  down to hold frame rate; HUD shows real px), NOT an 8K video (would
+  break performance.md). Real build: R3F, dynamic import after first
+  paint, poster fallback, <=1.5MB 3D payload. NOT BUILT: either app.
+  ** OWNER: go/no-go on the mockup; create empty repos for shop + rezrunner;
+  Vercel Pro likely needed for selling; Shopify + Printful accounts under
+  IronRoots; print-ready art. **
 - MEDICAL FORM ROUTED TO DR. SASSE (2026-10-22, lake-erie-cannabis-paid
   production). Owner: "got the email address for LEC dr sasse ...
   lakesidemedicalcare@gmail.com, please MAKE THAT WORK". Vercel env added
